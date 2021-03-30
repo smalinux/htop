@@ -195,6 +195,11 @@ const MeterClass* const Platform_meterTypes[] = {
    NULL
 };
 
+int fun() {
+   kjkjkj
+   return 0;
+}
+
 int Platform_getUptime() {
    double uptime = 0;
    FILE* fd = fopen(PROCDIR "/uptime", "r");
