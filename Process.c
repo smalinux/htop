@@ -172,7 +172,8 @@ void Process_printTime(RichString* str, unsigned long long totalHundredths) {
 void Process_fillStarttimeBuffer(Process* this) {
    struct tm date;
    (void) localtime_r(&this->starttime_ctime, &date);
-   strftime(this->starttime_show, sizeof(this->starttime_show) - 1, (this->starttime_ctime > (time(NULL) - 86400)) ? "%R " : "%b%d ", &date);
+   time_t realtime = this->processList->realtime.tv_sec;
+   strftime(this->starttime_show, sizeof(this->starttime_show) - 1, (this->starttime_ctime > (realtime - 86400)) ? "%R " : "%b%d ", &date);
 }
 
 static inline void Process_writeCommand(const Process* this, int attr, int baseattr, RichString* str) {
@@ -467,14 +468,14 @@ void Process_toggleTag(Process* this) {
 
 bool Process_isNew(const Process* this) {
    assert(this->processList);
-   if (this->processList->scanTs >= this->seenTs) {
-      return this->processList->scanTs - this->seenTs <= 1000 * this->processList->settings->highlightDelaySecs;
+   if (this->processList->monotonicMs >= this->seenMs) {
+      return this->processList->monotonicMs - this->seenMs <= 1000 * (uint64_t)this->processList->settings->highlightDelaySecs;
    }
    return false;
 }
 
 bool Process_isTomb(const Process* this) {
-    return this->tombTs > 0;
+    return this->tombMs > 0;
 }
 
 bool Process_setPriority(Process* this, int priority) {
