@@ -1,0 +1,12 @@
+metric = my.summary.sys
+expr = delta(kernel.all.intr)
+type = text
+color = cyan
+caption = sys
+#bar_caption = ZFS # should be 3 char only.
+description = this is sys description
+bar_range = 0 1000
+#bar_data = 666 123 42 23
+#bar_color = 4 6 2 1
+label = sys
+#led = 666 foo / 123 bar / 42 baz

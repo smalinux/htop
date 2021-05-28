@@ -18,6 +18,7 @@ in the source distribution for its full text.
 #include "CRT.h"
 #include "Macros.h"
 #include "Object.h"
+#include "Platform.h"
 #include "ProvideCurses.h"
 #include "RichString.h"
 #include "Settings.h"
@@ -46,7 +47,15 @@ Meter* Meter_new(const struct ProcessList_* pl, unsigned int param, const MeterC
    if (Meter_initFn(this)) {
       Meter_init(this);
    }
-   Meter_setMode(this, type->defaultMode);
+   if(String_eq(type->name, "PCPPlugin")) {
+      char* plugin_type = Platform_plugin_type(param);
+      if(String_eq(plugin_type, "text"))
+         Meter_setMode(this, 2);
+      else if(String_eq(plugin_type, "bar"))
+         Meter_setMode(this, 1);
+   } else {
+      Meter_setMode(this, type->defaultMode);
+   }
    return this;
 }
 

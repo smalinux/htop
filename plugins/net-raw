@@ -1,0 +1,12 @@
+metric = my.summary.network.raw
+expr = network.rawconn.count + network.rawconn6.count
+type = text
+color = cyan
+caption = raw
+#bar_caption = ZFS # should be 3 char only.
+description = this is net raw description
+#bar_range = 0 1000
+#bar_data = 666 123 42 23
+#bar_color = 4 6 2 1
+label = lbl
+#led = 666 foo / 123 bar / 42 baz
