@@ -331,6 +331,7 @@ endif
 # --------------------------
 
 pcp_platform_headers = \
+	pcp/PCPPluginsMeter.h \
 	pcp/PCPProcess.h \
 	pcp/PCPProcessList.h \
 	pcp/Platform.h \
@@ -343,6 +344,7 @@ pcp_platform_headers = \
 	zfs/ZfsCompressedArcMeter.h
 
 pcp_platform_sources = \
+	pcp/PCPPluginsMeter.c \
 	pcp/PCPProcess.c \
 	pcp/PCPProcessList.c \
 	pcp/Platform.c \

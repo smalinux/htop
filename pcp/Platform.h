@@ -257,4 +257,32 @@ void Platform_gettime_realtime(struct timeval* tv, uint64_t* msec);
 
 void Platform_gettime_monotonic(uint64_t* msec);
 
+int Platform_pluginParser(void);
+
+int Platform_get_pcp_metric_count(void);
+
+pmAtomValue Platform_get_metric_value(int index);
+
+short Platform_get_metric_type(int index);
+
+int Platform_totalplugins(void);
+
+char* Platform_plugin_caption(int index);
+
+char* Platform_plugin_color(int index);
+
+char* Platform_plugin_description(int index);
+
+char* Platform_plugin_label(int index);
+
+char* Platform_plugin_meter_type(int index);
+
+char* Platform_plugin_type(int index);
+
+char* Platform_plugin_uiName(int index);
+
+int Platform_plugin_side(int index);
+
+uint64_t Platform_plugin_bar_max(int index);
+
 #endif

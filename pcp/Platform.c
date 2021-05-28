@@ -29,6 +29,9 @@ in the source distribution for its full text.
 #include "NetworkIOMeter.h"
 #include "Object.h"
 #include "Panel.h"
+#include "PCPPluginsMeter.h"
+#include "PCPProcess.h"
+#include "PCPProcessList.h"
 #include "ProcessList.h"
 #include "ProvideCurses.h"
 #include "Settings.h"
@@ -64,6 +67,22 @@ typedef struct Platform_ {
    int ncpu;			/* maximum processor count configured */
 } Platform;
 
+typedef struct Plugins_ {
+   char** caption;
+   char** color;
+   char** description;
+   char** expr;
+   char** label;
+   char** metric;
+   char** type;
+   char** uiName;
+   int* onefetch;
+   int* side;
+   uint64_t* bar_max;
+} Plugins;
+
+Plugins* plugins;
+int totalplugins;
 Platform* pcp;
 
 ProcessField Platform_defaultFields[] = { PID, USER, PRIORITY, NICE, M_VIRT, M_RESIDENT, (int)M_SHARE, STATE, PERCENT_CPU, PERCENT_MEM, TIME, COMM, 0 };
@@ -78,6 +97,7 @@ const unsigned int Platform_numberOfSignals = ARRAYSIZE(Platform_signals);
 
 const MeterClass* const Platform_meterTypes[] = {
    &CPUMeter_class,
+   &PCPPluginsMeter_class,
    &ClockMeter_class,
    &DateMeter_class,
    &DateTimeMeter_class,
@@ -244,6 +264,17 @@ static const char *Platform_metricNames[] = {
    [PCP_METRIC_COUNT] = NULL
 };
 
+// REMOVEME: this function for testing only.
+// Give me the index of your metric, I will print its value to stderr
+void mydump(Metric metric) {
+   pmValueSet* vset = pcp->result->vset[metric];
+   const pmDesc* desc = &pcp->descs[metric];
+   fprintf(stderr, "From mydump() ===============>> %d - %s\n",
+         metric, plugins->metric[metric]);
+   pmPrintValue(stderr, vset->valfmt, desc->type, &vset->vlist[0], 1);
+   fprintf(stderr, "\n");
+}
+
 pmAtomValue* Metric_values(Metric metric, pmAtomValue *atom, int count, int type) {
 
    pmValueSet* vset = pcp->result->vset[metric];
@@ -409,6 +440,27 @@ pmOptions opts;
 
 void Platform_init(void) {
    const char* source;
+   char * pmRDM_msgerr;
+   int sts;
+
+   plugins = malloc(sizeof(Plugins));
+
+   Platform_pluginParser();
+   fprintf(stderr, "Platform_computePluginCount = %d\n", totalplugins);
+
+   plugins->metric[totalplugins] = NULL;
+
+   for (int i = 0; i < totalplugins; i++) {
+      fprintf(stderr, "%d - metric: %s meter_type: %s color: %s caption:\"%s\" uiName: \"%s\"",
+            i, plugins->metric[i], plugins->type[i], plugins->color[i],
+            plugins->caption[i], plugins->uiName[i]);
+      fprintf(stderr, " expr %s\n", plugins->expr[i]);
+      fprintf(stderr, " onefetch %d\n", plugins->onefetch[i]);
+      fprintf(stderr, " label %s\n", plugins->label[i]);
+   }
+
+   fprintf(stderr, "totalmetrics: %d\n", totalplugins);
+
    if (opts.context == PM_CONTEXT_ARCHIVE) {
       source = opts.archives[0];
    } else if (opts.context == PM_CONTEXT_HOST) {
@@ -418,7 +470,6 @@ void Platform_init(void) {
       source = "local:";
    }
 
-   int sts;
    sts = pmNewContext(opts.context, source);
    /* with no host requested, fallback to PM_CONTEXT_LOCAL shared libraries */
    if (sts < 0 && opts.context == PM_CONTEXT_HOST && opts.nhosts == 0) {
@@ -437,18 +488,36 @@ void Platform_init(void) {
 
    pcp = xCalloc(1, sizeof(Platform));
    pcp->context = sts;
-   pcp->fetch = xCalloc(PCP_METRIC_COUNT, sizeof(pmID));
-   pcp->pmids = xCalloc(PCP_METRIC_COUNT, sizeof(pmID));
-   pcp->names = xCalloc(PCP_METRIC_COUNT, sizeof(char*));
-   pcp->descs = xCalloc(PCP_METRIC_COUNT, sizeof(pmDesc));
+   pcp->fetch = xCalloc(PCP_METRIC_COUNT + totalplugins, sizeof(pmID));
+   pcp->pmids = xCalloc(PCP_METRIC_COUNT + totalplugins, sizeof(pmID));
+   pcp->names = xCalloc(PCP_METRIC_COUNT + totalplugins, sizeof(char*));
+   pcp->descs = xCalloc(PCP_METRIC_COUNT + totalplugins, sizeof(pmDesc));
 
    if (opts.context == PM_CONTEXT_ARCHIVE) {
       gettimeofday(&pcp->offset, NULL);
       pmtimevalDec(&pcp->offset, &opts.start);
    }
 
+   // pmRegisterDerivedMetric : FIXME
+   // I cannot handle:
+   // delta(disk.dev.total_bytes) / delta(disk.dev.total)
+   for (int i = 0; i < totalplugins; i++) {
+      if( plugins->expr[i] != NULL) {
+         pmRegisterDerivedMetric(plugins->metric[i], plugins->expr[i], &pmRDM_msgerr);
+         if(sts < 0) {
+            fprintf(stderr, "name: %s, \t expr: %s\nerr: %s\n",
+                  plugins->metric[i],
+                  plugins->expr[i], pmRDM_msgerr);
+            free(&pmRDM_msgerr);
+         }
+      }
+   }
+
    for (unsigned int i = 0; i < PCP_METRIC_COUNT; i++)
       Platform_addMetric(i, Platform_metricNames[i]);
+
+   for (int i = 0; i < totalplugins; i++)
+      Platform_addMetric(i+PCP_METRIC_COUNT, plugins->metric[i]);
 
    sts = pmLookupName(pcp->total, pcp->names, pcp->pmids);
    if (sts < 0) {
@@ -486,6 +555,9 @@ void Platform_init(void) {
    Metric_enable(PCP_UNAME_MACHINE, true);
    Metric_enable(PCP_UNAME_DISTRO, true);
 
+   for (int i = PCP_METRIC_COUNT; i < PCP_METRIC_COUNT+totalplugins; i++)
+      Metric_enable(i, true);
+
    Metric_fetch(NULL);
 
    for (Metric metric = 0; metric < PCP_PROC_PID; metric++)
@@ -496,6 +568,16 @@ void Platform_init(void) {
    Metric_enable(PCP_UNAME_RELEASE, false);
    Metric_enable(PCP_UNAME_MACHINE, false);
    Metric_enable(PCP_UNAME_DISTRO, false);
+
+   // handle one fetch only
+   /*
+   for (unsigned int i = PCP_METRIC_COUNT; i < PCP_METRIC_COUNT+totalplugins; i++) {
+      if(plugins->onefetch[i-PCP_METRIC_COUNT] == 1) {
+         Metric_enable(i-PCP_METRIC_COUNT, false);
+         mydump(i); // REMOVE ME
+      }
+   }
+   */
 
    /* first sample (fetch) performed above, save constants */
    Platform_getBootTime();
@@ -514,6 +596,18 @@ void Platform_done(void) {
    free(pcp->names);
    free(pcp->descs);
    free(pcp);
+   free(plugins->bar_max);
+   free(plugins->caption);
+   free(plugins->color);
+   free(plugins->description);
+   free(plugins->expr);
+   free(plugins->label);
+   free(plugins->metric);
+   free(plugins->onefetch);
+   free(plugins->side);
+   free(plugins->type);
+   free(plugins->uiName);
+   free(plugins);
 }
 
 void Platform_setBindings(Htop_Action* keys) {
@@ -883,3 +977,139 @@ void Platform_gettime_monotonic(uint64_t* msec) {
    struct timeval* tv = &pcp->result->timestamp;
    *msec = ((uint64_t)tv->tv_sec * 1000) + ((uint64_t)tv->tv_usec / 1000);
 }
+
+int Platform_pluginParser(void)
+{
+   DIR *dir = opendir("./plugins");
+   FILE *input;
+   struct dirent *dirent;
+   int index = 0;
+
+   if (dir == NULL)  // opendir returns NULL if couldn't open directory
+   {
+      fprintf(stderr, "Could not open current directory" );
+   }
+
+   if(NULL == (dir = opendir("plugins/"))) {
+      fprintf(stderr, "Error : Failed %s\n", strerror(errno));
+   }
+
+   char buffer[1024];
+
+   plugins->bar_max = xCalloc(1, sizeof(uint64_t*));
+   plugins->caption = xCalloc(1, sizeof(char**));
+   plugins->color = xCalloc(1, sizeof(char**));
+   plugins->description = xCalloc(1, sizeof(char**));
+   plugins->expr = xCalloc(1, sizeof(char**));
+   plugins->label = xCalloc(1, sizeof(char**));
+   plugins->metric = xCalloc(1, sizeof(char**));
+   plugins->onefetch = xCalloc(1, sizeof(int));
+   plugins->side = xCalloc(1, sizeof(int));
+   plugins->type = xCalloc(1, sizeof(char**));
+   plugins->uiName = xCalloc(1, sizeof(char**));
+
+   while ((dirent = readdir(dir)) != NULL) {
+      /* On linux/Unix we don't want current and parent directories
+      * On windows machine too
+      */
+     if (!strcmp (dirent->d_name, "."))
+         continue;
+     if (!strcmp (dirent->d_name, ".."))
+         continue;
+
+      char statePath[256];
+      xSnprintf(statePath, sizeof(statePath), "plugins/%s", dirent->d_name);
+      fprintf(stderr, "statePath: %s\n", statePath);
+      input = fopen(statePath, "r");
+      if (input == NULL) {
+         fprintf(stderr, "%s\n", dirent->d_name);
+         fprintf(stderr, "Err: failed to *open file:  %s\n", strerror(errno));
+
+         return 1;
+      }
+
+      while (fgets(buffer, sizeof(buffer), input)) {
+         char cr[20]; // meter color
+         char metric[100]; // metric == name; pmRegisterDerived(char *name, char *expr);
+         char exp[1000]; // exp == expr; pmRegisterDerived(char *name, char *expr);
+         char mt[20]; // [m]eter [t]ype
+         char capt[50]; // caption
+         char desc[200];
+         int side; // left/right side
+         int nfetch;
+         uint64_t bar_mx;
+         char lbl[20]; // label
+
+         plugins->uiName[index] = xStrdup(dirent->d_name);
+
+         if(buffer[0] == '#')
+            continue;
+         else if(sscanf(buffer, "color = %s", cr) == 1)
+               plugins->color[index] = xStrdup(cr);
+         else if(sscanf(buffer, "type = %s", mt) == 1)
+            plugins->type[index] = xStrdup(mt);
+         else if(sscanf(buffer, "caption = %[^\n]", capt) == 1)
+            plugins->caption[index] = xStrdup(capt);
+         else if(sscanf(buffer, "description = %[^\n]", desc) == 1)
+            plugins->description[index] = xStrdup(desc);
+         else if(sscanf(buffer, "side = %d", &side) == 1)
+            plugins->side[index] = side;
+         else if(sscanf(buffer, "onefetch = %d", &nfetch) == 1)
+            plugins->onefetch[index] = nfetch;
+         else if(sscanf(buffer, "metric = %s", metric) == 1)
+            plugins->metric[index] = xStrdup(metric);
+         else if(sscanf(buffer, "expr = %[^\n]", exp) == 1)
+            plugins->expr[index] = xStrdup(exp);
+         else if(sscanf(buffer, "bar_range = %*d %lu", &bar_mx) == 1)
+            plugins->bar_max[index] = bar_mx;
+         else if(sscanf(buffer, "label = %s", lbl) == 1)
+            plugins->label[index] = xStrdup(lbl);
+      }
+      ++index;
+
+      plugins->bar_max = xRealloc(plugins->bar_max, sizeof(uint64_t*)*index+1);
+      plugins->caption = xRealloc(plugins->caption, sizeof(char**)*index+1);
+      plugins->color = xRealloc(plugins->color, sizeof(char**)*index+1);
+      plugins->description = xRealloc(plugins->description, sizeof(char**)*index+1);
+      plugins->expr = xRealloc(plugins->expr, sizeof(char**)*index+1);
+      plugins->label = xRealloc(plugins->label, sizeof(char**)*(index+9));
+      plugins->metric = xRealloc(plugins->metric, sizeof(char**)*index+1);
+      plugins->onefetch = xRealloc(plugins->onefetch, sizeof(int)*index+1);
+      plugins->side = xRealloc(plugins->side, sizeof(int)*index+1);
+      plugins->type = xRealloc(plugins->type, sizeof(char**)*index+1);
+      plugins->uiName = xRealloc(plugins->uiName, sizeof(char**)*index+1);
+
+      fclose(input);
+   }
+   totalplugins = index;
+   closedir(dir);
+   return 0;
+}
+
+int Platform_get_pcp_metric_count(void) { return PCP_METRIC_COUNT; }
+
+pmAtomValue Platform_get_metric_value(int index) {
+   pmAtomValue value;
+   Metric_values(index, &value, 1, pcp->descs[index].type);
+   return value;
+}
+
+short Platform_get_metric_type(int index) { return pcp->descs[index].type; }
+
+int Platform_totalplugins(void) { return totalplugins; }
+
+int Platform_plugin_side(int index) { return plugins->side[index]; }
+
+char* Platform_plugin_type(int index) { return plugins->type[index]; }
+
+char* Platform_plugin_caption(int index) { return plugins->caption[index]; }
+
+char* Platform_plugin_color(int index) { return plugins->color[index]; }
+
+char* Platform_plugin_description(int index) { return plugins->description[index]; }
+
+char* Platform_plugin_label(int index) { return plugins->label[index]; }
+
+char* Platform_plugin_uiName(int index) { return plugins->uiName[index]; }
+
+uint64_t Platform_plugin_bar_max(int index) { return plugins->bar_max[index]; }
