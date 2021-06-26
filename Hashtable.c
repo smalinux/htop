@@ -61,14 +61,19 @@ static void Hashtable_dump(const Hashtable* this) {
 }
 
 static bool Hashtable_isConsistent(const Hashtable* this) {
+   if (!this)
+      return false;
+
    size_t items = 0;
    for (size_t i = 0; i < this->size; i++) {
       if (this->buckets[i].value)
          items++;
    }
+
    bool res = items == this->items;
    if (!res)
       Hashtable_dump(this);
+
    return res;
 }
 

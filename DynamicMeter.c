@@ -54,7 +54,7 @@ unsigned int DynamicMeter_search(const ProcessList* pl, const char* name) {
 }
 
 const char* DynamicMeter_lookup(const ProcessList* pl, unsigned int key) {
-   const DynamicMeter* meter = Hashtable_get(pl->dynamicMeters, key);
+   const DynamicMeter* meter = pl->dynamicMeters ? Hashtable_get(pl->dynamicMeters, key) : NULL;
    return meter ? meter->name : NULL;
 }
 
@@ -73,7 +73,7 @@ static void DynamicMeter_display(const Object* cast, RichString* out) {
 
 static void DynamicMeter_getUiName(const Meter* this, char* name, size_t length) {
    const ProcessList* pl = this->pl;
-   const DynamicMeter* meter = Hashtable_get(pl->dynamicMeters, this->param);
+   const DynamicMeter* meter = pl->dynamicMeters ? Hashtable_get(pl->dynamicMeters, this->param) : NULL;
    if (meter) {
       const char* uiName = meter->caption ? meter->caption : meter->name;
       xSnprintf(name, length, "%s", uiName);
