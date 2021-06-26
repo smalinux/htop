@@ -9,6 +9,7 @@ in the source distribution for its full text.
 
 #include "pcp/PCPDynamicMeter.h"
 
+#include <errno.h>
 #include <math.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -20,6 +21,7 @@ in the source distribution for its full text.
 #include "RichString.h"
 #include "Settings.h"
 #include "XUtils.h"
+
 
 static PCPDynamicMetric* PCPDynamicMeter_lookupMetric(PCPDynamicMeters* meters, PCPDynamicMeter* meter, const char* name) {
    size_t bytes = 8 + strlen(meter->super.name) + strlen(name);
