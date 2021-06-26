@@ -9,6 +9,7 @@ in the source distribution for its full text.
 
 #include "pcp/PCPDynamicMeter.h"
 
+#include <ctype.h>
 #include <errno.h>
 #include <math.h>
 #include <stdint.h>
