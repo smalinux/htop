@@ -18,7 +18,6 @@ in the source distribution for its full text.
 #include "Object.h"
 #include "Platform.h"
 #include "ProcessList.h"
-#include "RichString.h"
 #include "Settings.h"
 #include "XUtils.h"
 

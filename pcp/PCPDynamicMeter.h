@@ -3,6 +3,8 @@
 
 #include "CRT.h"
 #include "DynamicMeter.h"
+#include "Hashtable.h"
+#include "RichString.h"
 
 typedef struct {
    unsigned int id; /* index into metric array */
