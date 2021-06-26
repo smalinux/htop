@@ -10,6 +10,7 @@ in the source distribution for its full text.
 #include "DynamicMeter.h"
 
 #include "CRT.h"
+#include "Hashtable.h"
 #include "Object.h"
 #include "Platform.h"
 #include "ProcessList.h"
@@ -34,7 +35,7 @@ Hashtable* DynamicMeters_new(void) {
 }
 
 typedef struct {
-   unsigned int key;
+   ht_key_t key;
    const char* name;
 } DynamicIterator;
 
