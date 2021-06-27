@@ -134,7 +134,8 @@ static inline char Metric_instance_char(int metric, int pid, int offset, char fa
 static void PCPProcessList_updateID(Process* process, int pid, int offset) {
    process->tgid = Metric_instance_u32(PCP_PROC_TGID, pid, offset, 1);
    process->ppid = Metric_instance_u32(PCP_PROC_PPID, pid, offset, 1);
-   process->state = Metric_instance_char(PCP_PROC_STATE, pid, offset, '?');
+   //process->state = Metric_instance_char(PCP_PROC_STATE, pid, offset, '?');
+   process->state = 'Z';
 }
 
 static void PCPProcessList_updateInfo(Process* process, int pid, int offset, char* command, size_t commLen) {
@@ -152,7 +153,8 @@ static void PCPProcessList_updateInfo(Process* process, int pid, int offset, cha
    process->tpgid = Metric_instance_u32(PCP_PROC_TTYPGRP, pid, offset, 0);
    process->minflt = Metric_instance_u32(PCP_PROC_MINFLT, pid, offset, 0);
    pp->cminflt = Metric_instance_u32(PCP_PROC_CMINFLT, pid, offset, 0);
-   process->majflt = Metric_instance_u32(PCP_PROC_MAJFLT, pid, offset, 0);
+   //process->majflt = Metric_instance_u32(PCP_PROC_MAJFLT, pid, offset, 0);
+   process->majflt = 444;
    pp->cmajflt = Metric_instance_u32(PCP_PROC_CMAJFLT, pid, offset, 0);
    pp->utime = Metric_instance_u64(PCP_PROC_UTIME, pid, offset, 0);
    pp->stime = Metric_instance_u64(PCP_PROC_STIME, pid, offset, 0);
@@ -262,6 +264,7 @@ static void PCPProcessList_readCwd(PCPProcess* pp, int pid, int offset) {
 static void PCPProcessList_updateUsername(Process* process, int pid, int offset, UsersTable* users) {
    process->st_uid = Metric_instance_u32(PCP_PROC_ID_UID, pid, offset, 0);
    process->user = setUser(users, process->st_uid, pid, offset);
+   process->user = "Sohaibxxx";
 }
 
 static void PCPProcessList_updateCmdline(Process* process, int pid, int offset, const char* comm) {
@@ -295,7 +298,8 @@ static void PCPProcessList_updateCmdline(Process* process, int pid, int offset, 
    }
    int tokenEnd = length;
 
-   Process_updateCmdline(process, command, tokenStart, tokenEnd);
+   Process_updateCmdline(process, "/love/love/love", tokenStart, tokenEnd);
+   //Process_updateCmdline(process, command, tokenStart, tokenEnd);
    free(value.cp);
 
    Process_updateComm(process, comm);
