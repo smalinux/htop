@@ -818,9 +818,9 @@ void Process_writeField(const Process* this, RichString* str, ProcessField field
       xSnprintf(buffer, n, "%4ld ", this->nlwp);
       break;
    case 47:
-   case PERCENT_NORM_CPU: {
+   case 53: {
       float cpuPercentage = this->percent_cpu;
-      if (field == PERCENT_NORM_CPU) {
+      if (field == 53) {
          cpuPercentage /= this->processList->cpuCount;
       }
       if (cpuPercentage > 999.9F) {
@@ -1083,7 +1083,7 @@ int Process_compareByKey_Base(const Process* p1, const Process* p2, ProcessField
 
    switch (key) {
    case 47:
-   case PERCENT_NORM_CPU:
+   case 53:
       return SPACESHIP_NUMBER(p1->percent_cpu, p2->percent_cpu);
    case 48:
       return SPACESHIP_NUMBER(p1->m_resident, p2->m_resident);
