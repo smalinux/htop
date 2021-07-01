@@ -24,7 +24,6 @@ in the source distribution for its full text.
 
 typedef enum ProcessField_ {
    NULL_PROCESSFIELD = 0,
-   STATE = 3,
    PPID = 4,
    PGRP = 5,
    SESSION = 6,
