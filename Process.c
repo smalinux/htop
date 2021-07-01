@@ -881,7 +881,7 @@ void Process_writeField(const Process* this, RichString* str, ProcessField field
       xSnprintf(buffer, n, "%*d ", Process_pidDigits, this->tgid);
       break;
    case TPGID: xSnprintf(buffer, n, "%*d ", Process_pidDigits, this->tpgid); break;
-   case TTY:
+   case 7:
       if (!this->tty_name) {
          attr = CRT_colors[PROCESS_SHADOW];
          xSnprintf(buffer, n, "(no tty) ");
@@ -1141,7 +1141,7 @@ int Process_compareByKey_Base(const Process* p1, const Process* p2, ProcessField
       return SPACESHIP_NUMBER(p1->tgid, p2->tgid);
    case TPGID:
       return SPACESHIP_NUMBER(p1->tpgid, p2->tpgid);
-   case TTY:
+   case 7:
       /* Order no tty last */
       return SPACESHIP_DEFAULTSTR(p1->tty_name, p2->tty_name, "\x7F");
    case USER:
