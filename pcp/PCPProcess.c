@@ -80,7 +80,7 @@ const ProcessFieldData Process_fields[] = {
    [CTXT] = { .name = "CTXT", .title = " CTXT ", .description = "Context switches (incremental sum of voluntary_ctxt_switches and nonvoluntary_ctxt_switches)", .flags = PROCESS_FLAG_LINUX_CTXT, .defaultSortDesc = true, },
    [SECATTR] = { .name = "SECATTR", .title = " Security Attribute ", .description = "Security attribute of the process (e.g. SELinux or AppArmor)", .flags = PROCESS_FLAG_LINUX_SECATTR, },
    [124] = { .name = "COMM", .title = "COMM            ", .description = "comm string of the process", .flags = 0, },
-   [PROC_EXE] = { .name = "EXE", .title = "EXE             ", .description = "Basename of exe of the process", .flags = 0, },
+   [125] = { .name = "EXE", .title = "EXE             ", .description = "Basename of exe of the process", .flags = 0, },
    [CWD] = { .name = "CWD", .title = "CWD                       ", .description = "The current working directory of the process", .flags = PROCESS_FLAG_CWD, },
 };
 

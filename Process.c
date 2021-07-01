@@ -767,7 +767,7 @@ void Process_writeField(const Process* this, RichString* str, ProcessField field
       Process_printLeftAlignedField(str, attr, procComm, TASK_COMM_LEN - 1);
       return;
    }
-   case PROC_EXE: {
+   case 125: {
       const char* procExe;
       if (this->procExe) {
          attr = CRT_colors[Process_isUserlandThread(this) ? PROCESS_THREAD_BASENAME : PROCESS_BASENAME];
@@ -1094,7 +1094,7 @@ int Process_compareByKey_Base(const Process* p1, const Process* p2, ProcessField
       const char *comm2 = p2->procComm ? p2->procComm : (Process_isKernelThread(p2) ? kthreadID : "");
       return SPACESHIP_NULLSTR(comm1, comm2);
    }
-   case PROC_EXE: {
+   case 125: {
       const char *exe1 = p1->procExe ? (p1->procExe + p1->procExeBasenameOffset) : (Process_isKernelThread(p1) ? kthreadID : "");
       const char *exe2 = p2->procExe ? (p2->procExe + p2->procExeBasenameOffset) : (Process_isKernelThread(p2) ? kthreadID : "");
       return SPACESHIP_NULLSTR(exe1, exe2);
