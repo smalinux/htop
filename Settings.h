@@ -78,7 +78,7 @@ typedef struct Settings_ {
 
 static inline ProcessField Settings_getActiveSortKey(const Settings* this) {
    return (this->treeView)
-          ? (this->treeViewAlwaysByPID ? PID : this->treeSortKey)
+          ? (this->treeViewAlwaysByPID ? 1 : this->treeSortKey)
           : this->sortKey;
 }
 

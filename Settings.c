@@ -361,7 +361,7 @@ Settings* Settings_new(unsigned int initialCpuCount) {
    Settings* this = xCalloc(1, sizeof(Settings));
 
    this->sortKey = PERCENT_CPU;
-   this->treeSortKey = PID;
+   this->treeSortKey = 1;
    this->direction = -1;
    this->treeDirection = 1;
    this->shadowOtherUsers = false;

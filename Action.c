@@ -189,7 +189,7 @@ static Htop_Reaction actionSetSortColumn(State* st) {
 }
 
 static Htop_Reaction actionSortByPID(State* st) {
-   return Action_setSortKey(st->settings, PID);
+   return Action_setSortKey(st->settings, 1);
 }
 
 static Htop_Reaction actionSortByMemory(State* st) {
