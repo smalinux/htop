@@ -873,7 +873,7 @@ void Process_writeField(const Process* this, RichString* str, ProcessField field
       }
       break;
    case 46: xSnprintf(buffer, n, "%5d ", this->st_uid); break;
-   case TIME: Process_printTime(str, this->time, coloring); return;
+   case 50: Process_printTime(str, this->time, coloring); return;
    case TGID:
       if (this->tgid == this->pid)
          attr = CRT_colors[PROCESS_SHADOW];
@@ -890,7 +890,7 @@ void Process_writeField(const Process* this, RichString* str, ProcessField field
          xSnprintf(buffer, n, "%-8s ", name);
       }
       break;
-   case USER:
+   case 49:
       if (Process_getuid != this->st_uid)
          attr = CRT_colors[PROCESS_SHADOW];
 
@@ -1135,7 +1135,7 @@ int Process_compareByKey_Base(const Process* p1, const Process* p2, ProcessField
       return SPACESHIP_NUMBER(stateCompareValue(p1->state), stateCompareValue(p2->state));
    case 46:
       return SPACESHIP_NUMBER(p1->st_uid, p2->st_uid);
-   case TIME:
+   case 50:
       return SPACESHIP_NUMBER(p1->time, p2->time);
    case TGID:
       return SPACESHIP_NUMBER(p1->tgid, p2->tgid);
@@ -1144,7 +1144,7 @@ int Process_compareByKey_Base(const Process* p1, const Process* p2, ProcessField
    case 7:
       /* Order no tty last */
       return SPACESHIP_DEFAULTSTR(p1->tty_name, p2->tty_name, "\x7F");
-   case USER:
+   case 49:
       return SPACESHIP_NULLSTR(p1->user, p2->user);
    default:
       assert(0 && "Process_compareByKey_Base: default key reached"); /* should never be reached */

@@ -201,7 +201,7 @@ static Htop_Reaction actionSortByCPU(State* st) {
 }
 
 static Htop_Reaction actionSortByTime(State* st) {
-   return Action_setSortKey(st->settings, TIME);
+   return Action_setSortKey(st->settings, 50);
 }
 
 static Htop_Reaction actionToggleKernelThreads(State* st) {
