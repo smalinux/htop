@@ -81,7 +81,7 @@ const ProcessFieldData Process_fields[] = {
    [SECATTR] = { .name = "SECATTR", .title = " Security Attribute ", .description = "Security attribute of the process (e.g. SELinux or AppArmor)", .flags = PROCESS_FLAG_LINUX_SECATTR, },
    [124] = { .name = "COMM", .title = "COMM            ", .description = "comm string of the process", .flags = 0, },
    [125] = { .name = "EXE", .title = "EXE             ", .description = "Basename of exe of the process", .flags = 0, },
-   [CWD] = { .name = "CWD", .title = "CWD                       ", .description = "The current working directory of the process", .flags = PROCESS_FLAG_CWD, },
+   [126] = { .name = "CWD", .title = "CWD                       ", .description = "The current working directory of the process", .flags = PROCESS_FLAG_CWD, },
 };
 
 Process* PCPProcess_new(const Settings* settings) {

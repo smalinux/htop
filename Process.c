@@ -786,7 +786,7 @@ void Process_writeField(const Process* this, RichString* str, ProcessField field
       Process_printLeftAlignedField(str, attr, procExe, TASK_COMM_LEN - 1);
       return;
    }
-   case CWD: {
+   case 126: {
       const char* cwd;
       if (!this->procCwd) {
          attr = CRT_colors[PROCESS_SHADOW];
@@ -1099,7 +1099,7 @@ int Process_compareByKey_Base(const Process* p1, const Process* p2, ProcessField
       const char *exe2 = p2->procExe ? (p2->procExe + p2->procExeBasenameOffset) : (Process_isKernelThread(p2) ? kthreadID : "");
       return SPACESHIP_NULLSTR(exe1, exe2);
    }
-   case CWD:
+   case 126:
       return SPACESHIP_NULLSTR(p1->procCwd, p2->procCwd);
    case 54:
       r = -SPACESHIP_NUMBER(p1->starttime_ctime, p2->starttime_ctime);

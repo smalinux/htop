@@ -44,7 +44,7 @@ in the source distribution for its full text.
    CTXT = 122,                   \
    SECATTR = 123,                \
                                  \
-   DUMMY_BUMP_FIELD = CWD,       \
+   DUMMY_BUMP_FIELD = 126,       \
    // End of list
 
 
