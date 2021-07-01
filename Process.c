@@ -803,7 +803,7 @@ void Process_writeField(const Process* this, RichString* str, ProcessField field
    case ELAPSED: Process_printTime(str, /* convert to hundreds of a second */ this->processList->realtimeMs / 10 - 100 * this->starttime_ctime, coloring); return;
    case 12: Process_printCount(str, this->majflt, coloring); return;
    case 10: Process_printCount(str, this->minflt, coloring); return;
-   case M_RESIDENT: Process_printKBytes(str, this->m_resident, coloring); return;
+   case 40: Process_printKBytes(str, this->m_resident, coloring); return;
    case 39: Process_printKBytes(str, this->m_virt, coloring); return;
    case 19:
       xSnprintf(buffer, n, "%3ld ", this->nice);
@@ -1108,7 +1108,7 @@ int Process_compareByKey_Base(const Process* p1, const Process* p2, ProcessField
       return SPACESHIP_NUMBER(p1->majflt, p2->majflt);
    case 10:
       return SPACESHIP_NUMBER(p1->minflt, p2->minflt);
-   case M_RESIDENT:
+   case 40:
       return SPACESHIP_NUMBER(p1->m_resident, p2->m_resident);
    case 39:
       return SPACESHIP_NUMBER(p1->m_virt, p2->m_virt);
