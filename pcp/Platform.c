@@ -85,7 +85,7 @@ Plugins* plugins;
 int totalplugins;
 Platform* pcp;
 
-ProcessField Platform_defaultFields[] = { 1, USER, 18, 19, M_VIRT, M_RESIDENT, (int)M_SHARE, 3, PERCENT_CPU, PERCENT_MEM, TIME, 2, 0 };
+ProcessField Platform_defaultFields[] = { 1, USER, 18, 19, 39, M_RESIDENT, (int)M_SHARE, 3, PERCENT_CPU, PERCENT_MEM, TIME, 2, 0 };
 
 int Platform_numberOfFields = LAST_PROCESSFIELD;
 
