@@ -856,7 +856,7 @@ void Process_writeField(const Process* this, RichString* str, ProcessField field
       break;
    case PROCESSOR: xSnprintf(buffer, n, "%3d ", Settings_cpuId(this->settings, this->processor)); break;
    case 6: xSnprintf(buffer, n, "%*d ", Process_pidDigits, this->session); break;
-   case STARTTIME: xSnprintf(buffer, n, "%s", this->starttime_show); break;
+   case 21: xSnprintf(buffer, n, "%s", this->starttime_show); break;
    case 3:
       xSnprintf(buffer, n, "%c ", this->state);
       switch (this->state) {
@@ -1128,7 +1128,7 @@ int Process_compareByKey_Base(const Process* p1, const Process* p2, ProcessField
       return SPACESHIP_NUMBER(p1->processor, p2->processor);
    case 6:
       return SPACESHIP_NUMBER(p1->session, p2->session);
-   case STARTTIME:
+   case 21:
       r = SPACESHIP_NUMBER(p1->starttime_ctime, p2->starttime_ctime);
       return r != 0 ? r : SPACESHIP_NUMBER(p1->pid, p2->pid);
    case 3:
