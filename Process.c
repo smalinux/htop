@@ -811,7 +811,7 @@ void Process_writeField(const Process* this, RichString* str, ProcessField field
            : this->nice > 0 ? CRT_colors[PROCESS_LOW_PRIORITY]
            : CRT_colors[PROCESS_SHADOW];
       break;
-   case NLWP:
+   case 51:
       if (this->nlwp == 1)
          attr = CRT_colors[PROCESS_SHADOW];
 
@@ -1114,7 +1114,7 @@ int Process_compareByKey_Base(const Process* p1, const Process* p2, ProcessField
       return SPACESHIP_NUMBER(p1->m_virt, p2->m_virt);
    case 19:
       return SPACESHIP_NUMBER(p1->nice, p2->nice);
-   case NLWP:
+   case 51:
       return SPACESHIP_NUMBER(p1->nlwp, p2->nlwp);
    case 5:
       return SPACESHIP_NUMBER(p1->pgrp, p2->pgrp);
