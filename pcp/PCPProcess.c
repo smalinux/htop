@@ -28,7 +28,7 @@ const ProcessFieldData Process_fields[] = {
    [3] = { .name = "STATE", .title = "S ", .description = "Process state (S sleeping, R running, D disk, Z zombie, T traced, W paging, I idle)", .flags = 0, },
    [4] = { .name = "PPID", .title = "PPID", .description = "Parent process ID", .flags = 0, },
    [5] = { .name = "PGRP", .title = "PGRP", .description = "Process group ID", .flags = 0, },
-   [SESSION] = { .name = "SESSION", .title = "SID", .description = "Process's session ID", .flags = 0, },
+   [6] = { .name = "SESSION", .title = "SID", .description = "Process's session ID", .flags = 0, },
    [TTY] = { .name = "TTY", .title = "TTY      ", .description = "Controlling terminal", .flags = 0, },
    [TPGID] = { .name = "TPGID", .title = "TPGID", .description = "Process ID of the fg process group of the controlling terminal", .flags = 0, },
    [MINFLT] = { .name = "MINFLT", .title = "     MINFLT ", .description = "Number of minor faults which have not required loading a memory page from disk", .flags = 0, .defaultSortDesc = true, },
