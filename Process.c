@@ -835,7 +835,7 @@ void Process_writeField(const Process* this, RichString* str, ProcessField field
       }
       break;
    }
-   case PERCENT_MEM:
+   case 48:
       if (this->percent_mem > 99.9F) {
          xSnprintf(buffer, n, "100. ");
       } else {
@@ -1085,7 +1085,7 @@ int Process_compareByKey_Base(const Process* p1, const Process* p2, ProcessField
    case 47:
    case PERCENT_NORM_CPU:
       return SPACESHIP_NUMBER(p1->percent_cpu, p2->percent_cpu);
-   case PERCENT_MEM:
+   case 48:
       return SPACESHIP_NUMBER(p1->m_resident, p2->m_resident);
    case 2:
       return SPACESHIP_NULLSTR(Process_getCommand(p1), Process_getCommand(p2));

@@ -193,7 +193,7 @@ static Htop_Reaction actionSortByPID(State* st) {
 }
 
 static Htop_Reaction actionSortByMemory(State* st) {
-   return Action_setSortKey(st->settings, PERCENT_MEM);
+   return Action_setSortKey(st->settings, 48);
 }
 
 static Htop_Reaction actionSortByCPU(State* st) {
