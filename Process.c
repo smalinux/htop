@@ -874,7 +874,7 @@ void Process_writeField(const Process* this, RichString* str, ProcessField field
       break;
    case 46: xSnprintf(buffer, n, "%5d ", this->st_uid); break;
    case 50: Process_printTime(str, this->time, coloring); return;
-   case TGID:
+   case 52:
       if (this->tgid == this->pid)
          attr = CRT_colors[PROCESS_SHADOW];
 
@@ -1137,7 +1137,7 @@ int Process_compareByKey_Base(const Process* p1, const Process* p2, ProcessField
       return SPACESHIP_NUMBER(p1->st_uid, p2->st_uid);
    case 50:
       return SPACESHIP_NUMBER(p1->time, p2->time);
-   case TGID:
+   case 52:
       return SPACESHIP_NUMBER(p1->tgid, p2->tgid);
    case 8:
       return SPACESHIP_NUMBER(p1->tpgid, p2->tpgid);
