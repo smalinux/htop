@@ -754,7 +754,7 @@ void Process_writeField(const Process* this, RichString* str, ProcessField field
       Process_writeCommand(this, attr, baseattr, str);
       return;
    }
-   case PROC_COMM: {
+   case 124: {
       const char* procComm;
       if (this->procComm) {
          attr = CRT_colors[Process_isUserlandThread(this) ? PROCESS_THREAD_COMM : PROCESS_COMM];
@@ -1089,7 +1089,7 @@ int Process_compareByKey_Base(const Process* p1, const Process* p2, ProcessField
       return SPACESHIP_NUMBER(p1->m_resident, p2->m_resident);
    case 2:
       return SPACESHIP_NULLSTR(Process_getCommand(p1), Process_getCommand(p2));
-   case PROC_COMM: {
+   case 124: {
       const char *comm1 = p1->procComm ? p1->procComm : (Process_isKernelThread(p1) ? kthreadID : "");
       const char *comm2 = p2->procComm ? p2->procComm : (Process_isKernelThread(p2) ? kthreadID : "");
       return SPACESHIP_NULLSTR(comm1, comm2);
