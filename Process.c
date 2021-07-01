@@ -710,7 +710,7 @@ void Process_writeField(const Process* this, RichString* str, ProcessField field
    bool coloring = this->settings->highlightMegabytes;
 
    switch (field) {
-   case COMM: {
+   case 2: {
       int baseattr = CRT_colors[PROCESS_BASENAME];
       if (this->settings->highlightThreads && Process_isThread(this)) {
          attr = CRT_colors[PROCESS_THREAD];
@@ -1087,7 +1087,7 @@ int Process_compareByKey_Base(const Process* p1, const Process* p2, ProcessField
       return SPACESHIP_NUMBER(p1->percent_cpu, p2->percent_cpu);
    case PERCENT_MEM:
       return SPACESHIP_NUMBER(p1->m_resident, p2->m_resident);
-   case COMM:
+   case 2:
       return SPACESHIP_NULLSTR(Process_getCommand(p1), Process_getCommand(p2));
    case PROC_COMM: {
       const char *comm1 = p1->procComm ? p1->procComm : (Process_isKernelThread(p1) ? kthreadID : "");

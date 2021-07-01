@@ -121,7 +121,7 @@ void ProcessList_printHeader(const ProcessList* this, RichString* header) {
                                 CRT_treeStr[Settings_getActiveDirection(this->settings) == 1 ? TREE_STR_ASC : TREE_STR_DESC],
                                 1);
       }
-      if (COMM == fields[i] && settings->showMergedCommand) {
+      if (2 == fields[i] && settings->showMergedCommand) {
          RichString_appendAscii(header, color, "(merged)");
       }
    }
@@ -482,7 +482,7 @@ ProcessField ProcessList_keyAt(const ProcessList* this, int at) {
       }
       x += len;
    }
-   return COMM;
+   return 2;
 }
 
 void ProcessList_expandTree(ProcessList* this) {
