@@ -65,7 +65,7 @@ typedef struct ProcessMergedCommand_ {
    bool prevCmdlineSet : 1;                    /* whether stripExeFromCmdline was set */
 } ProcessMergedCommand;
 
-typedef struct Process_ {
+typedef struct Process_ { // All members here should be pmAtomValue
    /* Super object for emulated OOP */
    Object super;
 
