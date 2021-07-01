@@ -24,7 +24,6 @@ in the source distribution for its full text.
 
 typedef enum ProcessField_ {
    NULL_PROCESSFIELD = 0,
-   ELAPSED = 54,
    PROC_COMM = 124,
    PROC_EXE = 125,
    CWD = 126,
