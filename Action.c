@@ -197,7 +197,7 @@ static Htop_Reaction actionSortByMemory(State* st) {
 }
 
 static Htop_Reaction actionSortByCPU(State* st) {
-   return Action_setSortKey(st->settings, PERCENT_CPU);
+   return Action_setSortKey(st->settings, 47);
 }
 
 static Htop_Reaction actionSortByTime(State* st) {

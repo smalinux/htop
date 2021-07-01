@@ -360,7 +360,7 @@ int Settings_write(const Settings* this, bool onCrash) {
 Settings* Settings_new(unsigned int initialCpuCount) {
    Settings* this = xCalloc(1, sizeof(Settings));
 
-   this->sortKey = PERCENT_CPU;
+   this->sortKey = 47;
    this->treeSortKey = 1;
    this->direction = -1;
    this->treeDirection = 1;
