@@ -845,9 +845,9 @@ void Process_writeField(const Process* this, RichString* str, ProcessField field
          xSnprintf(buffer, n, "%4.1f ", this->percent_mem);
       }
       break;
-   case 5: xSnprintf(buffer, n, "%*d ", Process_pidDigits, this->pgrp); break;
-   case 1: xSnprintf(buffer, n, "%*d ", Process_pidDigits, this->pid); break;
-   case 4: xSnprintf(buffer, n, "%*d ", Process_pidDigits, this->ppid); break;
+   case 5: xSnprintf(buffer, n, "%*d ", Process_pidDigits, this->pgrp); break; // Done
+   case 1: xSnprintf(buffer, n, "%*d ", Process_pidDigits, this->pid); break; // Done
+   case 4: xSnprintf(buffer, n, "%*d ", Process_pidDigits, this->ppid); break; // Done
    case 18:
       if (this->priority <= -100)
          xSnprintf(buffer, n, " RT ");
@@ -857,7 +857,7 @@ void Process_writeField(const Process* this, RichString* str, ProcessField field
    case 38: xSnprintf(buffer, n, "%3d ", Settings_cpuId(this->settings, this->processor)); break;
    case 6: xSnprintf(buffer, n, "%*d ", Process_pidDigits, this->session); break;
    case 21: xSnprintf(buffer, n, "%s", this->starttime_show); break;
-   case 3:
+   case 3: // Done
       xSnprintf(buffer, n, "%c ", this->state);
       switch (this->state) {
          case 'R':
@@ -905,6 +905,13 @@ void Process_writeField(const Process* this, RichString* str, ProcessField field
       assert(0 && "Process_writeField: default key reached"); /* should never be reached */
       xSnprintf(buffer, n, "- ");
    }
+
+
+   /*
+    * put buffer into str
+      attr == color
+
+    */
    RichString_appendAscii(str, attr, buffer);
 }
 
