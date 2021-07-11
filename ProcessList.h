@@ -51,7 +51,7 @@ typedef struct ProcessList_ {
    Hashtable* draftingTreeSet;
 
    Hashtable* dynamicMeters;  /* runtime-discovered meters */
-   Hashtable* dynamicColumns;  /* runtime-discovered Columns */
+   Hashtable* dynamicColumns; /* runtime-discovered Columns */
 
    struct timeval realtime;   /* time of the current sample */
    uint64_t realtimeMs;       /* current time in milliseconds */

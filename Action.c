@@ -164,10 +164,6 @@ Htop_Reaction Action_setSortKey(Settings* settings, ProcessField sortKey) {
 
 // ----------------------------------------
 
-static inline bool has_dynamicColumns(int key) {
-   return key > LAST_STATIC_PROCESSFIELD;
-}
-
 static Htop_Reaction actionSetSortColumn(State* st) {
    Htop_Reaction reaction = HTOP_OK;
    Panel* sortPanel = Panel_new(0, 0, 0, 0, Class(ListItem), true, FunctionBar_newEnterEsc("Sort   ", "Cancel "));
@@ -175,13 +171,11 @@ static Htop_Reaction actionSetSortColumn(State* st) {
    const ProcessField* fields = st->settings->fields;
    for (int i = 0; fields[i]; i++) {
       char* name = NULL;
-      if(has_dynamicColumns(fields[i])) {
-         char buffer[20];
-         int index = fields[i]-LAST_STATIC_PROCESSFIELD;
+      if (fields[i] > LAST_STATIC_PROCESSFIELD) {
+         int index = fields[i] - LAST_STATIC_PROCESSFIELD;
          const DynamicColumn* column = Hashtable_get(st->pl->dynamicColumns, index);
-         if(column) {
-            xSnprintf(buffer, sizeof(buffer), "%s", column->caption);
-            Panel_add(sortPanel, (Object*) ListItem_new(buffer, fields[i]));
+         if (column) {
+            Panel_add(sortPanel, (Object*) ListItem_new(column->caption, fields[i]));
          }
       } else {
          name = String_trim(Process_fields[fields[i]].name);

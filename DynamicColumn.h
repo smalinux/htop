@@ -2,16 +2,17 @@
 #define HEADER_DynamicColumn
 
 #include "Hashtable.h"
+#include "Process.h"
 #include "ProcessList.h"
+#include "RichString.h"
 
 
 typedef struct DynamicColumn_ {
    char name[32];  /* unique name, cannot contain spaces */
    char* caption;
    char* description;
-   unsigned int type;
    double maximum;
-   unsigned int width;
+   int width;
 
    void* dynamicData;  /* platform-specific Column data */
 } DynamicColumn;

@@ -1,25 +1,36 @@
 /*
 htop - PCPDynamicColumn.c
+(C) 2021 Sohaib Mohammed
 (C) 2021 htop dev team
 (C) 2021 Red Hat, Inc.  All Rights Reserved.
 Released under the GNU GPLv2, see the COPYING file
 in the source distribution for its full text.
 */
+
 #include "config.h" // IWYU pragma: keep
 
 #include "pcp/PCPDynamicColumn.h"
 
-#include <math.h>
+#include <ctype.h>
+#include <dirent.h>
+#include <errno.h>
+#include <limits.h>
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+
+#include <pcp/pmapi.h>
 
 #include "CRT.h"
 #include "Macros.h"
-#include "Object.h"
-#include "PCPProcess.h"
 #include "Platform.h"
-#include "ProcessList.h"
+#include "Process.h"
 #include "RichString.h"
-#include "Settings.h"
 #include "XUtils.h"
+
+#include "pcp/PCPProcess.h"
 
 
 static PCPDynamicColumnMetric* PCPDynamicColumn_lookupMetric(PCPDynamicColumns* columns, PCPDynamicColumn* column, const char* name) {
@@ -40,7 +51,7 @@ static PCPDynamicColumnMetric* PCPDynamicColumn_lookupMetric(PCPDynamicColumns* 
    unsigned int n = column->totalMetrics + 1;
    column->metrics = xReallocArray(column->metrics, n, sizeof(PCPDynamicColumnMetric));
    column->totalMetrics = n;
-   metric = &column->metrics[n-1];
+   metric = &column->metrics[n - 1];
    memset(metric, 0, sizeof(PCPDynamicColumnMetric));
    metric->name = metricName;
    metric->label = String_cat(name, ": ");
@@ -82,23 +93,23 @@ static void PCPDynamicColumn_parseMetric(PCPDynamicColumns* columns, PCPDynamicC
       metric = PCPDynamicColumn_lookupMetric(columns, column, key);
       if (String_eq(p, "color")) {
          if (String_eq(value, "gray"))
-             metric->color = DYNAMIC_GRAY;
+            metric->color = DYNAMIC_GRAY;
          else if (String_eq(value, "darkgray"))
-             metric->color = DYNAMIC_DARKGRAY;
+            metric->color = DYNAMIC_DARKGRAY;
          else if (String_eq(value, "red"))
-             metric->color = DYNAMIC_RED;
+            metric->color = DYNAMIC_RED;
          else if (String_eq(value, "green"))
-             metric->color = DYNAMIC_GREEN;
+            metric->color = DYNAMIC_GREEN;
          else if (String_eq(value, "blue"))
-             metric->color = DYNAMIC_BLUE;
+            metric->color = DYNAMIC_BLUE;
          else if (String_eq(value, "cyan"))
-             metric->color = DYNAMIC_CYAN;
+            metric->color = DYNAMIC_CYAN;
          else if (String_eq(value, "magenta"))
-             metric->color = DYNAMIC_MAGENTA;
+            metric->color = DYNAMIC_MAGENTA;
          else if (String_eq(value, "yellow"))
-             metric->color = DYNAMIC_YELLOW;
+            metric->color = DYNAMIC_YELLOW;
          else if (String_eq(value, "white"))
-             metric->color = DYNAMIC_WHITE;
+            metric->color = DYNAMIC_WHITE;
       } else if (String_eq(p, "label")) {
          char* label = String_cat(value, ": ");
          free_and_xStrdup(&metric->label, label);
@@ -119,7 +130,7 @@ static void PCPDynamicColumn_validateColumnName(char* key, const char* path, uns
    } else {
       char* note;
       xAsprintf(&note,
-                "%s: no closing brace on column....... name at %s line %u\n\"%s\"",
+                "%s: no closing brace on column name at %s line %u\n\"%s\"",
                 pmGetProgname(), path, line, key);
       errno = EINVAL;
       CRT_fatalError(note);
@@ -139,7 +150,7 @@ static void PCPDynamicColumn_validateColumnName(char* key, const char* path, uns
    if (*p != '\0') { /* badness */
       char* note;
       xAsprintf(&note,
-                "%s: invalid column....... name at %s line %u\n\"%s\"",
+                "%s: invalid column name at %s line %u\n\"%s\"",
                 pmGetProgname(), path, line, key);
       errno = EINVAL;
       CRT_fatalError(note);
@@ -172,7 +183,7 @@ static void PCPDynamicColumn_parseFile(PCPDynamicColumns* columns, const char* p
       /* cleanup whitespace, skip comment lines */
       char* trimmed = String_trim(line);
       free(line);
-      if (trimmed[0] == '#' || trimmed[0] == '\0') {
+      if (!trimmed || !trimmed[0] || trimmed[0] == '#') {
          free(trimmed);
          continue;
       }
@@ -186,23 +197,14 @@ static void PCPDynamicColumn_parseFile(PCPDynamicColumns* columns, const char* p
       char* key = String_trim(config[0]);
       char* value = n > 1 ? String_trim(config[1]) : NULL;
       if (key[0] == '[') {  /* new section heading - i.e. new column */
-         PCPDynamicColumn_validateColumnName(key+1, path, lineno);
-         column = PCPDynamicColumn_new(columns, key+1);
+         PCPDynamicColumn_validateColumnName(key + 1, path, lineno);
+         column = PCPDynamicColumn_new(columns, key + 1);
       } else if (value && String_eq(key, "caption")) {
          free_and_xStrdup(&column->super.caption, value);
       } else if (value && String_eq(key, "description")) {
          free_and_xStrdup(&column->super.description, value);
       } else if (value && String_eq(key, "width")) {
          column->super.width = strtoul(value, NULL, 10);
-      } else if (value && String_eq(key, "type")) { // FIXME
-         if (String_eq(config[1], "bar"))
-             column->super.type = BAR_METERMODE;
-         else if (String_eq(config[1], "text"))
-             column->super.type = TEXT_METERMODE;
-         else if (String_eq(config[1], "graph"))
-             column->super.type = GRAPH_METERMODE;
-         else if (String_eq(config[1], "led"))
-             column->super.type = LED_METERMODE;
       } else if (value && String_eq(key, "maximum")) {
          column->super.maximum = strtod(value, NULL);
       } else if (value) {
@@ -267,17 +269,18 @@ void PCPDynamicColumns_init(PCPDynamicColumns* columns) {
 
 void PCPDynamicColumn_writeField(PCPDynamicColumn* this, const Process* proc, RichString* str, int field) {
    const PCPProcess* pp = (const PCPProcess*) proc;
-   char buffer[256];
+   char buffer[30];
    size_t size = sizeof(buffer);
-   int width = this->super.width;
+   int width = (this->super.width && abs(this->super.width) < 28) ? this->super.width : -12;
    PCPDynamicColumnMetric* metric = &this->metrics[0];
    const pmDesc* desc = Metric_desc(metric->id);
    int attr = CRT_colors[DEFAULT_COLOR];
-   int index = field-LAST_STATIC_PROCESSFIELD-1;
+   int index = field - LAST_STATIC_PROCESSFIELD - 1;
 
    attr = CRT_colors[metric->color];
    switch (desc->type) {
       case PM_TYPE_STRING:
+         width = abs(width);
          Process_printLeftAlignedField(str, attr, pp->dc[index].cp, width);
          break;
       case PM_TYPE_32:
@@ -308,12 +311,12 @@ void PCPDynamicColumn_writeField(PCPDynamicColumn* this, const Process* proc, Ri
          RichString_appendAscii(str, CRT_colors[METER_VALUE_ERROR], "no data");
          break;
    }
- }
+}
 
 int PCPDynamicColumn_compareByKey(const PCPProcess* p1, const PCPProcess* p2, ProcessField key) {
-   int index = key-LAST_STATIC_PROCESSFIELD-1;
+   int index = key - LAST_STATIC_PROCESSFIELD - 1;
    int metricOffset = Platform_getColumnOffset();
-   int type = Metric_type(metricOffset+index);
+   int type = Metric_type(metricOffset + index);
    switch (type) {
       case PM_TYPE_STRING:
          return SPACESHIP_NULLSTR(p2->dc[index].cp, p1->dc[index].cp);

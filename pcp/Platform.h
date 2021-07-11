@@ -27,13 +27,13 @@ in the source distribution for its full text.
 #include "Hashtable.h"
 #include "Meter.h"
 #include "NetworkIOMeter.h"
-#include "PCPProcess.h"
 #include "Process.h"
 #include "ProcessLocksScreen.h"
 #include "RichString.h"
 #include "SignalsPanel.h"
 #include "SysArchMeter.h"
-#include "RichString.h"
+
+#include "pcp/PCPProcess.h"
 
 
 extern ProcessField Platform_defaultFields[];

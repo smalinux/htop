@@ -24,9 +24,9 @@ ProcessList* ProcessList_init(ProcessList* this, const ObjectClass* klass, Users
    this->processes = Vector_new(klass, true, DEFAULT_SIZE);
    this->processes2 = Vector_new(klass, true, DEFAULT_SIZE); // tree-view auxiliary buffer
 
-   this->processTable = Hashtable_new(200, false); // FIXME limit ?
-   this->displayTreeSet = Hashtable_new(200, false); // FIXME limit ?
-   this->draftingTreeSet = Hashtable_new(200, false); // FIXME limit ?
+   this->processTable = Hashtable_new(200, false);
+   this->displayTreeSet = Hashtable_new(200, false);
+   this->draftingTreeSet = Hashtable_new(200, false);
 
    this->usersTable = usersTable;
    this->pidMatchList = pidMatchList;
@@ -84,29 +84,31 @@ void ProcessList_setPanel(ProcessList* this, Panel* panel) {
    this->panel = panel;
 }
 
-// FIXME titles need to align well
-static const char* alignedProcessFieldTitle(const ProcessList* this, ProcessField field) {
-   const char* title;
-   if(field > LAST_STATIC_PROCESSFIELD) { // DynamicColumns
-      int key = abs((int)field-LAST_STATIC_PROCESSFIELD);
-      const DynamicColumn* column = Hashtable_get(this->dynamicColumns, key);
-      if(column == NULL)
-         return "- ";
-      title = column->caption;
-      static char dynamicColumnBuffer[20];
-      xSnprintf(dynamicColumnBuffer, sizeof(dynamicColumnBuffer), "%*s", column->width, title);
-      return dynamicColumnBuffer;
-   } else {
-      title = Process_fields[field].title;
-      if (!title)
-         return "- ";
-
-      if (!Process_fields[field].pidColumn)
-         return title;
+static void alignedDynamicColumnTitle(const ProcessList* this, int field, char* buffer, int size) {
+   int key = (int)field - LAST_STATIC_PROCESSFIELD;
+   const DynamicColumn* column = Hashtable_get(this->dynamicColumns, key);
+   if (!column) {
+      xSnprintf(buffer, size, "- ");
+      return;
    }
+   int width = (column->width && abs(column->width) < 28) ? column->width : -12;
+   xSnprintf(buffer, size, "%*s", width, column->caption);
+}
+
+static const char* alignedProcessFieldTitle(const ProcessList* this, ProcessField field) {
+   const char* title = Process_fields[field].title;
+   if (!title)
+      return "- ";
+
+   if (!Process_fields[field].pidColumn)
+      return title;
 
    static char titleBuffer[PROCESS_MAX_PID_DIGITS + /* space */ 1 + /* null-terminator */ + 1];
-   xSnprintf(titleBuffer, sizeof(titleBuffer), "%*s ", Process_pidDigits, title);
+
+   if (field > LAST_STATIC_PROCESSFIELD)
+      alignedDynamicColumnTitle(this, field, titleBuffer, sizeof(titleBuffer));
+   else
+      xSnprintf(titleBuffer, sizeof(titleBuffer), "%*s ", Process_pidDigits, title);
 
    return titleBuffer;
 }
@@ -577,7 +579,7 @@ void ProcessList_rebuildPanel(ProcessList* this) {
    }
 }
 
-Process* ProcessList_getProcess(ProcessList* this, pid_t pid, bool* preExisting, Process_New constructor) { // LOOKATME
+Process* ProcessList_getProcess(ProcessList* this, pid_t pid, bool* preExisting, Process_New constructor) {
    Process* proc = (Process*) Hashtable_get(this->processTable, pid);
    *preExisting = proc != NULL;
    if (proc) {
@@ -591,7 +593,6 @@ Process* ProcessList_getProcess(ProcessList* this, pid_t pid, bool* preExisting,
    return proc;
 }
 
-// LOOKATME
 void ProcessList_scan(ProcessList* this, bool pauseProcessUpdate) {
    // in pause mode only gather global data for meters (CPU/memory/...)
    if (pauseProcessUpdate) {

@@ -12,16 +12,17 @@ in the source distribution for its full text.
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
-#include <syscall.h>
-#include <unistd.h>
 
 #include "CRT.h"
-#include "Process.h"
+#include "Macros.h"
 #include "Platform.h"
+#include "Process.h"
 #include "ProvideCurses.h"
+#include "RichString.h"
 #include "XUtils.h"
-#include "PCPDynamicColumn.h"
+
+#include "pcp/PCPDynamicColumn.h"
+
 
 const ProcessFieldData Process_fields[] = {
    [0] = { .name = "", .title = NULL, .description = NULL, .flags = 0, },
@@ -192,7 +193,6 @@ static int PCPProcess_compareByKey(const Process* v1, const Process* v2, Process
    const PCPProcess* p1 = (const PCPProcess*)v1;
    const PCPProcess* p2 = (const PCPProcess*)v2;
 
-   if(key < LAST_STATIC_PROCESSFIELD) {
    switch (key) {
    case M_DRS:
       return SPACESHIP_NUMBER(p1->m_drs, p2->m_drs);
@@ -253,10 +253,11 @@ static int PCPProcess_compareByKey(const Process* v1, const Process* v2, Process
    case SECATTR:
       return SPACESHIP_NULLSTR(p1->secattr, p2->secattr);
    default:
-      return Process_compareByKey_Base(v1, v2, key);
+      if(key > LAST_STATIC_PROCESSFIELD)
+         return Process_compareByKey_Base(v1, v2, key);
+      else
+         return PCPDynamicColumn_compareByKey(p1, p2, key);
    }
-   } else
-      return PCPDynamicColumn_compareByKey(p1, p2, key);
 }
 
 const ProcessClass PCPProcess_class = {

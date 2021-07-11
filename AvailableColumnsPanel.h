@@ -7,6 +7,7 @@ Released under the GNU GPLv2, see the COPYING file
 in the source distribution for its full text.
 */
 
+#include "Hashtable.h"
 #include "Panel.h"
 #include "ProcessList.h"
 
@@ -14,6 +15,7 @@ in the source distribution for its full text.
 typedef struct AvailableColumnsPanel_ {
    Panel super;
    Panel* columns;
+   Hashtable* dynamicColumns;
 } AvailableColumnsPanel;
 
 extern const PanelClass AvailableColumnsPanel_class;

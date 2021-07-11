@@ -1,16 +1,18 @@
 /*
 htop - DynamicColumn.c
+(C) 2021 Sohaib Mohammed
 (C) 2021 htop dev team
 (C) 2021 Red Hat, Inc.  All Rights Reserved.
 Released under the GNU GPLv2, see the COPYING file
 in the source distribution for its full text.
 */
+
 #include "config.h" // IWYU pragma: keep
+
+#include <stddef.h>
 
 #include "DynamicColumn.h"
 
-#include "CRT.h"
-#include "Object.h"
 #include "Platform.h"
 #include "ProcessList.h"
 #include "RichString.h"

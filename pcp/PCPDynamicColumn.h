@@ -3,9 +3,12 @@
 
 #include "CRT.h"
 #include "DynamicColumn.h"
+#include "Hashtable.h"
 #include "Process.h"
 #include "RichString.h"
-#include "PCPProcess.h"
+
+#include "pcp/PCPProcess.h"
+
 
 typedef struct {
    unsigned int id;

@@ -7,6 +7,7 @@ in the source distribution for its full text.
 
 #include "AvailableColumnsPanel.h"
 
+#include <assert.h>
 #include <ctype.h>
 #include <stdbool.h>
 #include <stdlib.h>
@@ -16,11 +17,13 @@ in the source distribution for its full text.
 #include "FunctionBar.h"
 #include "Hashtable.h"
 #include "ListItem.h"
+#include "Macros.h"
 #include "Object.h"
 #include "Process.h"
 #include "ProcessList.h"
 #include "ProvideCurses.h"
 #include "XUtils.h"
+
 
 typedef struct {
    Panel* super;
@@ -38,14 +41,12 @@ static void AvailableColumnsPanel_delete(Object* object) {
    free(this);
 }
 
-
-/*
-void AvailableColumnsPanel_insertDynamicColumnName(AvailableColumnsPanel* this, int at, int key, const ProcessList* pl) {
+static void AvailableColumnsPanel_insertDynamicColumnName(AvailableColumnsPanel* this, int at, int key) {
    int param = abs(key - LAST_STATIC_PROCESSFIELD);
-   const DynamicColumn* column = Hashtable_get(pl->dynamicColumns, param);
-   //Panel_insert(this->columns, at, (Object*) ListItem_new("lol", 1));
+   const DynamicColumn* column = Hashtable_get(this->dynamicColumns, param);
+   if (column)
+      Panel_insert(this->columns, at, (Object*) ListItem_new(column->caption, key));
 }
-*/
 
 static HandlerResult AvailableColumnsPanel_eventHandler(Panel* super, int ch) {
    AvailableColumnsPanel* this = (AvailableColumnsPanel*) super;
@@ -62,10 +63,8 @@ static HandlerResult AvailableColumnsPanel_eventHandler(Panel* super, int ch) {
 
          int key = selected->key;
          int at = Panel_getSelectedIndex(this->columns);
-         if( key > LAST_STATIC_PROCESSFIELD) {
-            // FIXME get caption of the column from pl->dynamicColumns
-            //AvailableColumnsPanel_insertDynamicColumnName(this, at, key, this->pl);
-            Panel_insert(this->columns, at, (Object*) ListItem_new("Dynamic", key));
+         if (key > LAST_STATIC_PROCESSFIELD) {
+            AvailableColumnsPanel_insertDynamicColumnName(this, at, key);
          } else {
             Panel_insert(this->columns, at, (Object*) ListItem_new(Process_fields[key].name, key));
          }
@@ -92,7 +91,6 @@ const PanelClass AvailableColumnsPanel_class = {
    .eventHandler = AvailableColumnsPanel_eventHandler
 };
 
-
 static void AvailableColumnsPanel_addDynamicColumn(ATTR_UNUSED ht_key_t key, void* value, void* data) {
    const DynamicColumn* column = (const DynamicColumn*)value;
    DynamicIterator* iter = (DynamicIterator*)data;
@@ -106,10 +104,9 @@ static void AvailableColumnsPanel_addDynamicColumn(ATTR_UNUSED ht_key_t key, voi
 // Handle DynamicColumns entries in the AvailableColumnsPanel
 static void AvailableColumnsPanel_addDynamicColumns(Panel* super, const ProcessList* pl) {
    DynamicIterator iter = { .super = super, .id = 1, .offset = 0 };
-   assert(pl->dynamicMeters != NULL);
+   assert(pl->dynamicMeters);
    Hashtable_foreach(pl->dynamicColumns, AvailableColumnsPanel_addDynamicColumn, &iter);
 }
-
 
 // Handle remaining Platform Meter entries in the AvailableColumnsPanel
 static void AvailableColumnsPanel_addPlatformColumn(Panel* super) {
@@ -125,6 +122,7 @@ static void AvailableColumnsPanel_addPlatformColumn(Panel* super) {
 AvailableColumnsPanel* AvailableColumnsPanel_new(Panel* columns, const ProcessList* pl) {
    AvailableColumnsPanel* this = AllocThis(AvailableColumnsPanel);
    Panel* super = (Panel*) this;
+   this->dynamicColumns = pl->dynamicColumns;
    FunctionBar* fuBar = FunctionBar_new(AvailableColumnsFunctions, NULL, NULL);
    Panel_init(super, 1, 1, 1, 1, Class(ListItem), true, fuBar);
 

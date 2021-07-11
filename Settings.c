@@ -115,9 +115,7 @@ static void readFields(ProcessField* fields, uint32_t* flags, const char* line) 
    for (j = 0, i = 0; i < MAX_PROCESSFIELD && ids[i]; i++) {
       // This "+1" is for compatibility with the older enum format.
       int id = atoi(ids[i]) + 1;
-      // FIXME set back Process_fields[id].name
-      //if (id > 0 && id < MAX_PROCESSFIELD && Process_fields[id].name) {
-      if (id > 0 && id < LAST_STATIC_PROCESSFIELD ) { // FIXME make sure this logic is vaild
+      if (id > 0 && id < LAST_STATIC_PROCESSFIELD ) {
          fields[j] = id;
          *flags |= Process_fields[id].flags;
          j++;
