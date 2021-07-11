@@ -31,6 +31,7 @@ in the source distribution for its full text.
 #include "ProcessLocksScreen.h"
 #include "SignalsPanel.h"
 #include "SysArchMeter.h"
+#include "RichString.h"
 
 
 extern ProcessField Platform_defaultFields[];
@@ -269,5 +270,15 @@ void Platform_dynamicMeterInit(Meter* meter);
 void Platform_dynamicMeterUpdateValues(Meter* meter);
 
 void Platform_dynamicMeterDisplay(const Meter* meter, RichString* out);
+
+Hashtable* Platform_dynamicColumns(void);
+
+void Platform_dynamicColumnWriteField(const Process* proc, RichString* str, int param);
+
+// REMOVEME next 4 lines
+bool mydump_pid(Metric metric, int* instp, int* offsetp);
+void mydump(Metric metric);
+void mydump_inst(Metric metric, int offset);
+void my_ps_aux(Metric metric);
 
 #endif

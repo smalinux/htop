@@ -163,14 +163,21 @@ Htop_Reaction Action_setSortKey(Settings* settings, ProcessField sortKey) {
 
 // ----------------------------------------
 
+char Xname[] = "DynamicCol"; // FIXME
 static Htop_Reaction actionSetSortColumn(State* st) {
    Htop_Reaction reaction = HTOP_OK;
    Panel* sortPanel = Panel_new(0, 0, 0, 0, Class(ListItem), true, FunctionBar_newEnterEsc("Sort   ", "Cancel "));
    Panel_setHeader(sortPanel, "Sort by");
    const ProcessField* fields = st->settings->fields;
    for (int i = 0; fields[i]; i++) {
-      char* name = String_trim(Process_fields[fields[i]].name);
-      Panel_add(sortPanel, (Object*) ListItem_new(name, fields[i]));
+      char* name = NULL;
+      if(i > LAST_PROCESSFIELD) { // DynamicColumns
+         name = Xname;
+         Panel_add(sortPanel, (Object*) ListItem_new("CCC", 0));
+      } else {  // regular columns
+         name = String_trim(Process_fields[fields[i]].name);
+         Panel_add(sortPanel, (Object*) ListItem_new(name, fields[i]));
+      }
       if (fields[i] == Settings_getActiveSortKey(st->settings))
          Panel_setSelected(sortPanel, i);
 

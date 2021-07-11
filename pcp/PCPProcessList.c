@@ -59,11 +59,11 @@ static char* setUser(UsersTable* this, unsigned int uid, int pid, int offset) {
    return name;
 }
 
-ProcessList* ProcessList_new(UsersTable* usersTable, Hashtable* dynamicMeters, Hashtable* pidMatchList, uid_t userId) {
+ProcessList* ProcessList_new(UsersTable* usersTable, Hashtable* dynamicMeters, Hashtable* dynamicColumns, Hashtable* pidMatchList, uid_t userId) {
    PCPProcessList* this = xCalloc(1, sizeof(PCPProcessList));
    ProcessList* super = &(this->super);
 
-   ProcessList_init(super, Class(PCPProcess), usersTable, dynamicMeters, pidMatchList, userId);
+   ProcessList_init(super, Class(PCPProcess), usersTable, dynamicMeters, dynamicColumns, pidMatchList, userId);
 
    struct timeval timestamp;
    gettimeofday(&timestamp, NULL);
@@ -306,6 +306,7 @@ static void PCPProcessList_updateCmdline(Process* process, int pid, int offset, 
    }
 }
 
+// LOOKATME
 static bool PCPProcessList_updateProcesses(PCPProcessList* this, double period, struct timeval* tv) {
    ProcessList* pl = (ProcessList*) this;
    const Settings* settings = pl->settings;
@@ -317,12 +318,21 @@ static bool PCPProcessList_updateProcesses(PCPProcessList* this, double period, 
    int pid = -1, offset = -1;
 
    /* for every process ... */
-   while (Metric_iterate(PCP_PROC_PID, &pid, &offset)) {
+   //mydump(165);
+   //int mypid = -1, myoffset = -1;
+   /*
+   while(mydump_pid(67, &mypid, &myoffset)) {
+      fprintf(stderr, "hello\n");
+   }
+   */
 
+   while (Metric_iterate(PCP_PROC_PID, &pid, &offset)) { // FIXME LOOKATME
+
+      //fprintf(stderr, ">>>>>>> offset %d PID %d\n", offset, pid);
       bool preExisting;
       Process* proc = ProcessList_getProcess(pl, pid, &preExisting, PCPProcess_new);
       PCPProcess* pp = (PCPProcess*) proc;
-      PCPProcessList_updateID(proc, pid, offset);
+      PCPProcessList_updateID(proc, pid, offset); // FIXME LOOKATME
 
       /*
        * These conditions will not trigger on first occurrence, cause we need to
@@ -422,6 +432,9 @@ static bool PCPProcessList_updateProcesses(PCPProcessList* this, double period, 
          pl->runningTasks++;
       proc->updated = true;
    }
+   // dump here - for every scan/second - not in the loop ( every PID!)
+   //mydump_inst(100, 1837);
+   //my_ps_aux(1);
    return true;
 }
 

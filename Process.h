@@ -56,7 +56,8 @@ typedef enum ProcessField_ {
    /* Platform specific fields, defined in ${platform}/ProcessField.h */
    PLATFORM_PROCESS_FIELDS
 
-   LAST_PROCESSFIELD
+   LAST_PROCESSFIELD,
+   MAX_PROCESSFIELD = 10000
 } ProcessField;
 
 struct Settings_;

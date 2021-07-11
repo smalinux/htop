@@ -1,0 +1,11 @@
+#
+# pcp-htop(1) configuration file - see pcp-htop(5)
+#
+
+[session]
+caption = SESSION
+width = 20
+description = PCP session description
+pid.metric = proc.psinfo.session
+pid.color = blue
+pid.label = sys
