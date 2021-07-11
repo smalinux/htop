@@ -14,6 +14,7 @@ in the source distribution for its full text.
 #include <pcp/pmapi.h>
 #include <stdbool.h>
 #include <sys/types.h>
+#include <pcp/pmapi.h>
 
 #include "Object.h"
 #include "Process.h"

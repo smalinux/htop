@@ -125,7 +125,7 @@ typedef struct {
 static void ColumnsPanel_addDynamicColumnCaption(Panel* super, int param, const ProcessList* pl) {
    int field = abs(param - LAST_STATIC_PROCESSFIELD);
    const DynamicColumn* column = Hashtable_get(pl->dynamicColumns, field);
-   if(column)
+   if (column)
       Panel_add(super, (Object*) ListItem_new(column->caption, param));
 }
 
@@ -159,11 +159,8 @@ void ColumnsPanel_update(Panel* super) {
    for (int i = 0; i < size; i++) {
       int key = ((ListItem*) Panel_get(super, i))->key;
       this->settings->fields[i] = key;
-      if (key < LAST_STATIC_PROCESSFIELD) {
+      if (key < LAST_STATIC_PROCESSFIELD)
          this->settings->flags |= Process_fields[key].flags;
-      } else {
-         // FIXME handle dynamic columns flags here
-      }
    }
    this->settings->fields[size] = 0;
 }

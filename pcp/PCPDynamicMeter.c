@@ -36,7 +36,7 @@ static PCPDynamicMeterMetric* PCPDynamicMeter_lookupMetric(PCPDynamicMeters* met
    unsigned int n = meter->totalMetrics + 1;
    meter->metrics = xReallocArray(meter->metrics, n, sizeof(PCPDynamicMeterMetric));
    meter->totalMetrics = n;
-   metric = &meter->metrics[n - 1];
+   metric = &meter->metrics[n-1];
    memset(metric, 0, sizeof(PCPDynamicMeterMetric));
    metric->name = metricName;
    metric->label = String_cat(name, ": ");

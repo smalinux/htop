@@ -14,13 +14,13 @@ in the source distribution for its full text.
 #include "CRT.h"
 #include "Macros.h"
 #include "Object.h"
-#include "PCPProcess.h"
 #include "Platform.h"
 #include "ProcessList.h"
 #include "RichString.h"
 #include "Settings.h"
 #include "XUtils.h"
 
+#include "pcp/PCPProcess.h"
 
 static PCPDynamicColumnMetric* PCPDynamicColumn_lookupMetric(PCPDynamicColumns* columns, PCPDynamicColumn* column, const char* name) {
    size_t bytes = 8 + strlen(column->super.name) + strlen(name);
@@ -194,15 +194,6 @@ static void PCPDynamicColumn_parseFile(PCPDynamicColumns* columns, const char* p
          free_and_xStrdup(&column->super.description, value);
       } else if (value && String_eq(key, "width")) {
          column->super.width = strtoul(value, NULL, 10);
-      } else if (value && String_eq(key, "type")) { // FIXME
-         if (String_eq(config[1], "bar"))
-             column->super.type = BAR_METERMODE;
-         else if (String_eq(config[1], "text"))
-             column->super.type = TEXT_METERMODE;
-         else if (String_eq(config[1], "graph"))
-             column->super.type = GRAPH_METERMODE;
-         else if (String_eq(config[1], "led"))
-             column->super.type = LED_METERMODE;
       } else if (value && String_eq(key, "maximum")) {
          column->super.maximum = strtod(value, NULL);
       } else if (value) {
@@ -308,7 +299,7 @@ void PCPDynamicColumn_writeField(PCPDynamicColumn* this, const Process* proc, Ri
          RichString_appendAscii(str, CRT_colors[METER_VALUE_ERROR], "no data");
          break;
    }
- }
+}
 
 int PCPDynamicColumn_compareByKey(const PCPProcess* p1, const PCPProcess* p2, ProcessField key) {
    int index = key-LAST_STATIC_PROCESSFIELD-1;

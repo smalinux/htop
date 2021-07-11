@@ -713,7 +713,7 @@ void Process_writeField(const Process* this, RichString* str, ProcessField field
    int attr = CRT_colors[DEFAULT_COLOR];
    bool coloring = this->settings->highlightMegabytes;
 
-   if(field<LAST_STATIC_PROCESSFIELD) {
+   if (field < LAST_STATIC_PROCESSFIELD) {
       switch (field) {
       case COMM: {
          int baseattr = CRT_colors[PROCESS_BASENAME];
@@ -728,12 +728,12 @@ void Process_writeField(const Process* this, RichString* str, ProcessField field
 
          char* buf = buffer;
          int maxIndent = 0;
-         bool lastItem = (this->indent < 0);
-         int indent = (this->indent < 0 ? -this->indent : this->indent);
+         bool lastItem = this->indent < 0;
+         int indent = this->indent < 0 ? -this->indent : this->indent;
 
          for (int i = 0; i < 32; i++) {
             if (indent & (1U << i)) {
-               maxIndent = i + 1;
+               maxIndent = i+1;
             }
          }
 
@@ -912,8 +912,9 @@ void Process_writeField(const Process* this, RichString* str, ProcessField field
       }
       RichString_appendAscii(str, attr, buffer);
    }
-   else if(field>LAST_STATIC_PROCESSFIELD)
+   else if (field>LAST_STATIC_PROCESSFIELD) {
       DynamicColumn_writeField(this, str, field);
+   }
 }
 
 void Process_display(const Object* cast, RichString* out) {

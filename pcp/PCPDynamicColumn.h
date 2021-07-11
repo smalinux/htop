@@ -5,7 +5,8 @@
 #include "DynamicColumn.h"
 #include "Process.h"
 #include "RichString.h"
-#include "PCPProcess.h"
+
+#include "pcp/PCPProcess.h"
 
 typedef struct {
    unsigned int id;

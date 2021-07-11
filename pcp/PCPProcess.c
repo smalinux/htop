@@ -21,7 +21,7 @@ in the source distribution for its full text.
 #include "Platform.h"
 #include "ProvideCurses.h"
 #include "XUtils.h"
-#include "PCPDynamicColumn.h"
+#include "pcp/PCPDynamicColumn.h"
 
 const ProcessFieldData Process_fields[] = {
    [0] = { .name = "", .title = NULL, .description = NULL, .flags = 0, },
@@ -192,69 +192,69 @@ static int PCPProcess_compareByKey(const Process* v1, const Process* v2, Process
    const PCPProcess* p1 = (const PCPProcess*)v1;
    const PCPProcess* p2 = (const PCPProcess*)v2;
 
-   if(key < LAST_STATIC_PROCESSFIELD) {
-   switch (key) {
-   case M_DRS:
-      return SPACESHIP_NUMBER(p1->m_drs, p2->m_drs);
-   case M_DT:
-      return SPACESHIP_NUMBER(p1->m_dt, p2->m_dt);
-   case M_LRS:
-      return SPACESHIP_NUMBER(p1->m_lrs, p2->m_lrs);
-   case M_TRS:
-      return SPACESHIP_NUMBER(p1->m_trs, p2->m_trs);
-   case M_SHARE:
-      return SPACESHIP_NUMBER(p1->m_share, p2->m_share);
-   case M_PSS:
-      return SPACESHIP_NUMBER(p1->m_pss, p2->m_pss);
-   case M_SWAP:
-      return SPACESHIP_NUMBER(p1->m_swap, p2->m_swap);
-   case M_PSSWP:
-      return SPACESHIP_NUMBER(p1->m_psswp, p2->m_psswp);
-   case UTIME:
-      return SPACESHIP_NUMBER(p1->utime, p2->utime);
-   case CUTIME:
-      return SPACESHIP_NUMBER(p1->cutime, p2->cutime);
-   case STIME:
-      return SPACESHIP_NUMBER(p1->stime, p2->stime);
-   case CSTIME:
-      return SPACESHIP_NUMBER(p1->cstime, p2->cstime);
-   case RCHAR:
-      return SPACESHIP_NUMBER(p1->io_rchar, p2->io_rchar);
-   case WCHAR:
-      return SPACESHIP_NUMBER(p1->io_wchar, p2->io_wchar);
-   case SYSCR:
-      return SPACESHIP_NUMBER(p1->io_syscr, p2->io_syscr);
-   case SYSCW:
-      return SPACESHIP_NUMBER(p1->io_syscw, p2->io_syscw);
-   case RBYTES:
-      return SPACESHIP_NUMBER(p1->io_read_bytes, p2->io_read_bytes);
-   case WBYTES:
-      return SPACESHIP_NUMBER(p1->io_write_bytes, p2->io_write_bytes);
-   case CNCLWB:
-      return SPACESHIP_NUMBER(p1->io_cancelled_write_bytes, p2->io_cancelled_write_bytes);
-   case IO_READ_RATE:
-      return SPACESHIP_NUMBER(adjustNaN(p1->io_rate_read_bps), adjustNaN(p2->io_rate_read_bps));
-   case IO_WRITE_RATE:
-      return SPACESHIP_NUMBER(adjustNaN(p1->io_rate_write_bps), adjustNaN(p2->io_rate_write_bps));
-   case IO_RATE:
-      return SPACESHIP_NUMBER(adjustNaN(p1->io_rate_read_bps) + adjustNaN(p1->io_rate_write_bps), adjustNaN(p2->io_rate_read_bps) + adjustNaN(p2->io_rate_write_bps));
-   case CGROUP:
-      return SPACESHIP_NULLSTR(p1->cgroup, p2->cgroup);
-   case OOM:
-      return SPACESHIP_NUMBER(p1->oom, p2->oom);
-   case PERCENT_CPU_DELAY:
-      return SPACESHIP_NUMBER(p1->cpu_delay_percent, p2->cpu_delay_percent);
-   case PERCENT_IO_DELAY:
-      return SPACESHIP_NUMBER(p1->blkio_delay_percent, p2->blkio_delay_percent);
-   case PERCENT_SWAP_DELAY:
-      return SPACESHIP_NUMBER(p1->swapin_delay_percent, p2->swapin_delay_percent);
-   case CTXT:
-      return SPACESHIP_NUMBER(p1->ctxt_diff, p2->ctxt_diff);
-   case SECATTR:
-      return SPACESHIP_NULLSTR(p1->secattr, p2->secattr);
-   default:
-      return Process_compareByKey_Base(v1, v2, key);
-   }
+   if (key < LAST_STATIC_PROCESSFIELD) {
+      switch (key) {
+         case M_DRS:
+            return SPACESHIP_NUMBER(p1->m_drs, p2->m_drs);
+         case M_DT:
+            return SPACESHIP_NUMBER(p1->m_dt, p2->m_dt);
+         case M_LRS:
+            return SPACESHIP_NUMBER(p1->m_lrs, p2->m_lrs);
+         case M_TRS:
+            return SPACESHIP_NUMBER(p1->m_trs, p2->m_trs);
+         case M_SHARE:
+            return SPACESHIP_NUMBER(p1->m_share, p2->m_share);
+         case M_PSS:
+            return SPACESHIP_NUMBER(p1->m_pss, p2->m_pss);
+         case M_SWAP:
+            return SPACESHIP_NUMBER(p1->m_swap, p2->m_swap);
+         case M_PSSWP:
+            return SPACESHIP_NUMBER(p1->m_psswp, p2->m_psswp);
+         case UTIME:
+            return SPACESHIP_NUMBER(p1->utime, p2->utime);
+         case CUTIME:
+            return SPACESHIP_NUMBER(p1->cutime, p2->cutime);
+         case STIME:
+            return SPACESHIP_NUMBER(p1->stime, p2->stime);
+         case CSTIME:
+            return SPACESHIP_NUMBER(p1->cstime, p2->cstime);
+         case RCHAR:
+            return SPACESHIP_NUMBER(p1->io_rchar, p2->io_rchar);
+         case WCHAR:
+            return SPACESHIP_NUMBER(p1->io_wchar, p2->io_wchar);
+         case SYSCR:
+            return SPACESHIP_NUMBER(p1->io_syscr, p2->io_syscr);
+         case SYSCW:
+            return SPACESHIP_NUMBER(p1->io_syscw, p2->io_syscw);
+         case RBYTES:
+            return SPACESHIP_NUMBER(p1->io_read_bytes, p2->io_read_bytes);
+         case WBYTES:
+            return SPACESHIP_NUMBER(p1->io_write_bytes, p2->io_write_bytes);
+         case CNCLWB:
+            return SPACESHIP_NUMBER(p1->io_cancelled_write_bytes, p2->io_cancelled_write_bytes);
+         case IO_READ_RATE:
+            return SPACESHIP_NUMBER(adjustNaN(p1->io_rate_read_bps), adjustNaN(p2->io_rate_read_bps));
+         case IO_WRITE_RATE:
+            return SPACESHIP_NUMBER(adjustNaN(p1->io_rate_write_bps), adjustNaN(p2->io_rate_write_bps));
+         case IO_RATE:
+            return SPACESHIP_NUMBER(adjustNaN(p1->io_rate_read_bps) + adjustNaN(p1->io_rate_write_bps), adjustNaN(p2->io_rate_read_bps) + adjustNaN(p2->io_rate_write_bps));
+         case CGROUP:
+            return SPACESHIP_NULLSTR(p1->cgroup, p2->cgroup);
+         case OOM:
+            return SPACESHIP_NUMBER(p1->oom, p2->oom);
+         case PERCENT_CPU_DELAY:
+            return SPACESHIP_NUMBER(p1->cpu_delay_percent, p2->cpu_delay_percent);
+         case PERCENT_IO_DELAY:
+            return SPACESHIP_NUMBER(p1->blkio_delay_percent, p2->blkio_delay_percent);
+         case PERCENT_SWAP_DELAY:
+            return SPACESHIP_NUMBER(p1->swapin_delay_percent, p2->swapin_delay_percent);
+         case CTXT:
+            return SPACESHIP_NUMBER(p1->ctxt_diff, p2->ctxt_diff);
+         case SECATTR:
+            return SPACESHIP_NULLSTR(p1->secattr, p2->secattr);
+         default:
+            return Process_compareByKey_Base(v1, v2, key);
+      }
    } else
       return PCPDynamicColumn_compareByKey(p1, p2, key);
 }

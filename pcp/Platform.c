@@ -64,7 +64,7 @@ typedef struct Platform_ {
    pmDesc* descs;		/* metric desc array indexed by Metric */
    pmResult* result;		/* sample values result indexed by Metric */
    PCPDynamicMeters meters;	/* dynamic meters via configuration files */
-   PCPDynamicColumns columns;
+   PCPDynamicColumns columns; 	/* dynamic columns via configuration files */
    struct timeval offset;	/* time offset used in archive mode only */
    long long btime;		/* boottime in seconds since the epoch */
    char* release;		/* uname and distro from this context */
@@ -516,8 +516,6 @@ void Platform_init(void) {
    Metric_enable(PCP_UNAME_MACHINE, true);
    Metric_enable(PCP_UNAME_DISTRO, true);
 
-   // FIXME move next two line to PCPDynamicColumn_enable
-   // and think that is the optimal place to invoke it..
    for(unsigned int i = pcp->columns.offset; i < pcp->columns.offset + pcp->columns.count; i++)
       Metric_enable(i, true);
 

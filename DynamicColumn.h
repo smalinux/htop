@@ -9,7 +9,6 @@ typedef struct DynamicColumn_ {
    char name[32];  /* unique name, cannot contain spaces */
    char* caption;
    char* description;
-   unsigned int type;
    double maximum;
    unsigned int width;
 

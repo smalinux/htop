@@ -138,17 +138,17 @@ static CommandLineSettings parseArguments(const char* program, int argc, char** 
             assert(optarg); /* please clang analyzer, cause optarg can be NULL in the 'u' case */
             if (String_eq(optarg, "help")) {
                for (int j = 1; j < LAST_STATIC_PROCESSFIELD; j++) {
-                  const char* name = Process_fields[j].name; // FIXME
-                  const char* description = Process_fields[j].description; // FIXME
+                  const char* name = Process_fields[j].name;
+                  const char* description = Process_fields[j].description;
                   if (name) printf("%19s %s\n", name, description);
                }
                exit(0);
             }
             flags.sortKey = 0;
             for (int j = 1; j < LAST_STATIC_PROCESSFIELD; j++) {
-               if (Process_fields[j].name == NULL) // FIXME
+               if (Process_fields[j].name == NULL)
                   continue;
-               if (String_eq(optarg, Process_fields[j].name)) { // FIXME
+               if (String_eq(optarg, Process_fields[j].name)) {
                   flags.sortKey = j;
                   break;
                }

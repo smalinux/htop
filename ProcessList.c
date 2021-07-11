@@ -24,9 +24,9 @@ ProcessList* ProcessList_init(ProcessList* this, const ObjectClass* klass, Users
    this->processes = Vector_new(klass, true, DEFAULT_SIZE);
    this->processes2 = Vector_new(klass, true, DEFAULT_SIZE); // tree-view auxiliary buffer
 
-   this->processTable = Hashtable_new(200, false); // FIXME limit ?
-   this->displayTreeSet = Hashtable_new(200, false); // FIXME limit ?
-   this->draftingTreeSet = Hashtable_new(200, false); // FIXME limit ?
+   this->processTable = Hashtable_new(200, false);
+   this->displayTreeSet = Hashtable_new(200, false);
+   this->draftingTreeSet = Hashtable_new(200, false);
 
    this->usersTable = usersTable;
    this->pidMatchList = pidMatchList;
@@ -84,10 +84,9 @@ void ProcessList_setPanel(ProcessList* this, Panel* panel) {
    this->panel = panel;
 }
 
-// FIXME titles need to align well
 static const char* alignedProcessFieldTitle(const ProcessList* this, ProcessField field) {
    const char* title;
-   if(field > LAST_STATIC_PROCESSFIELD) { // DynamicColumns
+   if(field > LAST_STATIC_PROCESSFIELD) {
       int key = abs((int)field-LAST_STATIC_PROCESSFIELD);
       const DynamicColumn* column = Hashtable_get(this->dynamicColumns, key);
       if(column == NULL)
