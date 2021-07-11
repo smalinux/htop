@@ -29,6 +29,7 @@ in the source distribution for its full text.
 #include "NetworkIOMeter.h"
 #include "Process.h"
 #include "ProcessLocksScreen.h"
+#include "RichString.h"
 #include "SignalsPanel.h"
 #include "SysArchMeter.h"
 
@@ -250,6 +251,8 @@ pmAtomValue* Metric_values(Metric metric, pmAtomValue* atom, int count, int type
 
 const pmDesc* Metric_desc(Metric metric);
 
+int Metric_type(Metric metric);
+
 int Metric_instanceCount(Metric metric);
 
 int Metric_instanceOffset(Metric metric, int inst);
@@ -269,5 +272,11 @@ void Platform_dynamicMeterInit(Meter* meter);
 void Platform_dynamicMeterUpdateValues(Meter* meter);
 
 void Platform_dynamicMeterDisplay(const Meter* meter, RichString* out);
+
+Hashtable* Platform_dynamicColumns(void);
+
+const char* Platform_dynamicColumnInit(unsigned int key);
+
+bool Platform_dynamicColumnWriteField(const Process* proc, RichString* str, unsigned int key);
 
 #endif

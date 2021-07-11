@@ -1,7 +1,7 @@
 /*
 htop - PCPDynamicMeter.c
 (C) 2021 htop dev team
-(C) 2021 Red Hat, Inc.  All Rights Reserved.
+(C) 2021 Red Hat, Inc.
 Released under the GNU GPLv2, see the COPYING file
 in the source distribution for its full text.
 */
@@ -18,10 +18,11 @@ in the source distribution for its full text.
 #include "Settings.h"
 #include "XUtils.h"
 
+
 static PCPDynamicMetric* PCPDynamicMeter_lookupMetric(PCPDynamicMeters* meters, PCPDynamicMeter* meter, const char* name) {
-   size_t bytes = 8 + strlen(meter->super.name) + strlen(name);
+   size_t bytes = 16 + strlen(meter->super.name) + strlen(name);
    char* metricName = xMalloc(bytes);
-   xSnprintf(metricName, bytes, "htop.%s.%s", meter->super.name, name);
+   xSnprintf(metricName, bytes, "htop.meter.%s.%s", meter->super.name, name);
 
    PCPDynamicMetric* metric;
    for (unsigned int i = 0; i < meter->totalMetrics; i++) {
@@ -139,12 +140,9 @@ static bool PCPDynamicMeter_validateMeterName(char* key, const char* path, unsig
 }
 
 // Ensure a meter name has not been defined previously
-static bool PCPDynamicMeter_uniqueName(char* key, const char* path, unsigned int line, PCPDynamicMeters* meters) {
+static bool PCPDynamicMeter_uniqueName(char* key, PCPDynamicMeters* meters) {
    if (DynamicMeter_search(meters->table, key, NULL) == false)
       return true;
-
-   fprintf(stderr, "%s: duplicate name at %s line %u: \"%s\", ignored\n",
-           pmGetProgname(), path, line, key);
    return false;
 }
 
@@ -188,7 +186,7 @@ static void PCPDynamicMeter_parseFile(PCPDynamicMeters* meters, const char* path
       if (key[0] == '[') {  /* new section heading - i.e. new meter */
          ok = PCPDynamicMeter_validateMeterName(key + 1, path, lineno);
          if (ok)
-            ok = PCPDynamicMeter_uniqueName(key + 1, path, lineno, meters);
+            ok = PCPDynamicMeter_uniqueName(key + 1, meters);
          if (ok)
             meter = PCPDynamicMeter_new(meters, key + 1);
       } else if (!ok) {
@@ -241,36 +239,43 @@ static void PCPDynamicMeter_scanDir(PCPDynamicMeters* meters, char* path) {
 }
 
 void PCPDynamicMeters_init(PCPDynamicMeters* meters) {
+   const char* share = pmGetConfig("PCP_SHARE_DIR");
    const char* sysconf = pmGetConfig("PCP_SYSCONF_DIR");
    const char* xdgConfigHome = getenv("XDG_CONFIG_HOME");
+   const char* override = getenv("PCP_HTOP_DIR");
    const char* home = getenv("HOME");
    char* path;
 
    meters->table = Hashtable_new(0, true);
 
-   /* search in the users home directory first of all */
-   if (xdgConfigHome) {
-      path = String_cat(xdgConfigHome, "/htop/meters/");
-   } else {
-      if (!home)
-         home = "";
-      path = String_cat(home, "/.config/htop/meters/");
+   /* developer paths - PCP_HTOP_DIR=./pcp ./pcp-htop */
+   if (override) {
+      path = String_cat(override, "/meters/");
+      PCPDynamicMeter_scanDir(meters, path);
+      free(path);
    }
-   PCPDynamicMeter_scanDir(meters, path);
-   free(path);
 
-   /* secondly search in the system meters directory */
+   /* next, search in home directory alongside htoprc */
+   if (xdgConfigHome)
+      path = String_cat(xdgConfigHome, "/htop/meters/");
+   else if (home)
+      path = String_cat(home, "/.config/htop/meters/");
+   else
+      path = NULL;
+   if (path) {
+      PCPDynamicMeter_scanDir(meters, path);
+      free(path);
+   }
+
+   /* next, search in the system meters directory */
    path = String_cat(sysconf, "/htop/meters/");
    PCPDynamicMeter_scanDir(meters, path);
    free(path);
 
-   /* check the working directory, as a final option */
-   char cwd[PATH_MAX];
-   if (getcwd(cwd, sizeof(cwd)) != NULL) {
-      path = String_cat(cwd, "/pcp/meters/");
-      PCPDynamicMeter_scanDir(meters, path);
-      free(path);
-   }
+   /* next, try the readonly system meters directory */
+   path = String_cat(share, "/htop/meters/");
+   PCPDynamicMeter_scanDir(meters, path);
+   free(path);
 }
 
 void PCPDynamicMeter_enable(PCPDynamicMeter* this) {
