@@ -64,7 +64,7 @@ ProcessList* ProcessList_new(UsersTable* usersTable, Hashtable* dynamicMeters, H
 
    NetBSDProcessList* npl = xCalloc(1, sizeof(NetBSDProcessList));
    ProcessList* pl = (ProcessList*) npl;
-   ProcessList_init(pl, Class(NetBSDProcess), usersTable, pidMatchList, userId);
+   ProcessList_init(pl, Class(NetBSDProcess), usersTable, dynamicMeters, pidMatchList, userId);
 
    size = sizeof(pl->cpuCount);
    r = sysctl(mib, 2, &pl->cpuCount, &size, NULL, 0);
@@ -378,7 +378,6 @@ static void NetBSDProcessList_scanCPUTime(NetBSDProcessList* this) {
    kernelCPUTimesToHtop(avg, this->cpus);
 }
 
-<<<<<<< HEAD
 static void NetBSDProcessList_scanCPUFrequency(NetBSDProcessList* this) {
    unsigned int cpus = this->super.cpuCount;
    bool match = false;
@@ -423,51 +422,6 @@ static void NetBSDProcessList_scanCPUFrequency(NetBSDProcessList* this) {
    }
 }
 
-||||||| constructed merge base
-=======
-static void NetBSDProcessList_scanCPUFrequency(NetBSDProcessList* this) {
-   unsigned int cpus = this->super.cpuCount;
-   bool match = false;
-   char name[64];
-   int freq = 0;
-   size_t freqSize = sizeof(freq);
-
-   for (unsigned int i = 0; i <= cpus; i++) {
-         this->cpus[i].frequency = NAN;
-   }
-
-   /* newer hardware supports per-core frequency, for e.g. ARM big.LITTLE */
-   for (unsigned int i = 0; i <= cpus; i++) {
-      snprintf(name, sizeof(name), "machdep.cpufreq.cpu%u.current", i);
-      if (sysctlbyname(name, &freq, &freqSize, NULL, 0) != -1) {
-         this->cpus[i].frequency = freq;
-         match = true;
-      }
-   }
-
-   if (match) {
-      return;
-   }
-
-   /*
-    * Iterate through legacy sysctl nodes for single-core frequency until
-    * we find a match...
-    */
-   for (const char** s = freqSysctls; *s != NULL; ++s) {
-      if (sysctlbyname(*s, &freq, &freqSize, NULL, 0) != -1) {
-         match = true;
-         break;
-      }
-   }
-
-   if (match) {
-      for (unsigned int i = 0; i <= cpus; i++) {
-         this->cpus[i].frequency = freq;
-      }
-   }
-}
-
->>>>>>> netbsd: Support display of CPU frequency
 void ProcessList_goThroughEntries(ProcessList* super, bool pauseProcessUpdate) {
    NetBSDProcessList* npl = (NetBSDProcessList*) super;
 
