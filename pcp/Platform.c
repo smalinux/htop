@@ -472,7 +472,7 @@ void Platform_init(void) {
          myPID = i;
          break;
       }
-      //fprintf(stderr, "%d %s\n", i, pcp->names[i]);
+      fprintf(stderr, "%d %s\n", i, pcp->names[i]);
    }
 
    sts = pmLookupName(pcp->totalMetrics, pcp->names, pcp->pmids);
@@ -521,6 +521,9 @@ void Platform_init(void) {
    Metric_enable(PCP_UNAME_RELEASE, false);
    Metric_enable(PCP_UNAME_MACHINE, false);
    Metric_enable(PCP_UNAME_DISTRO, false);
+
+   mydump(3); // kernel.uname.sysname
+   mydump(67); // proc.psinfo.pid - zero because metric not enabled yet
 
    /* first sample (fetch) performed above, save constants */
    Platform_getBootTime();
@@ -933,4 +936,14 @@ void Platform_dynamicMeterDisplay(const Meter* meter, RichString* out) {
    PCPDynamicMeter* this = Hashtable_get(pcp->meters.table, meter->param);
    if (this)
       PCPDynamicMeter_display(this, meter, out);
+}
+
+// Give me the metric offset, I'll print it's value, like pminfo -f
+void mydump(Metric metric) {
+   pmValueSet* vset = pcp->result->vset[metric];
+   const pmDesc* desc = &pcp->descs[metric];
+   fprintf(stderr, "From mydump() ===============>> %d - %s\n",
+         metric, pcp->names[metric]);
+   pmPrintValue(stderr, vset->valfmt, desc->type, &vset->vlist[0], 1);
+   fprintf(stderr, "\n");
 }

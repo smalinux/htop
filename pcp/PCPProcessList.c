@@ -317,7 +317,14 @@ static bool PCPProcessList_updateProcesses(PCPProcessList* this, double period, 
    int pid = -1, offset = -1;
 
    /* for every process ... */
+   // FIXME uncomment next two lines
+   /*
+   while (Metric_iterate(PCP_PROC_PID, &pid, &offset)) {
+      mydump(PCP_PROC_PID); // 1 == value of first instance
+   */
+
    while (Metric_iterate(myPID, &pid, &offset)) {
+      mydump(myPID);
 
       bool preExisting;
       Process* proc = ProcessList_getProcess(pl, pid, &preExisting, PCPProcess_new);

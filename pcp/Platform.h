@@ -271,4 +271,6 @@ void Platform_dynamicMeterUpdateValues(Meter* meter);
 
 void Platform_dynamicMeterDisplay(const Meter* meter, RichString* out);
 
+void mydump(Metric metric);
+
 #endif
