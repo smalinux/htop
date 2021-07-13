@@ -39,16 +39,6 @@ static long fscale;
 static int pageSize;
 static int pageSizeKB;
 
-static char const *freqSysctls[] = {
-   "machdep.est.frequency.current",
-   "machdep.powernow.frequency.current",
-   "machdep.intrepid.frequency.current",
-   "machdep.loongson.frequency.current",
-   "machdep.cpu.frequency.current",
-   "machdep.frequency.current",
-   NULL
-};
-
 ProcessList* ProcessList_new(UsersTable* usersTable, Hashtable* dynamicMeters, Hashtable* pidMatchList, uid_t userId) {
    const int mib[] = { CTL_HW, HW_NCPU };
    const int fmib[] = { CTL_KERN, KERN_FSCALE };
