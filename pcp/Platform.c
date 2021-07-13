@@ -340,8 +340,10 @@ bool Metric_iterate(Metric metric, int* instp, int* offsetp) {
       return false;
 
    pmValueSet* vset = pcp->result->vset[metric];
-   if (!vset || vset->numval <= 0)
+   if (!vset || vset->numval <= 0) {
+      fprintf(stderr, "inst %d - %s\n", *instp, pmErrStr(vset->numval));
       return false;
+   }
 
    int offset = *offsetp;
    offset = (offset < 0) ? 0 : offset + 1;
@@ -464,6 +466,14 @@ void Platform_init(void) {
    pcp->meters.offset = PCP_METRIC_COUNT;
 
    PCPDynamicMeters_init(&pcp->meters);
+
+   for(unsigned int i = 0; i < pcp->totalMetrics; ++i) {
+      if(String_eq(pcp->names[i], "htop.syspid.pid")) {
+         myPID = i;
+         break;
+      }
+      //fprintf(stderr, "%d %s\n", i, pcp->names[i]);
+   }
 
    sts = pmLookupName(pcp->totalMetrics, pcp->names, pcp->pmids);
    if (sts < 0) {

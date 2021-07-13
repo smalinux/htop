@@ -317,7 +317,7 @@ static bool PCPProcessList_updateProcesses(PCPProcessList* this, double period, 
    int pid = -1, offset = -1;
 
    /* for every process ... */
-   while (Metric_iterate(PCP_PROC_PID, &pid, &offset)) {
+   while (Metric_iterate(myPID, &pid, &offset)) {
 
       bool preExisting;
       Process* proc = ProcessList_getProcess(pl, pid, &preExisting, PCPProcess_new);
@@ -637,6 +637,9 @@ void ProcessList_goThroughEntries(ProcessList* super, bool pauseProcessUpdate) {
    /* In pause mode do not sample per-process metric values at all */
    for (int metric = PCP_PROC_PID; metric < PCP_METRIC_COUNT; metric++)
       Metric_enable(metric, enabled);
+
+   //fprintf(stderr, "%d .................\n", myPID);
+   Metric_enable(myPID, enabled);
 
    flagged = settings->flags & PROCESS_FLAG_LINUX_CGROUP;
    Metric_enable(PCP_PROC_CGROUPS, flagged && enabled);

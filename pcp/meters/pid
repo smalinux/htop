@@ -1,0 +1,10 @@
+#
+# pcp-htop(1) configuration file - see pcp-htop(5)
+#
+
+[syspid]
+caption = PID
+pid.metric = proc.pminfo.pid
+pid.color = red
+pid.label = sys
+pid.description = temp description

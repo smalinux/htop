@@ -32,6 +32,7 @@ in the source distribution for its full text.
 #include "SignalsPanel.h"
 #include "SysArchMeter.h"
 
+int myPID;
 
 extern ProcessField Platform_defaultFields[];
 
