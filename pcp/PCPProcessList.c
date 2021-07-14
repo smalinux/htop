@@ -325,6 +325,7 @@ static bool PCPProcessList_updateProcesses(PCPProcessList* this, double period, 
 
    while (Metric_iterate(myPID, &pid, &offset)) {
       mydump(myPID);
+      fprintf(stderr, "222222222\n");
 
       bool preExisting;
       Process* proc = ProcessList_getProcess(pl, pid, &preExisting, PCPProcess_new);

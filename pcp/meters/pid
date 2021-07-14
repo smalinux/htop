@@ -4,7 +4,7 @@
 
 [syspid]
 caption = PID
-pid.metric = proc.pminfo.pid
+pid.metric = proc.psinfo.pid
 pid.color = red
 pid.label = sys
 pid.description = temp description
