@@ -38,6 +38,7 @@ in the source distribution for its full text.
 #include "TasksMeter.h"
 #include "UptimeMeter.h"
 #include "XUtils.h"
+#include "PCPProcess.h"
 
 #include "linux/PressureStallMeter.h"
 #include "linux/ZramMeter.h"
@@ -330,6 +331,10 @@ const pmDesc* Metric_desc(Metric metric) {
    return &pcp->descs[metric];
 }
 
+int Metric_type(Metric metric) {
+   return pcp->descs[metric].type;
+}
+
 pmAtomValue* Metric_values(Metric metric, pmAtomValue* atom, int count, int type) {
    if (pcp->result == NULL)
       return NULL;
@@ -549,11 +554,9 @@ void Platform_init(void) {
    PCPDynamicColumns_init(&pcp->columns);
 
    // REMOVEME - debuging
-   /*
    for(unsigned int i = 0; i < pcp->totalMetrics; i++) {
       fprintf(stderr, "%u metric: %s\n", i, pcp->names[i]);
    }
-   */
 
    /*
    // REMOVEME
@@ -1066,9 +1069,29 @@ Hashtable* Platform_dynamicColumns(void) {
    return pcp->columns.table;
 }
 
-void Platform_dynamicColumnWriteField(const Process* proc, RichString* str, int param) {
-   int key = abs(param-LAST_PROCESSFIELD);
+void Platform_dynamicColumnWriteField(const Process* proc, RichString* str, int field) {
+   int key = abs(field-LAST_PROCESSFIELD);
    PCPDynamicColumn* this = Hashtable_get(pcp->columns.table, key);
    if (this)
-      PCPDynamicColumn_writeField(this, proc, str, param);
+      PCPDynamicColumn_writeField(this, proc, str, field);
+}
+
+int Platform_getNumberOfColumns() {
+   return pcp->columns.count;
+}
+
+void Platform_updateDynamicColumns(PCPProcess* proc, int pid, int offset) {
+   pmAtomValue value;
+   for(unsigned int i = 0; i < pcp->columns.count; ++i) {
+      //proc->dc[i] = *pcp->result->vset[pcp->columns.offset+i];
+      Metric_instance(pcp->columns.offset+i, pid, offset, &value, Metric_type(pcp->columns.offset+i));
+      //proc->dc[i].ul = 0;
+      //fprintf(stderr, "pid ====> %d\n", pcp->columns.offset);
+      proc->dc[i] = value;
+
+   }
+}
+
+int Platform_getColumnOffset() {
+   return pcp->columns.offset;
 }

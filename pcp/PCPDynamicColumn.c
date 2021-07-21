@@ -12,7 +12,9 @@ in the source distribution for its full text.
 #include <math.h>
 
 #include "CRT.h"
+#include "Macros.h"
 #include "Object.h"
+#include "PCPProcess.h"
 #include "Platform.h"
 #include "ProcessList.h"
 #include "RichString.h"
@@ -264,59 +266,85 @@ void PCPDynamicColumns_init(PCPDynamicColumns* columns) {
 }
 
 // FIXME maybe: no need for param here
-void PCPDynamicColumn_writeField(PCPDynamicColumn* this, const Process* proc, RichString* str, ATTR_UNUSED int param) {
-      char buffer[256];
-      size_t size = sizeof(buffer);
-      int width = this->super.width;
-      PCPDynamicColumnMetric* metric = &this->metrics[0];
-      const pmDesc* desc = Metric_desc(metric->id);
-      pmAtomValue value;
-      int attr = CRT_colors[DEFAULT_COLOR];
+void PCPDynamicColumn_writeField(PCPDynamicColumn* this, const Process* proc, RichString* str, int field) {
+   const PCPProcess* pp = (const PCPProcess*) proc;
+   char buffer[256];
+   size_t size = sizeof(buffer);
+   int width = this->super.width;
+   PCPDynamicColumnMetric* metric = &this->metrics[0];
+   const pmDesc* desc = Metric_desc(metric->id);
+   pmAtomValue value;
+   int attr = CRT_colors[DEFAULT_COLOR];
+   int index = field-LAST_PROCESSFIELD-1;
 
-      if (!Metric_instance(metric->id, proc->pid, 0, &value, desc->type)) {
-         char* note;
-         xAsprintf(&note,
-                   "%s: invalid derived metric name \"%s\"",
-                   pmGetProgname(), metric->name);
-         errno = EINVAL;
-         CRT_fatalError(note);
-         free(note);
-      }
+   if (!Metric_instance(metric->id, proc->pid, 0, &value, desc->type)) {
+      char* note;
+      xAsprintf(&note,
+                "%s: invalid derived metric name \"%s\"",
+                pmGetProgname(), metric->name);
+      errno = EINVAL;
+      CRT_fatalError(note);
+      free(note);
+   }
 
-      attr = CRT_colors[metric->color];
+   attr = CRT_colors[metric->color];
 
-      switch (desc->type) {
-         case PM_TYPE_STRING:
-               xSnprintf(buffer, size, "%*s", width, value.cp);
-               Process_printLeftAlignedField(str, attr, value.cp, width);
-            free(value.cp);
-            break;
-         case PM_TYPE_32:
-               xSnprintf(buffer, size, "%*d", width, value.l);
-               RichString_appendAscii(str, attr, buffer);
-            break;
-         case PM_TYPE_U32:
-               xSnprintf(buffer, size, "%*u", width, value.ul);
-               RichString_appendAscii(str, attr, buffer);
-            break;
-         case PM_TYPE_64:
-               xSnprintf(buffer, size, "%*lld", width, (long long) value.ll);
-               RichString_appendAscii(str, attr, buffer);
-            break;
-         case PM_TYPE_U64:
-               xSnprintf(buffer, size, "%*llu", width, (unsigned long long) value.ull);
-               RichString_appendAscii(str, attr, buffer);
-            break;
-         case PM_TYPE_FLOAT:
-               xSnprintf(buffer, size, "%*.2f", width, (double) value.f);
-               RichString_appendAscii(str, attr, buffer);
-            break;
-         case PM_TYPE_DOUBLE:
-               xSnprintf(buffer, size, "%*.2f", width, value.d);
-               RichString_appendAscii(str, attr, buffer);
-            break;
-         default:
-            RichString_appendAscii(str, CRT_colors[METER_VALUE_ERROR], "no data");
-            break;
-      }
+   switch (desc->type) {
+      case PM_TYPE_STRING:
+            xSnprintf(buffer, size, "%*s", width, pp->dc[index].cp);
+            Process_printLeftAlignedField(str, attr, pp->dc[index].cp, width);
+         free(value.cp);
+         break;
+      case PM_TYPE_32:
+            xSnprintf(buffer, size, "%*d", width, value.l);
+            RichString_appendAscii(str, attr, buffer);
+         break;
+      case PM_TYPE_U32:
+            xSnprintf(buffer, size, "%*u", width, pp->dc[index].ul);
+            RichString_appendAscii(str, attr, buffer);
+         break;
+      case PM_TYPE_64:
+            xSnprintf(buffer, size, "%*lld", width, (long long) pp->dc[index].ll);
+            RichString_appendAscii(str, attr, buffer);
+         break;
+      case PM_TYPE_U64:
+            xSnprintf(buffer, size, "%*llu", width, (unsigned long long) pp->dc[index].ull);
+            RichString_appendAscii(str, attr, buffer);
+         break;
+      case PM_TYPE_FLOAT:
+            xSnprintf(buffer, size, "%*.2f", width, (double) pp->dc[index].f);
+            RichString_appendAscii(str, attr, buffer);
+         break;
+      case PM_TYPE_DOUBLE:
+            xSnprintf(buffer, size, "%*.2f", width, pp->dc[index].d);
+            RichString_appendAscii(str, attr, buffer);
+         break;
+      default:
+         RichString_appendAscii(str, CRT_colors[METER_VALUE_ERROR], "no data");
+         break;
+   }
+}
+
+int PCPDynamicColumn_compareByKey(const PCPProcess* p1, const PCPProcess* p2, ProcessField key) {
+   int index = key-LAST_PROCESSFIELD-1;
+   int metricOffset = Platform_getColumnOffset();
+   int type = Metric_type(metricOffset+index);
+   switch (type) {
+      case PM_TYPE_32:
+         return SPACESHIP_NUMBER(p1->dc[index].l, p2->dc[index].l);
+      case PM_TYPE_U32:
+         fprintf(stderr, "%u %u\n", p1->dc[index].ul, p2->dc[index].ul);
+         return SPACESHIP_NUMBER(p1->dc[index].ul, p2->dc[index].ul);
+      case PM_TYPE_64:
+         return SPACESHIP_NUMBER(p1->dc[index].ll, p2->dc[index].ll);
+      case PM_TYPE_U64:
+         return SPACESHIP_NUMBER(p1->dc[index].ull, p2->dc[index].ull);
+      case PM_TYPE_FLOAT:
+         return SPACESHIP_NUMBER(p1->dc[index].f, p2->dc[index].f);
+      case PM_TYPE_DOUBLE:
+         return SPACESHIP_NUMBER(p1->dc[index].d, p2->dc[index].d);
+      default:
+         break;
+   }
+   return -1;
 }

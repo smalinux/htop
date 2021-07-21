@@ -27,11 +27,12 @@ in the source distribution for its full text.
 #include "Hashtable.h"
 #include "Meter.h"
 #include "NetworkIOMeter.h"
+#include "PCPProcess.h"
 #include "Process.h"
 #include "ProcessLocksScreen.h"
+#include "RichString.h"
 #include "SignalsPanel.h"
 #include "SysArchMeter.h"
-#include "RichString.h"
 
 
 extern ProcessField Platform_defaultFields[];
@@ -251,6 +252,8 @@ pmAtomValue* Metric_values(Metric metric, pmAtomValue* atom, int count, int type
 
 const pmDesc* Metric_desc(Metric metric);
 
+int Metric_type(Metric metric);
+
 int Metric_instanceCount(Metric metric);
 
 int Metric_instanceOffset(Metric metric, int inst);
@@ -274,6 +277,12 @@ void Platform_dynamicMeterDisplay(const Meter* meter, RichString* out);
 Hashtable* Platform_dynamicColumns(void);
 
 void Platform_dynamicColumnWriteField(const Process* proc, RichString* str, int param);
+
+int Platform_getNumberOfColumns(void);
+
+void Platform_updateDynamicColumns(PCPProcess* proc, int pid, int offset);
+
+int Platform_getColumnOffset(void);
 
 // REMOVEME next 4 lines
 bool mydump_pid(Metric metric, int* instp, int* offsetp);

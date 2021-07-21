@@ -22,6 +22,6 @@ const char* DynamicColumn_lookup(const ProcessList* pl, unsigned int param);
 
 unsigned int DynamicColumn_search(const ProcessList* pl, const char* name);
 
-void DynamicColumn_writeField(const Process* proc, RichString* str, int param);
+void DynamicColumn_writeField(const Process* proc, RichString* str, int field);
 
 #endif

@@ -45,6 +45,6 @@ const char* DynamicColumn_lookup(const ProcessList* pl, unsigned int key) {
    return column ? column->name : NULL;
 }
 
-void DynamicColumn_writeField(const Process* proc, RichString* str, int param) {
-   Platform_dynamicColumnWriteField(proc, str, param);
+void DynamicColumn_writeField(const Process* proc, RichString* str, int field) {
+   Platform_dynamicColumnWriteField(proc, str, field);
 }

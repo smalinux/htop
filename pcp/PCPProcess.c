@@ -18,8 +18,10 @@ in the source distribution for its full text.
 
 #include "CRT.h"
 #include "Process.h"
+#include "Platform.h"
 #include "ProvideCurses.h"
 #include "XUtils.h"
+#include "PCPDynamicColumn.h"
 
 const ProcessFieldData Process_fields[] = {
    [0] = { .name = "", .title = NULL, .description = NULL, .flags = 0, },
@@ -81,13 +83,18 @@ const ProcessFieldData Process_fields[] = {
    [SECATTR] = { .name = "SECATTR", .title = " Security Attribute ", .description = "Security attribute of the process (e.g. SELinux or AppArmor)", .flags = PROCESS_FLAG_LINUX_SECATTR, },
    [PROC_COMM] = { .name = "COMM", .title = "COMM            ", .description = "comm string of the process", .flags = 0, },
    [PROC_EXE] = { .name = "EXE", .title = "EXE             ", .description = "Basename of exe of the process", .flags = 0, },
+   [MY] = { .name = "MY", .title = "MY             ", .description = "*****************", .flags = 0, },
+   [MY2] = { .name = "MY2", .title = "MY2             ", .description = "*****************", .flags = 0, },
    [CWD] = { .name = "CWD", .title = "CWD                       ", .description = "The current working directory of the process", .flags = PROCESS_FLAG_CWD, },
 };
 
 Process* PCPProcess_new(const Settings* settings) {
    PCPProcess* this = xCalloc(1, sizeof(PCPProcess));
+   int dcCount = Platform_getNumberOfColumns();
+   pmAtomValue* dc = xCalloc(dcCount, sizeof(pmAtomValue));
    Object_setClass(this, Class(PCPProcess));
    Process_init(&this->super, settings);
+   this->dc = dc;
    return &this->super;
 }
 
@@ -96,6 +103,7 @@ void Process_delete(Object* cast) {
    Process_done((Process*)cast);
    free(this->cgroup);
    free(this->secattr);
+   free(this->dc);
    free(this);
 }
 
@@ -133,6 +141,8 @@ static void PCPProcess_writeField(const Process* this, RichString* str, ProcessF
    case SYSCR:  Process_printCount(str, pp->io_syscr, coloring); return;
    case SYSCW:  Process_printCount(str, pp->io_syscw, coloring); return;
    case RBYTES: Process_printBytes(str, pp->io_read_bytes, coloring); return;
+   case MY: xSnprintf(buffer, n, "%*d ", Process_pidDigits, pp->yyyy[0]); break;
+   case MY2: xSnprintf(buffer, n, "%*d ", Process_pidDigits, pp->yyyy[1]); break;
    case WBYTES: Process_printBytes(str, pp->io_write_bytes, coloring); return;
    case CNCLWB: Process_printBytes(str, pp->io_cancelled_write_bytes, coloring); return;
    case IO_READ_RATE:  Process_printRate(str, pp->io_rate_read_bps, coloring); return;
@@ -185,6 +195,7 @@ static int PCPProcess_compareByKey(const Process* v1, const Process* v2, Process
    const PCPProcess* p1 = (const PCPProcess*)v1;
    const PCPProcess* p2 = (const PCPProcess*)v2;
 
+   if(key < LAST_PROCESSFIELD) {
    switch (key) {
    case M_DRS:
       return SPACESHIP_NUMBER(p1->m_drs, p2->m_drs);
@@ -206,6 +217,10 @@ static int PCPProcess_compareByKey(const Process* v1, const Process* v2, Process
       return SPACESHIP_NUMBER(p1->utime, p2->utime);
    case CUTIME:
       return SPACESHIP_NUMBER(p1->cutime, p2->cutime);
+   case MY:
+      return SPACESHIP_NUMBER(p1->yyyy[0], p2->yyyy[0]);
+   case MY2:
+      return SPACESHIP_NUMBER(p1->yyyy[1], p2->yyyy[1]);
    case STIME:
       return SPACESHIP_NUMBER(p1->stime, p2->stime);
    case CSTIME:
@@ -247,6 +262,10 @@ static int PCPProcess_compareByKey(const Process* v1, const Process* v2, Process
    default:
       return Process_compareByKey_Base(v1, v2, key);
    }
+   }
+   else
+      return SPACESHIP_NUMBER(v2->pid, v1->pid); // FIXME: REMOVEME
+      //return PCPDynamicColumn_compareByKey(p1, p2, key); // FIXME ADDME
 }
 
 const ProcessClass PCPProcess_class = {

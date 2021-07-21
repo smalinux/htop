@@ -11,6 +11,7 @@ in the source distribution for its full text.
 
 #include "config.h" // IWYU pragma: keep
 
+#include <pcp/pmapi.h>
 #include <stdbool.h>
 #include <sys/types.h>
 
@@ -60,6 +61,10 @@ typedef struct PCPProcess_ {
 
    /* Storage data written (in kilobytes) */
    unsigned long long io_write_bytes;
+
+   int yyyy[2];
+
+   pmAtomValue* dc;
 
    /* Storage data cancelled (in kilobytes) */
    unsigned long long io_cancelled_write_bytes;

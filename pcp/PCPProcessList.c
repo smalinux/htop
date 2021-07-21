@@ -7,6 +7,7 @@ Released under the GNU GPLv2, see the COPYING file
 in the source distribution for its full text.
 */
 
+#include "Platform.h"
 #include "config.h" // IWYU pragma: keep
 
 #include "pcp/PCPProcessList.h"
@@ -22,6 +23,8 @@ in the source distribution for its full text.
 
 #include "pcp/PCPProcess.h"
 
+static int myYYY;
+static int myYYY2;
 
 static int PCPProcessList_computeCPUcount(void) {
    int cpus;
@@ -167,6 +170,18 @@ static void PCPProcessList_updateInfo(Process* process, int pid, int offset, cha
    process->time = pp->utime + pp->stime;
 }
 
+
+static void PCPProcessList_updateMY(Process* process, int pid, int offset) {
+   PCPProcess* pp = (PCPProcess*) process;
+   // 1
+   pp->yyyy[0] = myYYY;
+   myYYY++;
+
+   // 2
+   pp->yyyy[1] = myYYY2;
+   myYYY2++;
+}
+
 static void PCPProcessList_updateIO(PCPProcess* pp, int pid, int offset, unsigned long long now) {
    pmAtomValue value;
 
@@ -306,6 +321,11 @@ static void PCPProcessList_updateCmdline(Process* process, int pid, int offset, 
    }
 }
 
+
+static void PCPProcessList_updateDynamicColumns(PCPProcess* pp, int pid, int offset) {
+   Platform_updateDynamicColumns(pp, pid, offset);
+}
+
 // LOOKATME
 static bool PCPProcessList_updateProcesses(PCPProcessList* this, double period, struct timeval* tv) {
    ProcessList* pl = (ProcessList*) this;
@@ -333,6 +353,11 @@ static bool PCPProcessList_updateProcesses(PCPProcessList* this, double period, 
       Process* proc = ProcessList_getProcess(pl, pid, &preExisting, PCPProcess_new);
       PCPProcess* pp = (PCPProcess*) proc;
       PCPProcessList_updateID(proc, pid, offset); // FIXME LOOKATME
+
+
+      PCPProcessList_updateMY(proc, pid, offset);
+
+      PCPProcessList_updateDynamicColumns(pp, pid, offset);
 
       /*
        * These conditions will not trigger on first occurrence, cause we need to
@@ -432,6 +457,8 @@ static bool PCPProcessList_updateProcesses(PCPProcessList* this, double period, 
          pl->runningTasks++;
       proc->updated = true;
    }
+   myYYY = 50;
+   myYYY2 = 100;
    // dump here - for every scan/second - not in the loop ( every PID!)
    //mydump_inst(100, 1837);
    //my_ps_aux(1);

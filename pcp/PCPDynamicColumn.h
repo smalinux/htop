@@ -5,6 +5,7 @@
 #include "DynamicColumn.h"
 #include "Process.h"
 #include "RichString.h"
+#include "PCPProcess.h"
 
 typedef struct {
    unsigned int id;
@@ -30,5 +31,7 @@ typedef struct {
 void PCPDynamicColumns_init(PCPDynamicColumns* columns);
 
 void PCPDynamicColumn_writeField(PCPDynamicColumn* this, const Process* proc, RichString* str, int param);
+
+int PCPDynamicColumn_compareByKey(const PCPProcess* p1, const PCPProcess* p2, ProcessField key);
 
 #endif

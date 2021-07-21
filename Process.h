@@ -113,6 +113,8 @@ typedef struct Process_ {
    /* Session identifier */
    int session;
 
+   int xxx;
+
    /* Foreground group identifier of the controlling terminal */
    int tpgid;
 
