@@ -22,6 +22,7 @@ in the source distribution for its full text.
 #include "ProvideCurses.h"
 #include "XUtils.h"
 
+
 typedef struct {
    Panel* super;
    unsigned int id;

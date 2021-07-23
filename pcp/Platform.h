@@ -35,6 +35,7 @@ in the source distribution for its full text.
 
 #include "pcp/PCPProcess.h"
 
+
 extern ProcessField Platform_defaultFields[];
 
 extern int Platform_numberOfFields;

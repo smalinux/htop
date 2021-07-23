@@ -8,6 +8,7 @@
 
 #include "pcp/PCPProcess.h"
 
+
 typedef struct {
    unsigned int id;
    ColorElements color;

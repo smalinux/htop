@@ -23,6 +23,7 @@ in the source distribution for its full text.
 #include "XUtils.h"
 #include "pcp/PCPDynamicColumn.h"
 
+
 const ProcessFieldData Process_fields[] = {
    [0] = { .name = "", .title = NULL, .description = NULL, .flags = 0, },
    [PID] = { .name = "PID", .title = "PID", .description = "Process/thread ID", .flags = 0, .pidColumn = true, },

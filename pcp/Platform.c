@@ -50,6 +50,7 @@ in the source distribution for its full text.
 #include "zfs/ZfsArcStats.h"
 #include "zfs/ZfsCompressedArcMeter.h"
 
+
 typedef struct {
    unsigned int key;
    const char* name;

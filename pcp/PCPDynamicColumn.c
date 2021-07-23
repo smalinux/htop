@@ -22,6 +22,7 @@ in the source distribution for its full text.
 
 #include "pcp/PCPProcess.h"
 
+
 static PCPDynamicColumnMetric* PCPDynamicColumn_lookupMetric(PCPDynamicColumns* columns, PCPDynamicColumn* column, const char* name) {
    size_t bytes = 8 + strlen(column->super.name) + strlen(name);
    char* metricName = xMalloc(bytes);
