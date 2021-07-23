@@ -176,7 +176,7 @@ static Htop_Reaction actionSetSortColumn(State* st) {
    for (int i = 0; fields[i]; i++) {
       char* name = NULL;
       if (has_dynamicColumns(fields[i])) {
-         int index = fields[i]-LAST_STATIC_PROCESSFIELD;
+         int index = fields[i] - LAST_STATIC_PROCESSFIELD;
          const DynamicColumn* column = Hashtable_get(st->pl->dynamicColumns, index);
          if (column) {
             Panel_add(sortPanel, (Object*) ListItem_new(column->caption, fields[i]));

@@ -56,10 +56,10 @@ typedef enum CPUMetric_ {
 
 typedef struct PCPProcessList_ {
    ProcessList super;
-   double timestamp;		/* previous sample timestamp */
-   pmAtomValue* cpu;		/* aggregate values for each metric */
-   pmAtomValue** percpu;	/* per-processor values for each metric */
-   pmAtomValue* values;		/* per-processor buffer for just one metric */
+   double timestamp;    /* previous sample timestamp */
+   pmAtomValue* cpu;    /* aggregate values for each metric */
+   pmAtomValue** percpu;   /* per-processor values for each metric */
+   pmAtomValue* values;    /* per-processor buffer for just one metric */
    ZfsArcStats zfs;
 } PCPProcessList;
 

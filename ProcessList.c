@@ -87,7 +87,7 @@ void ProcessList_setPanel(ProcessList* this, Panel* panel) {
 static const char* alignedProcessFieldTitle(const ProcessList* this, ProcessField field) {
    const char* title;
    if(field > LAST_STATIC_PROCESSFIELD) {
-      int key = abs((int)field-LAST_STATIC_PROCESSFIELD);
+      int key = abs((int)field - LAST_STATIC_PROCESSFIELD);
       const DynamicColumn* column = Hashtable_get(this->dynamicColumns, key);
       if(column == NULL)
          return "- ";

@@ -57,20 +57,20 @@ typedef struct {
 } DynamicIterator;
 
 typedef struct Platform_ {
-   int context;			/* PMAPI(3) context identifier */
-   unsigned int totalMetrics;	/* total number of all metrics */
-   const char** names;		/* name array indexed by Metric */
-   pmID* pmids;			/* all known metric identifiers */
-   pmID* fetch;			/* enabled identifiers for sampling */
-   pmDesc* descs;		/* metric desc array indexed by Metric */
-   pmResult* result;		/* sample values result indexed by Metric */
-   PCPDynamicMeters meters;	/* dynamic meters via configuration files */
-   PCPDynamicColumns columns; 	/* dynamic columns via configuration files */
-   struct timeval offset;	/* time offset used in archive mode only */
-   long long btime;		/* boottime in seconds since the epoch */
-   char* release;		/* uname and distro from this context */
-   int pidmax;			/* maximum platform process identifier */
-   int ncpu;			/* maximum processor count configured */
+   int context;         /* PMAPI(3) context identifier */
+   unsigned int totalMetrics; /* total number of all metrics */
+   const char** names;     /* name array indexed by Metric */
+   pmID* pmids;         /* all known metric identifiers */
+   pmID* fetch;         /* enabled identifiers for sampling */
+   pmDesc* descs;    /* metric desc array indexed by Metric */
+   pmResult* result;    /* sample values result indexed by Metric */
+   PCPDynamicMeters meters;   /* dynamic meters via configuration files */
+   PCPDynamicColumns columns;    /* dynamic columns via configuration files */
+   struct timeval offset;  /* time offset used in archive mode only */
+   long long btime;     /* boottime in seconds since the epoch */
+   char* release;    /* uname and distro from this context */
+   int pidmax;       /* maximum platform process identifier */
+   int ncpu;         /* maximum processor count configured */
 } Platform;
 
 Platform* pcp;
@@ -488,7 +488,7 @@ void Platform_init(void) {
    }
 
    for (unsigned int i = 0; i < pcp->totalMetrics; i++) {
-      pcp->fetch[i] = PM_ID_NULL;	/* default is to not sample */
+      pcp->fetch[i] = PM_ID_NULL;   /* default is to not sample */
 
       /* expect some metrics to be missing - e.g. PMDA not available */
       if (pcp->pmids[i] == PM_ID_NULL)
@@ -949,7 +949,7 @@ Hashtable* Platform_dynamicColumns(void) {
 }
 
 void Platform_dynamicColumnWriteField(const Process* proc, RichString* str, int field) {
-   int key = abs(field-LAST_STATIC_PROCESSFIELD);
+   int key = abs(field - LAST_STATIC_PROCESSFIELD);
    PCPDynamicColumn* this = Hashtable_get(pcp->columns.table, key);
    if (this)
       PCPDynamicColumn_writeField(this, proc, str, field);
@@ -962,9 +962,9 @@ int Platform_getNumberOfColumns() {
 void Platform_updateDynamicColumns(PCPProcess* proc, int pid, int offset) {
    pmAtomValue value;
    for(unsigned int i = 0; i < pcp->columns.count; ++i) {
-      Metric_instance(pcp->columns.offset+i, pid, offset, &value,
-            Metric_type(pcp->columns.offset+i));
-   proc->dc[i] = value;
+      Metric_instance(pcp->columns.offset + i, pid, offset, &value,
+                      Metric_type(pcp->columns.offset + i));
+      proc->dc[i] = value;
    }
 }
 
