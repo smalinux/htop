@@ -63,7 +63,7 @@ static HandlerResult AvailableColumnsPanel_eventHandler(Panel* super, int ch) {
 
          int key = selected->key;
          int at = Panel_getSelectedIndex(this->columns);
-         if( key > LAST_STATIC_PROCESSFIELD) {
+         if (key > LAST_STATIC_PROCESSFIELD) {
             AvailableColumnsPanel_insertDynamicColumnName(this, at, key);
          } else {
             Panel_insert(this->columns, at, (Object*) ListItem_new(Process_fields[key].name, key));
@@ -104,7 +104,7 @@ static void AvailableColumnsPanel_addDynamicColumn(ATTR_UNUSED ht_key_t key, voi
 // Handle DynamicColumns entries in the AvailableColumnsPanel
 static void AvailableColumnsPanel_addDynamicColumns(Panel* super, const ProcessList* pl) {
    DynamicIterator iter = { .super = super, .id = 1, .offset = 0 };
-   assert(pl->dynamicMeters != NULL);
+   assert(pl->dynamicMeters);
    Hashtable_foreach(pl->dynamicColumns, AvailableColumnsPanel_addDynamicColumn, &iter);
 }
 

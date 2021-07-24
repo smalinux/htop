@@ -57,20 +57,20 @@ typedef struct {
 } DynamicIterator;
 
 typedef struct Platform_ {
-   int context;         /* PMAPI(3) context identifier */
+   int context;               /* PMAPI(3) context identifier */
    unsigned int totalMetrics; /* total number of all metrics */
-   const char** names;     /* name array indexed by Metric */
-   pmID* pmids;         /* all known metric identifiers */
-   pmID* fetch;         /* enabled identifiers for sampling */
-   pmDesc* descs;    /* metric desc array indexed by Metric */
-   pmResult* result;    /* sample values result indexed by Metric */
+   const char** names;        /* name array indexed by Metric */
+   pmID* pmids;               /* all known metric identifiers */
+   pmID* fetch;               /* enabled identifiers for sampling */
+   pmDesc* descs;             /* metric desc array indexed by Metric */
+   pmResult* result;          /* sample values result indexed by Metric */
    PCPDynamicMeters meters;   /* dynamic meters via configuration files */
-   PCPDynamicColumns columns;    /* dynamic columns via configuration files */
-   struct timeval offset;  /* time offset used in archive mode only */
-   long long btime;     /* boottime in seconds since the epoch */
-   char* release;    /* uname and distro from this context */
-   int pidmax;       /* maximum platform process identifier */
-   int ncpu;         /* maximum processor count configured */
+   PCPDynamicColumns columns; /* dynamic columns via configuration files */
+   struct timeval offset;     /* time offset used in archive mode only */
+   long long btime;           /* boottime in seconds since the epoch */
+   char* release;             /* uname and distro from this context */
+   int pidmax;                /* maximum platform process identifier */
+   int ncpu;                  /* maximum processor count configured */
 } Platform;
 
 Platform* pcp;
@@ -362,7 +362,6 @@ bool Metric_iterate(Metric metric, int* instp, int* offsetp) {
 
    *offsetp = offset;
    *instp = vset->vlist[offset].inst;
-   //fprintf(stderr, "offset %d PID %d\n", *offsetp, *instp);
    return true;
 }
 

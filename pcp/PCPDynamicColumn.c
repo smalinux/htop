@@ -14,12 +14,13 @@ in the source distribution for its full text.
 #include <dirent.h>
 #include <errno.h>
 #include <limits.h>
-#include <pcp/pmapi.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+
+#include <pcp/pmapi.h>
 
 #include "CRT.h"
 #include "Macros.h"
@@ -128,7 +129,7 @@ static void PCPDynamicColumn_validateColumnName(char* key, const char* path, uns
    } else {
       char* note;
       xAsprintf(&note,
-                "%s: no closing brace on column....... name at %s line %u\n\"%s\"",
+                "%s: no closing brace on column name at %s line %u\n\"%s\"",
                 pmGetProgname(), path, line, key);
       errno = EINVAL;
       CRT_fatalError(note);
@@ -148,7 +149,7 @@ static void PCPDynamicColumn_validateColumnName(char* key, const char* path, uns
    if (*p != '\0') { /* badness */
       char* note;
       xAsprintf(&note,
-                "%s: invalid column....... name at %s line %u\n\"%s\"",
+                "%s: invalid column name at %s line %u\n\"%s\"",
                 pmGetProgname(), path, line, key);
       errno = EINVAL;
       CRT_fatalError(note);
@@ -181,7 +182,7 @@ static void PCPDynamicColumn_parseFile(PCPDynamicColumns* columns, const char* p
       /* cleanup whitespace, skip comment lines */
       char* trimmed = String_trim(line);
       free(line);
-      if (trimmed[0] == '#' || trimmed[0] == '\0') {
+      if (!trimmed || !trimmed[0] || trimmed[0] == '#') {
          free(trimmed);
          continue;
       }
@@ -269,7 +270,7 @@ void PCPDynamicColumn_writeField(PCPDynamicColumn* this, const Process* proc, Ri
    const PCPProcess* pp = (const PCPProcess*) proc;
    char buffer[30];
    size_t size = sizeof(buffer);
-   int width = (abs(this->super.width) < 28 && this->super.width) ? this->super.width : -12;
+   int width = (this->super.width && abs(this->super.width) < 28) ? this->super.width : -12;
    PCPDynamicColumnMetric* metric = &this->metrics[0];
    const pmDesc* desc = Metric_desc(metric->id);
    int attr = CRT_colors[DEFAULT_COLOR];

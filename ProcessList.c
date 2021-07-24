@@ -87,8 +87,10 @@ void ProcessList_setPanel(ProcessList* this, Panel* panel) {
 static void alignedDynamicColumnTitle(const ProcessList* this, int field, char buffer[], int size) {
    int key = (int)field - LAST_STATIC_PROCESSFIELD;
    const DynamicColumn* column = Hashtable_get(this->dynamicColumns, key);
-   if (!column)
+   if (!column) {
+      xSnprintf(buffer, size, "- ");
       return;
+   }
    int width = (column->width && abs(column->width) < 28) ? column->width : -12;
    xSnprintf(buffer, size, "%*s", width, column->caption);
 }
@@ -577,7 +579,7 @@ void ProcessList_rebuildPanel(ProcessList* this) {
    }
 }
 
-Process* ProcessList_getProcess(ProcessList* this, pid_t pid, bool* preExisting, Process_New constructor) { // LOOKATME
+Process* ProcessList_getProcess(ProcessList* this, pid_t pid, bool* preExisting, Process_New constructor) {
    Process* proc = (Process*) Hashtable_get(this->processTable, pid);
    *preExisting = proc != NULL;
    if (proc) {
@@ -591,7 +593,6 @@ Process* ProcessList_getProcess(ProcessList* this, pid_t pid, bool* preExisting,
    return proc;
 }
 
-// LOOKATME
 void ProcessList_scan(ProcessList* this, bool pauseProcessUpdate) {
    // in pause mode only gather global data for meters (CPU/memory/...)
    if (pauseProcessUpdate) {
