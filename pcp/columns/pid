@@ -1,6 +1,4 @@
-#
 # pcp-htop(1) configuration file - see pcp-htop(5)
-#
 
 [unamesys]
 caption = myPID
