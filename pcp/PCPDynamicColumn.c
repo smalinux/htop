@@ -15,6 +15,7 @@ in the source distribution for its full text.
 #include "Macros.h"
 #include "Object.h"
 #include "Platform.h"
+#include "Process.h"
 #include "ProcessList.h"
 #include "RichString.h"
 #include "Settings.h"
@@ -259,9 +260,9 @@ void PCPDynamicColumns_init(PCPDynamicColumns* columns) {
 
 void PCPDynamicColumn_writeField(PCPDynamicColumn* this, const Process* proc, RichString* str, int field) {
    const PCPProcess* pp = (const PCPProcess*) proc;
-   char buffer[256];
+   char buffer[30];
    size_t size = sizeof(buffer);
-   int width = this->super.width;
+   int width = (abs(this->super.width) < 28 && this->super.width) ? this->super.width : -12;
    PCPDynamicColumnMetric* metric = &this->metrics[0];
    const pmDesc* desc = Metric_desc(metric->id);
    int attr = CRT_colors[DEFAULT_COLOR];
@@ -270,6 +271,7 @@ void PCPDynamicColumn_writeField(PCPDynamicColumn* this, const Process* proc, Ri
    attr = CRT_colors[metric->color];
    switch (desc->type) {
       case PM_TYPE_STRING:
+         width = abs(width);
          Process_printLeftAlignedField(str, attr, pp->dc[index].cp, width);
          break;
       case PM_TYPE_32:

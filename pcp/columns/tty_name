@@ -4,7 +4,7 @@
 
 [myttyname]
 caption = TTYName
-width = 5
+width = -5
 description = PCP TTY description
 tty.metric = proc.psinfo.ttyname
 tty.color = green

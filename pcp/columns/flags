@@ -4,7 +4,7 @@
 
 [psflags]
 caption = Flags
-width = 12
+width = -12
 description = PCP flags description
 pid.metric = proc.psinfo.flags
 pid.color = blue

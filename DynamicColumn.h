@@ -10,7 +10,7 @@ typedef struct DynamicColumn_ {
    char* caption;
    char* description;
    double maximum;
-   unsigned int width;
+   int width;
 
    void* dynamicData;  /* platform-specific Column data */
 } DynamicColumn;
