@@ -3,6 +3,7 @@
 
 #include "CRT.h"
 #include "DynamicColumn.h"
+#include "Hashtable.h"
 #include "Process.h"
 #include "RichString.h"
 

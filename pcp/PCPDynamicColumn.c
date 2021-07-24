@@ -5,20 +5,27 @@ htop - PCPDynamicColumn.c
 Released under the GNU GPLv2, see the COPYING file
 in the source distribution for its full text.
 */
+
 #include "config.h" // IWYU pragma: keep
 
 #include "pcp/PCPDynamicColumn.h"
 
-#include <math.h>
+#include <ctype.h>
+#include <dirent.h>
+#include <errno.h>
+#include <limits.h>
+#include <pcp/pmapi.h>
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
 
 #include "CRT.h"
 #include "Macros.h"
-#include "Object.h"
 #include "Platform.h"
 #include "Process.h"
-#include "ProcessList.h"
 #include "RichString.h"
-#include "Settings.h"
 #include "XUtils.h"
 
 #include "pcp/PCPProcess.h"

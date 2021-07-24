@@ -2,7 +2,9 @@
 #define HEADER_DynamicColumn
 
 #include "Hashtable.h"
+#include "Process.h"
 #include "ProcessList.h"
+#include "RichString.h"
 
 
 typedef struct DynamicColumn_ {

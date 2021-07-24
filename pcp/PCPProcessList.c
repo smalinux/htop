@@ -11,9 +11,12 @@ in the source distribution for its full text.
 
 #include "pcp/PCPProcessList.h"
 
+#include <limits.h>
 #include <math.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/time.h>
 
-#include "CRT.h"
 #include "Macros.h"
 #include "Object.h"
 #include "Platform.h"

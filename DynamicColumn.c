@@ -5,12 +5,13 @@ htop - DynamicColumn.c
 Released under the GNU GPLv2, see the COPYING file
 in the source distribution for its full text.
 */
+
 #include "config.h" // IWYU pragma: keep
+
+#include <stddef.h>
 
 #include "DynamicColumn.h"
 
-#include "CRT.h"
-#include "Object.h"
 #include "Platform.h"
 #include "ProcessList.h"
 #include "RichString.h"

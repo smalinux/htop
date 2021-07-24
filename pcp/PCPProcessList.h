@@ -11,12 +11,12 @@ in the source distribution for its full text.
 
 #include <stdbool.h>
 #include <sys/types.h>
+#include <pcp/pmapi.h>
 
 #include "Hashtable.h"
 #include "ProcessList.h"
 #include "UsersTable.h"
 
-#include "pcp/Platform.h"
 #include "zfs/ZfsArcStats.h"
 
 

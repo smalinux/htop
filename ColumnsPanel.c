@@ -13,6 +13,7 @@ in the source distribution for its full text.
 #include "CRT.h"
 #include "DynamicColumn.h"
 #include "FunctionBar.h"
+#include "Hashtable.h"
 #include "ListItem.h"
 #include "Object.h"
 #include "Process.h"

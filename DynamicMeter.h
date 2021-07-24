@@ -1,6 +1,8 @@
 #ifndef HEADER_DynamicMeter
 #define HEADER_DynamicMeter
 
+#include <stdbool.h>
+
 #include "Hashtable.h"
 #include "Meter.h"
 
