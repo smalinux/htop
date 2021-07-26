@@ -709,9 +709,7 @@ void Process_printLeftAlignedField(RichString* str, int attr, const char* conten
 
 static inline bool is_dynamicColumn( const ProcessList* pl, int key) {
    const DynamicColumn* column = Hashtable_get(pl->dynamicColumns, key);
-   if (!column)
-      return 1;
-   return 0;
+   return !column? true : false;
 }
 
 void Process_writeField(const Process* this, RichString* str, ProcessField field) {
@@ -739,7 +737,7 @@ void Process_writeField(const Process* this, RichString* str, ProcessField field
 
       for (int i = 0; i < 32; i++) {
          if (indent & (1U << i)) {
-            maxIndent = i+1;
+            maxIndent = i + 1;
          }
       }
 
