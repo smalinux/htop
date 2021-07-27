@@ -106,9 +106,7 @@ static inline void Platform_gettime_monotonic(uint64_t* msec) {
    Generic_gettime_monotonic(msec);
 }
 
-static inline Hashtable* Platform_dynamicMeters(void) {
-   return NULL;
-}
+static inline Hashtable* Platform_dynamicMeters(void) { return NULL; }
 
 static inline void Platform_dynamicMeterInit(ATTR_UNUSED Meter* meter) { }
 
@@ -118,6 +116,8 @@ static inline void Platform_dynamicMeterDisplay(ATTR_UNUSED const Meter* meter, 
 
 static inline Hashtable* Platform_dynamicColumns(void) { return NULL; }
 
-static inline void Platform_dynamicColumnWriteField(ATTR_UNUSED const Process* proc, ATTR_UNUSED RichString* str, ATTR_UNUSED int param) { }
+static inline const char* Platform_dynamicColumnInit(ATTR_UNUSED unsigned int key) { return NULL; }
+
+static inline bool Platform_dynamicColumnWriteField(ATTR_UNUSED const Process* proc, ATTR_UNUSED RichString* str, ATTR_UNUSED unsigned int key) { return false; }
 
 #endif

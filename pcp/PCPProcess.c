@@ -89,9 +89,6 @@ const ProcessFieldData Process_fields[] = {
 
 Process* PCPProcess_new(const Settings* settings) {
    PCPProcess* this = xCalloc(1, sizeof(PCPProcess));
-   int dcCount = Platform_getNumberOfColumns();
-   pmAtomValue* dc = xCalloc(dcCount, sizeof(pmAtomValue));
-   this->dc = dc;
    Object_setClass(this, Class(PCPProcess));
    Process_init(&this->super, settings);
    return &this->super;
@@ -102,7 +99,6 @@ void Process_delete(Object* cast) {
    Process_done((Process*)cast);
    free(this->cgroup);
    free(this->secattr);
-   free(this->dc);
    free(this);
 }
 
@@ -253,10 +249,9 @@ static int PCPProcess_compareByKey(const Process* v1, const Process* v2, Process
    case SECATTR:
       return SPACESHIP_NULLSTR(p1->secattr, p2->secattr);
    default:
-      if(key > LAST_STATIC_PROCESSFIELD)
+      if (key < LAST_STATIC_PROCESSFIELD)
          return Process_compareByKey_Base(v1, v2, key);
-      else
-         return PCPDynamicColumn_compareByKey(p1, p2, key);
+      return PCPDynamicColumn_compareByKey(p1, p2, key);
    }
 }
 
