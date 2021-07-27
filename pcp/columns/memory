@@ -3,37 +3,37 @@
 #
 
 [vmdata]
-caption = VDATA
+heading = VDATA
 width = 6
 metric = proc.memory.vmdata
 description = Virtual memory used for data
 
 [vmstack]
-caption = VSTACK
-width = 6
+heading = VSTACK
+width = -6
 metric = proc.memory.vmstack
 description = Virtual memory used for stack
 
 [vmexe]
-caption = VEXEC
+heading = VEXEC
 width = 6
 metric = proc.memory.vmexe
 description = Virtual memory used for non-library executable code
 
 [vmlib]
-caption = VLIBS
+heading = VLIBS
 width = 6
 metric = proc.memory.vmlib
 description = Virtual memory used for libraries
 
 [vmswap]
-caption = VSWAP
+heading = VSWAP
 width = 6
 metric = proc.memory.vmswap
 description = Virtual memory size currently swapped out
 
 [vmlock]
-caption = VLOCK
+heading = VLOCK
 width = 6
 metric = proc.memory.vmlock
 description = Locked virtual memory

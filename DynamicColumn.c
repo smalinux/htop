@@ -23,30 +23,38 @@ Hashtable* DynamicColumns_new(void) {
    return Platform_dynamicColumns();
 }
 
+const char* DynamicColumn_init(unsigned int key) {
+   return Platform_dynamicColumnInit(key);
+}
+
 typedef struct {
-   unsigned int key;
    const char* name;
+   const DynamicColumn* data;
+   unsigned int key;
 } DynamicIterator;
 
 static void DynamicColumn_compare(ht_key_t key, void* value, void* data) {
    const DynamicColumn* column = (const DynamicColumn*)value;
    DynamicIterator* iter = (DynamicIterator*)data;
-   if (String_eq(iter->name, column->name))
+   if (String_eq(iter->name, column->name)) {
+      iter->data = column;
       iter->key = key;
+   }
 }
 
-unsigned int DynamicColumn_search(const ProcessList* pl, const char* name) {
-   DynamicIterator iter = { .key = 0, .name = name };
-   if (pl->dynamicColumns)
-      Hashtable_foreach(pl->dynamicColumns, DynamicColumn_compare, &iter);
-   return iter.key;
+const DynamicColumn* DynamicColumn_search(Hashtable* dynamics, const char* name, unsigned int* key) {
+   DynamicIterator iter = { .key = 0, .data = NULL, .name = name };
+   if (dynamics)
+      Hashtable_foreach(dynamics, DynamicColumn_compare, &iter);
+   if (key)
+      *key = iter.key;
+   return iter.data;
 }
 
-const char* DynamicColumn_lookup(const ProcessList* pl, unsigned int key) {
-   const DynamicColumn* column = Hashtable_get(pl->dynamicColumns, key);
-   return column ? column->name : NULL;
+const DynamicColumn* DynamicColumn_lookup(Hashtable* dynamics, unsigned int key) {
+   return (const DynamicColumn*) Hashtable_get(dynamics, key);
 }
 
-void DynamicColumn_writeField(const Process* proc, RichString* str, int field) {
-   Platform_dynamicColumnWriteField(proc, str, field);
+bool DynamicColumn_writeField(const Process* proc, RichString* str, unsigned int key) {
+   return Platform_dynamicColumnWriteField(proc, str, key);
 }

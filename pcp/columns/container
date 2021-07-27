@@ -3,7 +3,8 @@
 #
 
 [container]
-caption = Container
+heading = Container
+caption = CONTAINER
 width = -12
 metric = proc.id.container
 description = Name of processes container via cgroup heuristics

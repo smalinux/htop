@@ -84,32 +84,30 @@ void ProcessList_setPanel(ProcessList* this, Panel* panel) {
    this->panel = panel;
 }
 
-static void alignedDynamicColumnTitle(const ProcessList* this, int field, char* buffer, int size) {
-   int key = (int)field - LAST_STATIC_PROCESSFIELD;
+static const char* alignedDynamicColumnTitle(const ProcessList* this, int key) {
    const DynamicColumn* column = Hashtable_get(this->dynamicColumns, key);
-   if (!column) {
-      xSnprintf(buffer, size, "- ");
-      return;
-   }
-   int width = (column->width && abs(column->width) < 28) ? column->width : -12;
-   xSnprintf(buffer, size, "%*s", width, column->caption);
+   if (column == NULL)
+      return "- ";
+   static char titleBuffer[DYNAMIC_MAX_COLUMN_WIDTH + /* space */ 1 + /* null terminator */ + 1];
+   int width = column->width;
+   if (!width || abs(width) > DYNAMIC_MAX_COLUMN_WIDTH)
+      width = DYNAMIC_DEFAULT_COLUMN_WIDTH;
+   xSnprintf(titleBuffer, sizeof(titleBuffer), "%*s", width, column->heading);
+   return titleBuffer;
 }
 
 static const char* alignedProcessFieldTitle(const ProcessList* this, ProcessField field) {
+   if (field >= LAST_STATIC_PROCESSFIELD)
+      return alignedDynamicColumnTitle(this, field);
+
    const char* title = Process_fields[field].title;
    if (!title)
       return "- ";
 
+   static char titleBuffer[PROCESS_MAX_PID_DIGITS + /* space */ 1 + /* null-terminator */ + 1];
    if (!Process_fields[field].pidColumn)
       return title;
-
-   static char titleBuffer[PROCESS_MAX_PID_DIGITS + /* space */ 1 + /* null-terminator */ + 1];
-
-   if (field > LAST_STATIC_PROCESSFIELD)
-      alignedDynamicColumnTitle(this, field, titleBuffer, sizeof(titleBuffer));
-   else
-      xSnprintf(titleBuffer, sizeof(titleBuffer), "%*s ", Process_pidDigits, title);
-
+   xSnprintf(titleBuffer, sizeof(titleBuffer), "%*s ", Process_pidDigits, title);
    return titleBuffer;
 }
 

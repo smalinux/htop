@@ -17,6 +17,7 @@ in the source distribution for its full text.
 #include <string.h>
 #include <unistd.h>
 
+#include "Hashtable.h"
 #include "ProvideCurses.h"
 #include "XUtils.h"
 
@@ -81,6 +82,7 @@ bool CRT_utf8 = false;
 const char* const* CRT_treeStr = CRT_treeStrAscii;
 
 static const Settings* CRT_crashSettings;
+static Hashtable* CRT_crashColumns;
 static const int* CRT_delay;
 
 const char* CRT_degreeSign;
@@ -817,12 +819,13 @@ static void dumpStderr(void) {
 
 static struct sigaction old_sig_handler[32];
 
-void CRT_init(const Settings* settings, bool allowUnicode) {
+void CRT_init(const Settings* settings, Hashtable* dynamicColumns, bool allowUnicode) {
    redirectStderr();
 
    initscr();
    noecho();
    CRT_crashSettings = settings;
+   CRT_crashColumns = dynamicColumns;
    CRT_delay = &(settings->delay);
    CRT_colors = CRT_colorSchemes[settings->colorScheme];
    CRT_colorScheme = settings->colorScheme;
@@ -1017,7 +1020,7 @@ void CRT_handleSIGSEGV(int signal) {
    fprintf(stderr,
       "Setting information:\n"
       "--------------------\n");
-   Settings_write(CRT_crashSettings, true);
+   Settings_write(CRT_crashSettings, CRT_crashColumns, true);
    fprintf(stderr, "\n");
 
 #ifdef HAVE_EXECINFO_H

@@ -2,8 +2,9 @@
 # pcp-htop(1) configuration file - see pcp-htop(5)
 #
 
-[blkio_time]
-caption = BLKIOD
+[blkio]
+heading = BLKIOD
+caption = BLKIO_TIME
 width = 6
 metric = proc.psinfo.delayacct_blkio_time
 description = Aggregated block I/O delays
