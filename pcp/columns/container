@@ -1,0 +1,9 @@
+#
+# pcp-htop(1) configuration file - see pcp-htop(5)
+#
+
+[container]
+caption = Container
+width = -12
+metric = proc.id.container
+description = Name of processes container via cgroup heuristics

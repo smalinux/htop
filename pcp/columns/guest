@@ -1,0 +1,15 @@
+#
+# pcp-htop(1) configuration file - see pcp-htop(5)
+#
+
+[guest_time]
+caption = GUEST
+width = 6
+metric = proc.psinfo.guest_time
+description = Guest time for the process
+
+[cguest_time]
+caption = CGUEST
+width = 6
+metric = proc.psinfo.guest_time + proc.psinfo.cguest_time
+description = Cumulative guest time for the process and its children
