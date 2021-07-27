@@ -297,7 +297,7 @@ int CommandLine_run(const char* name, int argc, char** argv) {
    Hashtable* dm = DynamicMeters_new();
    ProcessList* pl = ProcessList_new(ut, dm, dc, flags.pidMatchList, flags.userId);
 
-   Settings* settings = Settings_new(pl->cpuCount);
+   Settings* settings = Settings_new(pl->cpuCount, dc);
    pl->settings = settings;
 
    Header* header = Header_new(pl, settings, 2);
@@ -327,7 +327,7 @@ int CommandLine_run(const char* name, int argc, char** argv) {
       Settings_setSortKey(settings, flags.sortKey);
    }
 
-   CRT_init(settings, flags.allowUnicode);
+   CRT_init(settings, dc, flags.allowUnicode);
 
    MainPanel* panel = MainPanel_new();
    ProcessList_setPanel(pl, (Panel*) panel);
@@ -370,7 +370,7 @@ int CommandLine_run(const char* name, int argc, char** argv) {
    CRT_done();
 
    if (settings->changed) {
-      int r = Settings_write(settings, false);
+      int r = Settings_write(settings, dc, false);
       if (r < 0)
          fprintf(stderr, "Can not save configuration to %s: %s\n", settings->filename, strerror(-r));
    }
@@ -386,8 +386,12 @@ int CommandLine_run(const char* name, int argc, char** argv) {
    if (flags.pidMatchList)
       Hashtable_delete(flags.pidMatchList);
 
-   /* Delete Settings last, since it can get accessed in the crash handler */
+   /* Delete these last, since they can get accessed in the crash handler */
    Settings_delete(settings);
+   if (dc)
+      Hashtable_delete(dc);
+   if (dm)
+   Hashtable_delete(dm);
 
    return 0;
 }

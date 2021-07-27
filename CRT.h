@@ -172,7 +172,7 @@ extern int CRT_scrollWheelVAmount;
 
 extern ColorScheme CRT_colorScheme;
 
-void CRT_init(const Settings* settings, bool allowUnicode);
+void CRT_init(const Settings* settings, Hashtable* dynamicColumns, bool allowUnicode);
 
 void CRT_done(void);
 

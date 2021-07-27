@@ -3,13 +3,13 @@
 #
 
 [swap]
-caption = SWAP
+heading = SWAP
 width = 5
 metric = proc.psinfo.nswap
 description = Count of swap operations for the process
 
 [cswap]
-caption = CSWAP
+heading = CSWAP
 width = 5
 metric = proc.psinfo.nswap + proc.psinfo.cnswap
 description = Cumulative swap operations for the process and its children

@@ -707,11 +707,6 @@ void Process_printLeftAlignedField(RichString* str, int attr, const char* conten
    RichString_appendChr(str, attr, ' ', width + 1 - columns);
 }
 
-static inline bool is_dynamicColumn( const ProcessList* pl, int key) {
-   const DynamicColumn* column = Hashtable_get(pl->dynamicColumns, key);
-   return !column? true : false;
-}
-
 void Process_writeField(const Process* this, RichString* str, ProcessField field) {
    char buffer[256];
    size_t n = sizeof(buffer);
@@ -911,12 +906,10 @@ void Process_writeField(const Process* this, RichString* str, ProcessField field
       xSnprintf(buffer, n, "%-9d ", this->st_uid);
       break;
    default:
-      if (is_dynamicColumn(this->processList, field)) {
-         DynamicColumn_writeField(this, str, field);
-      } else {
-         assert(0 && "Process_writeField: default key reached"); /* should never be reached */
-         xSnprintf(buffer, n, "- ");
-      }
+      if (DynamicColumn_writeField(this, str, field))
+         return;
+      assert(0 && "Process_writeField: default key reached"); /* should never be reached */
+      xSnprintf(buffer, n, "- ");
       return;
    }
    RichString_appendAscii(str, attr, buffer);

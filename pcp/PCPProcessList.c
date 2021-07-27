@@ -310,10 +310,6 @@ static void PCPProcessList_updateCmdline(Process* process, int pid, int offset, 
    }
 }
 
-static void PCPProcessList_updateDynamicColumns(PCPProcess* pp, int pid, int offset) {
-   Platform_updateDynamicColumns(pp, pid, offset);
-}
-
 static bool PCPProcessList_updateProcesses(PCPProcessList* this, double period, struct timeval* tv) {
    ProcessList* pl = (ProcessList*) this;
    const Settings* settings = pl->settings;
@@ -331,6 +327,7 @@ static bool PCPProcessList_updateProcesses(PCPProcessList* this, double period, 
       PCPProcess* pp = (PCPProcess*) proc;
       PCPProcessList_updateID(proc, pid, offset);
       proc->isUserlandThread = proc->pid != proc->tgid;
+      pp->offset = offset >= 0 ? offset : 0;
 
       /*
        * These conditions will not trigger on first occurrence, cause we need to
@@ -429,9 +426,6 @@ static bool PCPProcessList_updateProcesses(PCPProcessList* this, double period, 
       if (proc->state == 'R')
          pl->runningTasks++;
       proc->updated = true;
-
-      /* dynamic columns */
-      PCPProcessList_updateDynamicColumns(pp, pid, offset);
    }
    return true;
 }
