@@ -477,7 +477,7 @@ void Platform_init(void) {
    pcp->meters.offset = PCP_METRIC_COUNT;
    PCPDynamicMeters_init(&pcp->meters);
 
-   pcp->columns.offset = pcp->meters.cursor + PCP_METRIC_COUNT;
+   pcp->columns.offset = PCP_METRIC_COUNT + pcp->meters.cursor;
    PCPDynamicColumns_init(&pcp->columns);
 
    sts = pmLookupName(pcp->totalMetrics, pcp->names, pcp->pmids);
@@ -947,26 +947,24 @@ Hashtable* Platform_dynamicColumns(void) {
    return pcp->columns.table;
 }
 
-void Platform_dynamicColumnWriteField(const Process* proc, RichString* str, int field) {
-   int key = abs(field - LAST_STATIC_PROCESSFIELD);
+const char* Platform_dynamicColumnInit(unsigned int key) {
    PCPDynamicColumn* this = Hashtable_get(pcp->columns.table, key);
-   if (this)
-      PCPDynamicColumn_writeField(this, proc, str, field);
-}
-
-int Platform_getNumberOfColumns() {
-   return pcp->columns.count;
-}
-
-void Platform_updateDynamicColumns(PCPProcess* proc, int pid, int offset) {
-   pmAtomValue value;
-   for(unsigned int i = 0; i < pcp->columns.count; ++i) {
-      Metric_instance(pcp->columns.offset + i, pid, offset, &value,
-                      Metric_type(pcp->columns.offset + i));
-      proc->dc[i] = value;
+   if (this) {
+      Metric_enable(this->id, true);
+      if (this->super.caption)
+         return this->super.caption;
+      if (this->super.heading)
+         return this->super.heading;
+      return this->super.name;
    }
+   return NULL;
 }
 
-int Platform_getColumnOffset() {
-   return pcp->columns.offset;
+bool Platform_dynamicColumnWriteField(const Process* proc, RichString* str, unsigned int key) {
+   PCPDynamicColumn* this = Hashtable_get(pcp->columns.table, key);
+   if (this) {
+      PCPDynamicColumn_writeField(this, proc, str);
+      return true;
+   }
+   return false;
 }

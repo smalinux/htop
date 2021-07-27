@@ -12,6 +12,7 @@ in the source distribution for its full text.
 #include <stdbool.h>
 #include <stdint.h>
 
+#include "Hashtable.h"
 #include "Process.h"
 
 
@@ -90,9 +91,9 @@ static inline int Settings_getActiveDirection(const Settings* this) {
 
 void Settings_delete(Settings* this);
 
-int Settings_write(const Settings* this, bool onCrash);
+int Settings_write(const Settings* this, Hashtable* dynamicColumns, bool onCrash);
 
-Settings* Settings_new(unsigned int initialCpuCount);
+Settings* Settings_new(unsigned int initialCpuCount, Hashtable* dynamicColumns);
 
 void Settings_invertSortOrder(Settings* this);
 

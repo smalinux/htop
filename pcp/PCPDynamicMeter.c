@@ -19,12 +19,12 @@ in the source distribution for its full text.
 #include "XUtils.h"
 
 
-static PCPDynamicMeterMetric* PCPDynamicMeter_lookupMetric(PCPDynamicMeters* meters, PCPDynamicMeter* meter, const char* name) {
-   size_t bytes = 8 + strlen(meter->super.name) + strlen(name);
+static PCPDynamicMetric* PCPDynamicMeter_lookupMetric(PCPDynamicMeters* meters, PCPDynamicMeter* meter, const char* name) {
+   size_t bytes = 16 + strlen(meter->super.name) + strlen(name);
    char* metricName = xMalloc(bytes);
-   xSnprintf(metricName, bytes, "htop.%s.%s", meter->super.name, name);
+   xSnprintf(metricName, bytes, "htop.meter.%s.%s", meter->super.name, name);
 
-   PCPDynamicMeterMetric* metric;
+   PCPDynamicMetric* metric;
    for (unsigned int i = 0; i < meter->totalMetrics; i++) {
       metric = &meter->metrics[i];
       if (String_eq(metric->name, metricName)) {
@@ -35,10 +35,10 @@ static PCPDynamicMeterMetric* PCPDynamicMeter_lookupMetric(PCPDynamicMeters* met
 
    /* not an existing metric in this meter - add it */
    unsigned int n = meter->totalMetrics + 1;
-   meter->metrics = xReallocArray(meter->metrics, n, sizeof(PCPDynamicMeterMetric));
+   meter->metrics = xReallocArray(meter->metrics, n, sizeof(PCPDynamicMetric));
    meter->totalMetrics = n;
    metric = &meter->metrics[n - 1];
-   memset(metric, 0, sizeof(PCPDynamicMeterMetric));
+   memset(metric, 0, sizeof(PCPDynamicMetric));
    metric->name = metricName;
    metric->label = String_cat(name, ": ");
    metric->id = meters->offset + meters->cursor;
@@ -50,7 +50,7 @@ static PCPDynamicMeterMetric* PCPDynamicMeter_lookupMetric(PCPDynamicMeters* met
 }
 
 static void PCPDynamicMeter_parseMetric(PCPDynamicMeters* meters, PCPDynamicMeter* meter, const char* path, unsigned int line, char* key, char* value) {
-   PCPDynamicMeterMetric* metric;
+   PCPDynamicMetric* metric;
    char* p;
 
    if ((p = strchr(key, '.')) == NULL)
@@ -140,12 +140,9 @@ static bool PCPDynamicMeter_validateMeterName(char* key, const char* path, unsig
 }
 
 // Ensure a meter name has not been defined previously
-static bool PCPDynamicMeter_uniqueName(char* key, const char* path, unsigned int line, PCPDynamicMeters* meters) {
+static bool PCPDynamicMeter_uniqueName(char* key, PCPDynamicMeters* meters) {
    if (DynamicMeter_search(meters->table, key, NULL) == false)
       return true;
-
-   fprintf(stderr, "%s: duplicate name at %s line %u: \"%s\", ignored\n",
-           pmGetProgname(), path, line, key);
    return false;
 }
 
@@ -189,7 +186,7 @@ static void PCPDynamicMeter_parseFile(PCPDynamicMeters* meters, const char* path
       if (key[0] == '[') {  /* new section heading - i.e. new meter */
          ok = PCPDynamicMeter_validateMeterName(key + 1, path, lineno);
          if (ok)
-            ok = PCPDynamicMeter_uniqueName(key + 1, path, lineno, meters);
+            ok = PCPDynamicMeter_uniqueName(key + 1, meters);
          if (ok)
             meter = PCPDynamicMeter_new(meters, key + 1);
       } else if (!ok) {
@@ -288,7 +285,7 @@ void PCPDynamicMeter_updateValues(PCPDynamicMeter* this, Meter* meter) {
       if (i > 0 && bytes < size - 1)
          buffer[bytes++] = '/';  /* separator */
 
-      PCPDynamicMeterMetric* metric = &this->metrics[i];
+      PCPDynamicMetric* metric = &this->metrics[i];
       const pmDesc* desc = Metric_desc(metric->id);
       pmAtomValue atom, raw;
 
@@ -359,7 +356,7 @@ void PCPDynamicMeter_display(PCPDynamicMeter* this, ATTR_UNUSED const Meter* met
    int nodata = 1;
 
    for (unsigned int i = 0; i < this->totalMetrics; i++) {
-      PCPDynamicMeterMetric* metric = &this->metrics[i];
+      PCPDynamicMetric* metric = &this->metrics[i];
       const pmDesc* desc = Metric_desc(metric->id);
       pmAtomValue atom, raw;
       char buffer[64];

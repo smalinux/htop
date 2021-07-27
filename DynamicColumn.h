@@ -7,22 +7,25 @@
 #include "RichString.h"
 
 
-typedef struct DynamicColumn_ {
-   char name[32];  /* unique name, cannot contain spaces */
-   char* caption;
-   char* description;
-   double maximum;
-   int width;
+#define DYNAMIC_MAX_COLUMN_WIDTH 28
+#define DYNAMIC_DEFAULT_COLUMN_WIDTH -5
 
-   void* dynamicData;  /* platform-specific Column data */
+typedef struct DynamicColumn_ {
+   char name[32];     /* unique, internal-only name */
+   char* heading;     /* displayed in main screen */
+   char* caption;     /* displayed in setup menu (short name) */
+   char* description; /* displayed in setup menu (detail) */
+   int width;         /* display width +/- for value alignment */
 } DynamicColumn;
 
 Hashtable* DynamicColumns_new(void);
 
-const char* DynamicColumn_lookup(const ProcessList* pl, unsigned int param);
+const char* DynamicColumn_init(unsigned int key);
 
-unsigned int DynamicColumn_search(const ProcessList* pl, const char* name);
+const DynamicColumn* DynamicColumn_lookup(Hashtable* dynamics, unsigned int key);
 
-void DynamicColumn_writeField(const Process* proc, RichString* str, int field);
+const DynamicColumn* DynamicColumn_search(Hashtable* dynamics, const char* name, unsigned int* field);
+
+bool DynamicColumn_writeField(const Process* proc, RichString* str, unsigned int key);
 
 #endif
