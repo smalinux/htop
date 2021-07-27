@@ -169,18 +169,17 @@ static Htop_Reaction actionSetSortColumn(State* st) {
    Panel* sortPanel = Panel_new(0, 0, 0, 0, Class(ListItem), true, FunctionBar_newEnterEsc("Sort   ", "Cancel "));
    Panel_setHeader(sortPanel, "Sort by");
    const ProcessField* fields = st->settings->fields;
+   Hashtable* dynamicColumns = st->pl->dynamicColumns;
    for (int i = 0; fields[i]; i++) {
       char* name = NULL;
-      if (fields[i] > LAST_STATIC_PROCESSFIELD) {
-         int index = fields[i] - LAST_STATIC_PROCESSFIELD;
-         const DynamicColumn* column = Hashtable_get(st->pl->dynamicColumns, index);
-         if (column) {
-            Panel_add(sortPanel, (Object*) ListItem_new(column->caption, fields[i]));
-         }
+      if (fields[i] >= LAST_STATIC_PROCESSFIELD) {
+         DynamicColumn* column = Hashtable_get(dynamicColumns, fields[i]);
+         if (column)
+         name = column->caption ? xStrdup(column->caption) : xStrdup(column->name);
       } else {
          name = String_trim(Process_fields[fields[i]].name);
-         Panel_add(sortPanel, (Object*) ListItem_new(name, fields[i]));
       }
+      Panel_add(sortPanel, (Object*) ListItem_new(name, fields[i]));
       if (fields[i] == Settings_getActiveSortKey(st->settings))
          Panel_setSelected(sortPanel, i);
 

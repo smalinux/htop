@@ -33,8 +33,6 @@ in the source distribution for its full text.
 #include "SignalsPanel.h"
 #include "SysArchMeter.h"
 
-#include "pcp/PCPProcess.h"
-
 
 extern ProcessField Platform_defaultFields[];
 
@@ -277,12 +275,8 @@ void Platform_dynamicMeterDisplay(const Meter* meter, RichString* out);
 
 Hashtable* Platform_dynamicColumns(void);
 
-void Platform_dynamicColumnWriteField(const Process* proc, RichString* str, int param);
+const char* Platform_dynamicColumnInit(unsigned int key);
 
-int Platform_getNumberOfColumns(void);
-
-void Platform_updateDynamicColumns(PCPProcess* proc, int pid, int offset);
-
-int Platform_getColumnOffset(void);
+bool Platform_dynamicColumnWriteField(const Process* proc, RichString* str, unsigned int key);
 
 #endif

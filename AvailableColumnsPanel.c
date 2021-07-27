@@ -25,13 +25,6 @@ in the source distribution for its full text.
 #include "XUtils.h"
 
 
-typedef struct {
-   Panel* super;
-   unsigned int id;
-   unsigned int offset;
-} DynamicIterator;
-
-
 static const char* const AvailableColumnsFunctions[] = {"      ", "      ", "      ", "      ", "Add   ", "      ", "      ", "      ", "      ", "Done  ", NULL};
 
 static void AvailableColumnsPanel_delete(Object* object) {
@@ -41,11 +34,13 @@ static void AvailableColumnsPanel_delete(Object* object) {
    free(this);
 }
 
-static void AvailableColumnsPanel_insertDynamicColumnName(AvailableColumnsPanel* this, int at, int key) {
-   int param = abs(key - LAST_STATIC_PROCESSFIELD);
-   const DynamicColumn* column = Hashtable_get(this->dynamicColumns, param);
-   if (column)
-      Panel_insert(this->columns, at, (Object*) ListItem_new(column->caption, key));
+static void AvailableColumnsPanel_insert(AvailableColumnsPanel* this, int at, int key) {
+   const char* name;
+   if (key >= LAST_STATIC_PROCESSFIELD)
+      name = DynamicColumn_init(key);
+   else
+      name = Process_fields[key].name;
+   Panel_insert(this->columns, at, (Object*) ListItem_new(name, key));
 }
 
 static HandlerResult AvailableColumnsPanel_eventHandler(Panel* super, int ch) {
@@ -61,14 +56,9 @@ static HandlerResult AvailableColumnsPanel_eventHandler(Panel* super, int ch) {
          if (!selected)
             break;
 
-         int key = selected->key;
          int at = Panel_getSelectedIndex(this->columns);
-         if (key > LAST_STATIC_PROCESSFIELD) {
-            AvailableColumnsPanel_insertDynamicColumnName(this, at, key);
-         } else {
-            Panel_insert(this->columns, at, (Object*) ListItem_new(Process_fields[key].name, key));
-         }
-         Panel_setSelected(this->columns, at+1);
+	 AvailableColumnsPanel_insert(this, at, selected->key);
+         Panel_setSelected(this->columns, at + 1);
          ColumnsPanel_update(this->columns);
          result = HANDLED;
          break;
@@ -91,21 +81,19 @@ const PanelClass AvailableColumnsPanel_class = {
    .eventHandler = AvailableColumnsPanel_eventHandler
 };
 
-static void AvailableColumnsPanel_addDynamicColumn(ATTR_UNUSED ht_key_t key, void* value, void* data) {
-   const DynamicColumn* column = (const DynamicColumn*)value;
-   DynamicIterator* iter = (DynamicIterator*)data;
-   int fields = LAST_STATIC_PROCESSFIELD+iter->id;
+static void AvailableColumnsPanel_addDynamicColumn(ht_key_t key, void* value, void* data) {
+   const DynamicColumn* column = (const DynamicColumn*) value;
+   Panel* super = (Panel*) data;
+   char* title = column->caption ? column->caption : column->heading;
    char description[256];
-   xSnprintf(description, sizeof(description), "%s - %s", column->caption, column->description);
-   Panel_add(iter->super, (Object*) ListItem_new(description, fields));
-   iter->id++;
+   xSnprintf(description, sizeof(description), "%s - %s", title, column->description);
+   Panel_add(super, (Object*) ListItem_new(description, key));
 }
 
 // Handle DynamicColumns entries in the AvailableColumnsPanel
 static void AvailableColumnsPanel_addDynamicColumns(Panel* super, const ProcessList* pl) {
-   DynamicIterator iter = { .super = super, .id = 1, .offset = 0 };
-   assert(pl->dynamicMeters);
-   Hashtable_foreach(pl->dynamicColumns, AvailableColumnsPanel_addDynamicColumn, &iter);
+   assert(pl->dynamicColumns);
+   Hashtable_foreach(pl->dynamicColumns, AvailableColumnsPanel_addDynamicColumn, super);
 }
 
 // Handle remaining Platform Meter entries in the AvailableColumnsPanel
@@ -127,9 +115,7 @@ AvailableColumnsPanel* AvailableColumnsPanel_new(Panel* columns, const ProcessLi
    Panel_init(super, 1, 1, 1, 1, Class(ListItem), true, fuBar);
 
    Panel_setHeader(super, "Available Columns");
-
    AvailableColumnsPanel_addPlatformColumn(super);
-
    AvailableColumnsPanel_addDynamicColumns(super, pl);
 
    this->columns = columns;
