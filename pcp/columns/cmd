@@ -1,9 +1,0 @@
-# pcp-htop(1) configuration file - see pcp-htop(5)
-
-[syscmd]
-caption = myCMD
-width = -17
-description = PCP CMD description
-cmd.metric = proc.psinfo.cmd
-cmd.color = cyan
-cmd.label = sys
