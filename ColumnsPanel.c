@@ -129,10 +129,10 @@ static void ColumnsPanel_add(Panel* super, unsigned int key, Hashtable* columns)
       name = Process_fields[key].name;
    } else {
       const DynamicColumn* column = Hashtable_get(columns, key);
-      assert(column);
       name = column->caption ? column->caption : column->heading;
    }
-   Panel_add(super, (Object*) ListItem_new(name, key));
+   if (name)
+      Panel_add(super, (Object*) ListItem_new(name, key));
 }
 
 ColumnsPanel* ColumnsPanel_new(Settings* settings, const ProcessList* pl) {
