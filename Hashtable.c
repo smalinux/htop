@@ -120,19 +120,23 @@ Hashtable* Hashtable_new(size_t size, bool owner) {
 void Hashtable_delete(Hashtable* this) {
    Hashtable_clear(this);
 
-   free(this->buckets);
-   free(this);
+   if (this) {
+      free(this->buckets);
+      free(this);
+   }
 }
 
 void Hashtable_clear(Hashtable* this) {
    assert(Hashtable_isConsistent(this));
 
-   if (this->owner)
+   if (this && this->owner)
       for (size_t i = 0; i < this->size; i++)
          free(this->buckets[i].value);
 
-   memset(this->buckets, 0, this->size * sizeof(HashtableItem));
-   this->items = 0;
+   if (this) {
+      memset(this->buckets, 0, this->size * sizeof(HashtableItem));
+      this->items = 0;
+   }
 
    assert(Hashtable_isConsistent(this));
 }
