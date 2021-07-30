@@ -187,36 +187,43 @@ static void PCPDynamicColumn_scanDir(PCPDynamicColumns* columns, char* path) {
 }
 
 void PCPDynamicColumns_init(PCPDynamicColumns* columns) {
+   const char* share = pmGetConfig("PCP_SHARE_DIR");
    const char* sysconf = pmGetConfig("PCP_SYSCONF_DIR");
    const char* xdgConfigHome = getenv("XDG_CONFIG_HOME");
+   const char* override = getenv("PCP_HTOP_DIR");
    const char* home = getenv("HOME");
    char* path;
 
    columns->table = Hashtable_new(0, true);
 
-   /* search in the users home directory first of all */
-   if (xdgConfigHome) {
-      path = String_cat(xdgConfigHome, "/htop/columns/");
-   } else {
-      if (!home)
-         home = "";
-      path = String_cat(home, "/.config/htop/columns/");
+   /* developer paths - PCP_HTOP_DIR=./pcp ./pcp-htop */
+   if (override) {
+      path = String_cat(override, "/columns/");
+      PCPDynamicColumn_scanDir(columns, path);
+      free(path);
    }
-   PCPDynamicColumn_scanDir(columns, path);
-   free(path);
 
-   /* secondly search in the system columns directory */
+   /* next, search in home directory alongside htoprc */
+   if (xdgConfigHome)
+      path = String_cat(xdgConfigHome, "/htop/columns/");
+   else if (home)
+      path = String_cat(home, "/.config/htop/columns/");
+   else
+      path = NULL;
+   if (path) {
+      PCPDynamicColumn_scanDir(columns, path);
+      free(path);
+   }
+
+   /* next, search in the system columns directory */
    path = String_cat(sysconf, "/htop/columns/");
    PCPDynamicColumn_scanDir(columns, path);
    free(path);
 
-   /* check the working directory, as a final option */
-   char cwd[PATH_MAX];
-   if (getcwd(cwd, sizeof(cwd)) != NULL) {
-      path = String_cat(cwd, "/pcp/columns/");
-      PCPDynamicColumn_scanDir(columns, path);
-      free(path);
-   }
+   /* next, try the readonly system columns directory */
+   path = String_cat(share, "/htop/columns/");
+   PCPDynamicColumn_scanDir(columns, path);
+   free(path);
 }
 
 void PCPDynamicColumn_writeField(PCPDynamicColumn* this, const Process* proc, RichString* str) {

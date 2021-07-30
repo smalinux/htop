@@ -239,36 +239,43 @@ static void PCPDynamicMeter_scanDir(PCPDynamicMeters* meters, char* path) {
 }
 
 void PCPDynamicMeters_init(PCPDynamicMeters* meters) {
+   const char* share = pmGetConfig("PCP_SHARE_DIR");
    const char* sysconf = pmGetConfig("PCP_SYSCONF_DIR");
    const char* xdgConfigHome = getenv("XDG_CONFIG_HOME");
+   const char* override = getenv("PCP_HTOP_DIR");
    const char* home = getenv("HOME");
    char* path;
 
    meters->table = Hashtable_new(0, true);
 
-   /* search in the users home directory first of all */
-   if (xdgConfigHome) {
-      path = String_cat(xdgConfigHome, "/htop/meters/");
-   } else {
-      if (!home)
-         home = "";
-      path = String_cat(home, "/.config/htop/meters/");
+   /* developer paths - PCP_HTOP_DIR=./pcp ./pcp-htop */
+   if (override) {
+      path = String_cat(override, "/meters/");
+      PCPDynamicMeter_scanDir(meters, path);
+      free(path);
    }
-   PCPDynamicMeter_scanDir(meters, path);
-   free(path);
 
-   /* secondly search in the system meters directory */
+   /* next, search in home directory alongside htoprc */
+   if (xdgConfigHome)
+      path = String_cat(xdgConfigHome, "/htop/meters/");
+   else if (home)
+      path = String_cat(home, "/.config/htop/meters/");
+   else
+      path = NULL;
+   if (path) {
+      PCPDynamicMeter_scanDir(meters, path);
+      free(path);
+   }
+
+   /* next, search in the system meters directory */
    path = String_cat(sysconf, "/htop/meters/");
    PCPDynamicMeter_scanDir(meters, path);
    free(path);
 
-   /* check the working directory, as a final option */
-   char cwd[PATH_MAX];
-   if (getcwd(cwd, sizeof(cwd)) != NULL) {
-      path = String_cat(cwd, "/pcp/meters/");
-      PCPDynamicMeter_scanDir(meters, path);
-      free(path);
-   }
+   /* next, try the readonly system meters directory */
+   path = String_cat(share, "/htop/meters/");
+   PCPDynamicMeter_scanDir(meters, path);
+   free(path);
 }
 
 void PCPDynamicMeter_enable(PCPDynamicMeter* this) {
