@@ -2,7 +2,7 @@
 htop - PCPDynamicColumn.c
 (C) 2021 Sohaib Mohammed
 (C) 2021 htop dev team
-(C) 2021 Red Hat, Inc.  All Rights Reserved.
+(C) 2021 Red Hat, Inc.
 Released under the GNU GPLv2, see the COPYING file
 in the source distribution for its full text.
 */
