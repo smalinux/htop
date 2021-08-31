@@ -66,6 +66,7 @@ myhtopsources = \
 	ProcessLocksScreen.c \
 	RichString.c \
 	ScreenManager.c \
+	ScreensPanel.c \
 	Settings.c \
 	SignalsPanel.c \
 	SwapMeter.c \
@@ -127,6 +128,7 @@ myhtopheaders = \
 	ProvideCurses.h \
 	RichString.h \
 	ScreenManager.h \
+	ScreensPanel.h \
 	Settings.h \
 	SignalsPanel.h \
 	SwapMeter.h \
