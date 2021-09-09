@@ -1,20 +1,22 @@
 /*
 htop - ScreensPanel.c
 (C) 2004-2011 Hisham H. Muhammad
+(C) 2020-2021 htop dev team
+(C) 2020-2021 Red Hat, Inc.
 Released under the GNU GPL, see the COPYING file
 in the source distribution for its full text.
 */
 
 #include "ScreensPanel.h"
-#include "Platform.h"
-
-#include "CRT.h"
-#include "XUtils.h"
 
 #include <assert.h>
-#include <stdlib.h>
 #include <ctype.h>
+#include <stdlib.h>
 #include <string.h>
+
+#include "CRT.h"
+#include "Platform.h"
+#include "XUtils.h"
 
 
 ObjectClass ScreenListItem_class = {
@@ -67,6 +69,7 @@ static HandlerResult ScreensPanel_eventHandlerRenaming(Panel* super, int ch) {
          case 0x0d:
          case KEY_ENTER:
          {
+            this->settings->changed = true;
             ListItem* item = (ListItem*) Panel_getSelected(super);
             if (!item)
                break;
@@ -74,7 +77,7 @@ static HandlerResult ScreensPanel_eventHandlerRenaming(Panel* super, int ch) {
             item->value = xStrdup(this->buffer);
             this->renaming = false;
             super->cursorOn = false;
-            Panel_setSelectionColor(super, CRT_colors[PANEL_SELECTION_FOCUS]);
+            Panel_setSelectionColor(super, PANEL_SELECTION_FOCUS);
             ScreensPanel_update(super);
             break;
          }
@@ -86,7 +89,7 @@ static HandlerResult ScreensPanel_eventHandlerRenaming(Panel* super, int ch) {
             item->value = this->saved;
             this->renaming = false;
             super->cursorOn = false;
-            Panel_setSelectionColor(super, CRT_colors[PANEL_SELECTION_FOCUS]);
+            Panel_setSelectionColor(super, PANEL_SELECTION_FOCUS);
             break;
          }
       }
@@ -108,7 +111,7 @@ static void startRenaming(Panel* super) {
    this->buffer[SCREEN_NAME_LEN] = '\0';
    this->cursor = strlen(this->buffer);
    item->value = this->buffer;
-   Panel_setSelectionColor(super, CRT_colors[PANEL_EDIT]);
+   Panel_setSelectionColor(super, PANEL_EDIT);
    super->selectedLen = strlen(this->buffer);
    Panel_setCursorToSelection(super);
 }
@@ -153,7 +156,7 @@ static HandlerResult ScreensPanel_eventHandlerNormal(Panel* super, int ch) {
       case KEY_RECLICK:
       {
          this->moving = !(this->moving);
-         Panel_setSelectionColor(super, this->moving ? CRT_colors[PANEL_SELECTION_FOLLOW] : CRT_colors[PANEL_SELECTION_FOCUS]);
+         Panel_setSelectionColor(super, this->moving ? PANEL_SELECTION_FOLLOW : PANEL_SELECTION_FOCUS);
          ListItem* item = (ListItem*) Panel_getSelected(super);
          if (item)
             item->moving = this->moving;
@@ -161,18 +164,24 @@ static HandlerResult ScreensPanel_eventHandlerNormal(Panel* super, int ch) {
          break;
       }
       case EVENT_SET_SELECTED:
+      {
+         this->settings->changed = false;
          result = HANDLED;
          break;
+      }
       case KEY_NPAGE:
       case KEY_PPAGE:
       case KEY_HOME:
-      case KEY_END: {
+      case KEY_END:
+      {
+         this->settings->changed = false;
          Panel_onKey(super, ch);
          break;
       }
       case KEY_F(2):
       case KEY_CTRL('R'):
       {
+         this->settings->changed = true;
          startRenaming(super);
          result = HANDLED;
          break;
@@ -180,6 +189,7 @@ static HandlerResult ScreensPanel_eventHandlerNormal(Panel* super, int ch) {
       case KEY_F(5):
       case KEY_CTRL('N'):
       {
+         this->settings->changed = true;
          addNewScreen(super);
          startRenaming(super);
          shouldRebuildArray = true;
@@ -188,6 +198,7 @@ static HandlerResult ScreensPanel_eventHandlerNormal(Panel* super, int ch) {
       }
       case KEY_UP:
       {
+         this->settings->changed = false;
          if (!this->moving) {
             Panel_onKey(super, ch);
             break;
@@ -198,6 +209,7 @@ static HandlerResult ScreensPanel_eventHandlerNormal(Panel* super, int ch) {
       case '[':
       case '-':
       {
+         this->settings->changed = true;
          Panel_moveSelectedUp(super);
          shouldRebuildArray = true;
          result = HANDLED;
@@ -205,6 +217,7 @@ static HandlerResult ScreensPanel_eventHandlerNormal(Panel* super, int ch) {
       }
       case KEY_DOWN:
       {
+         this->settings->changed = false;
          if (!this->moving) {
             Panel_onKey(super, ch);
             break;
@@ -215,19 +228,28 @@ static HandlerResult ScreensPanel_eventHandlerNormal(Panel* super, int ch) {
       case ']':
       case '+':
       {
+         this->settings->changed = true;
          Panel_moveSelectedDown(super);
          shouldRebuildArray = true;
          result = HANDLED;
          break;
       }
       case KEY_F(9):
-      //case KEY_DC:
+      case KEY_DC:
       {
+         this->settings->changed = true;
          if (Panel_size(super) > 1) {
             Panel_remove(super, selected);
          }
          shouldRebuildArray = true;
          result = HANDLED;
+         break;
+      }
+      case KEY_LEFT:
+      case KEY_RIGHT:
+      {
+         this->settings->changed = false;
+         result = IGNORED;
          break;
       }
       default:
@@ -277,6 +299,8 @@ ScreensPanel* ScreensPanel_new(Settings* settings) {
    Panel_init(super, 1, 1, 1, 1, Class(ListItem), true, fuBar);
 
    this->settings = settings;
+   //settings->changed = false;
+   //this->settings->changed = false;
    this->columns = ColumnsPanel_new(settings->screens[0], columns, &(settings->changed));
    this->moving = false;
    this->renaming = false;

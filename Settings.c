@@ -188,12 +188,12 @@ static int toFieldIndex(Hashtable* columns, const char* str) {
       if (sscanf(str, "Dynamic(%30s)", dynamic)) {
          char* end;
          if ((end = strrchr(dynamic, ')')) != NULL) {
-	    bool success;
+            bool success;
             unsigned int key;
             *end = '\0';
             success = DynamicColumn_search(columns, dynamic, &key) != NULL;
             *end = ')';
-	    if (success)
+            if (success)
                return key;
          }
       }
@@ -289,8 +289,10 @@ static bool Settings_read(Settings* this, const char* fileName, unsigned int ini
          }
       } else if (String_eq(option[0], "fields")) {
          // old (no screen) naming also supported for backwards compatibility
-         if (!this->nScreens)
+         if (!this->nScreens) {
+            // FIXME this function prints 2 extra tabs at runtime!
             Settings_defaultScreens(this);
+         }
          ScreenSettings_readFields(this->screens[0], this->dynamicColumns, option[1]);
       } else if (String_eq(option[0], "sort_key")) {
          // old (no screen) naming also supported for backwards compatibility
