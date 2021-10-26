@@ -129,7 +129,7 @@ void InfoScreen_run(InfoScreen* this) {
          continue;
       }
 
-      switch(ch) {
+      switch (ch) {
       case ERR:
          continue;
       case KEY_F(3):

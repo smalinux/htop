@@ -39,7 +39,7 @@ in the source distribution for its full text.
 /* Used to identify kernel threads in Comm and Exe columns */
 static const char* const kthreadID = "KTHREAD";
 
-static uid_t Process_getuid = (uid_t)-1;
+static uid_t Process_getuid = (uid_t) -1;
 
 int Process_pidDigits = 7;
 
@@ -989,9 +989,9 @@ void Process_init(Process* this, const Settings* settings) {
    this->show = true;
    this->updated = false;
    this->cmdlineBasenameEnd = -1;
-   this->st_uid = (uid_t)-1;
+   this->st_uid = (uid_t) -1;
 
-   if (Process_getuid == (uid_t)-1) {
+   if (Process_getuid == (uid_t) -1) {
       Process_getuid = getuid();
    }
 }

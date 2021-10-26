@@ -34,6 +34,7 @@ in the source distribution for its full text.
 #include "TraceScreen.h"
 #include "Vector.h"
 #include "XUtils.h"
+#include "string.h"
 
 #if (defined(HAVE_LIBHWLOC) || defined(HAVE_AFFINITY))
 #include "Affinity.h"
@@ -112,7 +113,7 @@ bool Action_setUserOnly(const char* userName, uid_t* userId) {
       *userId = user->pw_uid;
       return true;
    }
-   *userId = (uid_t)-1;
+   *userId = (uid_t) -1;
    return false;
 }
 
@@ -409,7 +410,7 @@ static Htop_Reaction actionFilterByUser(State* st) {
    const ListItem* picked = (ListItem*) Action_pickFromVector(st, usersPanel, 19, false);
    if (picked) {
       if (picked == allUsers) {
-         st->pl->userId = (uid_t)-1;
+         st->pl->userId = (uid_t) -1;
       } else {
          Action_setUserOnly(ListItem_getRef(picked), &(st->pl->userId));
       }
