@@ -147,6 +147,7 @@ void ColumnsPanel_fill(ColumnsPanel* this, ScreenSettings* ss, Hashtable* column
 }
 
 ColumnsPanel* ColumnsPanel_new(ScreenSettings* ss, Hashtable* columns, bool* changed) {
+    //fprintf(stderr, "ColumnsPanel_new\n");
    ColumnsPanel* this = AllocThis(ColumnsPanel);
    Panel* super = (Panel*) this;
    FunctionBar* fuBar = FunctionBar_new(ColumnsFunctions, NULL, NULL);

@@ -150,7 +150,7 @@ static void addNewScreen(Panel* super) {
    ScreensPanel* const this = (ScreensPanel*) super;
 
    const char* name = "New";
-   ScreenSettings* ss = Settings_newScreen(this->settings, &(const ScreenDefaults){ .name = name, .columns = "PID Command", .sortKey = "PID" });
+   ScreenSettings* ss = Settings_newScreen(this->settings, &(const ScreenDefaults){ .name = name, .columns = "PID Command", .sortKey = "PID" }); // SMA: default columns !!!
    ScreenListItem* item = ScreenListItem_new(name, ss);
    int idx = Panel_getSelectedIndex(super);
    Panel_insert(super, idx + 1, (Object*) item);
@@ -260,7 +260,7 @@ static HandlerResult ScreensPanel_eventHandlerNormal(Panel* super, int ch) {
    }
    ScreenListItem* newFocus = (ScreenListItem*) Panel_getSelected(super);
    if (newFocus && oldFocus != newFocus) {
-      ColumnsPanel_fill(this->columns, newFocus->ss, this->settings->dynamicColumns);
+      ColumnsPanel_fill(this->columns, newFocus->ss, this->settings->dynamicColumns); // SMA: __2
       result = HANDLED;
    }
    if (shouldRebuildArray)
@@ -289,6 +289,7 @@ PanelClass ScreensPanel_class = {
 };
 
 ScreensPanel* ScreensPanel_new(Settings* settings) {
+    //fprintf(stderr, "ScreensPanel_new\n");
    ScreensPanel* this = AllocThis(ScreensPanel);
    Panel* super = (Panel*) this;
    Hashtable* columns = settings->dynamicColumns;
@@ -312,6 +313,7 @@ ScreensPanel* ScreensPanel_new(Settings* settings) {
 }
 
 void ScreensPanel_update(Panel* super) {
+    fprintf(stderr, "ScreensPanel_update\n");
    ScreensPanel* this = (ScreensPanel*) super;
    int size = Panel_size(super);
    this->settings->changed = true;

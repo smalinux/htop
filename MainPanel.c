@@ -91,6 +91,7 @@ static HandlerResult MainPanel_eventHandler(Panel* super, int ch) {
       reaction |= HTOP_RECALCULATE | HTOP_REDRAW_BAR | HTOP_SAVE_SETTINGS;
       result = HANDLED;
    } else if (EVENT_IS_SCREEN_TAB_CLICK(ch)) {
+       //fprintf(stderr, "hiiiiiiiiiiiii\n");
       int x = EVENT_SCREEN_TAB_GET_X(ch);
       reaction |= Action_setScreenTab(settings, x);
       result = HANDLED;

@@ -70,6 +70,7 @@ static void CategoriesPanel_makeColorsPage(CategoriesPanel* this) {
 }
 
 static void CategoriesPanel_makeScreensPage(CategoriesPanel* this) {
+    //fprintf(stderr, "CategoriesPanel_makeScreensPage\n");
    Panel* screens = (Panel*) ScreensPanel_new(this->settings);
    Panel* columns = (Panel*) ((ScreensPanel*)screens)->columns;
    Panel* availableColumns = (Panel*) AvailableColumnsPanel_new(columns, this->settings->dynamicColumns);

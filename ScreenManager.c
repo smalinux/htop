@@ -54,6 +54,7 @@ void ScreenManager_add(ScreenManager* this, Panel* item, int size) {
 }
 
 void ScreenManager_insert(ScreenManager* this, Panel* item, int size, int idx) {
+    //fprintf(stderr, "ScreenManager_add & ScreenManager_insert\n");
    int lastX = 0;
    if (idx > 0) {
       const Panel* last = (const Panel*) Vector_get(this->panels, idx - 1);
@@ -65,6 +66,7 @@ void ScreenManager_insert(ScreenManager* this, Panel* item, int size, int idx) {
    }
    Panel_resize(item, size, height);
    Panel_move(item, lastX, this->y1 + (this->header ? this->header->height : 0));
+    //fprintf(stderr, "idx = %d this->panelCount = %d\n", idx, this->panelCount);
    if (idx < this->panelCount) {
       for (int i =  idx + 1; i <= this->panelCount; i++) {
          Panel* p = (Panel*) Vector_get(this->panels, i);
@@ -142,7 +144,9 @@ static void checkRecalculation(ScreenManager* this, double* oldTime, int* sortTi
    *rescan = false;
 }
 
+// SMA: this call every second n number fo tabs...
 static inline bool drawTab(int* y, int* x, int l, const char* name, bool cur) {
+    //fprintf(stderr, "drawTab\n");
    attrset(CRT_colors[cur ? SCREENS_CUR_BORDER : SCREENS_OTH_BORDER]);
    mvaddch(*y, *x, '[');
    (*x)++;
