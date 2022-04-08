@@ -29,6 +29,7 @@ typedef enum PCPMetric_ {
    PCP_HINV_CPUCLOCK,           /* hinv.cpu.clock */
    PCP_UNAME_SYSNAME,           /* kernel.uname.sysname */
    MY_PCP_UNAME_SYSNAME,           /* kernel.uname.sysname */
+   CGROUP_CPU_STAT_USER,           /* cgroup.cpu.stat.user */
    PCP_UNAME_RELEASE,           /* kernel.uname.release */
    PCP_UNAME_MACHINE,           /* kernel.uname.machine */
    PCP_UNAME_DISTRO,            /* kernel.uname.distro */

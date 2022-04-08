@@ -124,6 +124,7 @@ static const char* Platform_metricNames[] = {
    [PCP_HINV_CPUCLOCK] = "hinv.cpu.clock",
    [PCP_UNAME_SYSNAME] = "kernel.uname.sysname",
    [MY_PCP_UNAME_SYSNAME] = "kernel.uname.sysname",
+   [CGROUP_CPU_STAT_USER] = "cgroup.cpu.stat.user", // cgroup
    [PCP_UNAME_RELEASE] = "kernel.uname.release",
    [PCP_UNAME_MACHINE] = "kernel.uname.machine",
    [PCP_UNAME_DISTRO] = "kernel.uname.distro",
@@ -352,6 +353,7 @@ bool Platform_init(void) {
    PCPMetric_enable(PCP_PERCPU_SYSTEM, true);
    PCPMetric_enable(PCP_UNAME_SYSNAME, true);
    PCPMetric_enable(MY_PCP_UNAME_SYSNAME, true);
+   PCPMetric_enable(CGROUP_CPU_STAT_USER, true);
    PCPMetric_enable(PCP_UNAME_RELEASE, true);
    PCPMetric_enable(PCP_UNAME_MACHINE, true);
    PCPMetric_enable(PCP_UNAME_DISTRO, true);
@@ -367,6 +369,7 @@ bool Platform_init(void) {
    PCPMetric_enable(PCP_BOOTTIME, false);
    PCPMetric_enable(PCP_UNAME_SYSNAME, false);
    PCPMetric_enable(MY_PCP_UNAME_SYSNAME, false);
+   //PCPMetric_enable(CGROUP_CPU_STAT_USER, false); // SMA: don't disable
    PCPMetric_enable(PCP_UNAME_RELEASE, false);
    PCPMetric_enable(PCP_UNAME_MACHINE, false);
    PCPMetric_enable(PCP_UNAME_DISTRO, false);
@@ -406,6 +409,10 @@ void Platform_setBindings(Htop_Action* keys) {
 }
 
 int Platform_getUptime(void) {
+   /* -------------------------------------------------------- */
+   //fprintf(stderr, "hiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii\n");
+   //fflush( stderr );
+   /* -------------------------------------------------------- */
    pmAtomValue value;
    if (PCPMetric_values(PCP_UPTIME, &value, 1, PM_TYPE_32) == NULL)
       return 0;
@@ -638,6 +645,18 @@ void Platform_getRelease(char** string) {
       }
       strcat(pcp->release, " ");
    }
+   /* -------------------------------------------------------- */
+   fprintf(stderr, "hiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii\n");
+   fflush( stderr );
+   int i, count = PCPMetric_instanceCount(CGROUP_CPU_STAT_USER);
+   pmAtomValue* values = xCalloc(count, sizeof(pmAtomValue));
+   if (PCPMetric_values(CGROUP_CPU_STAT_USER, values, count, PM_TYPE_U64)) {
+      for (i = 0; i < count; i++)
+          fprintf(stderr, "%lu\n", values[i].ull);
+
+   }
+   fflush( stderr );
+   /* -------------------------------------------------------- */
 
    if (pcp->release) /* cull trailing space */
       pcp->release[strlen(pcp->release)] = '\0';
