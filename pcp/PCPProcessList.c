@@ -162,6 +162,8 @@ static inline ProcessState PCPProcessList_getProcessState(char state) {
 static void PCPProcessList_updateID(Process* process, int pid, int offset) {
    process->tgid = Metric_instance_u32(PCP_PROC_TGID, pid, offset, 1);
    process->ppid = Metric_instance_u32(PCP_PROC_PPID, pid, offset, 1);
+   process->mycgroup = Metric_instance_u32(PCP_PROC_PPID, pid, offset, 1);
+   //process->cgroup = Metric_instance_u64(PCP_PROC_PPID, pid, offset, 1);
    process->state = PCPProcessList_getProcessState(Metric_instance_char(PCP_PROC_STATE, pid, offset, '?'));
 }
 
@@ -177,6 +179,7 @@ static void PCPProcessList_updateInfo(Process* process, int pid, int offset, cha
    process->pgrp = Metric_instance_u32(PCP_PROC_PGRP, pid, offset, 0);
    process->session = Metric_instance_u32(PCP_PROC_SESSION, pid, offset, 0);
    process->tty_nr = Metric_instance_u32(PCP_PROC_TTY, pid, offset, 0);
+   //process->cgroup = Metric_instance_u64(CGROUP_CPU_STAT_USER, pid, offset, 0);
    process->tpgid = Metric_instance_u32(PCP_PROC_TTYPGRP, pid, offset, 0);
    process->minflt = Metric_instance_u32(PCP_PROC_MINFLT, pid, offset, 0);
    pp->cminflt = Metric_instance_u32(PCP_PROC_CMINFLT, pid, offset, 0);
@@ -280,6 +283,10 @@ static void PCPProcessList_updateTTY(Process* process, int pid, int offset) {
    process->tty_name = setString(PCP_PROC_TTYNAME, pid, offset, process->tty_name);
 }
 
+// static void PCPProcessList_cgroup(Process* process, int pid, int offset) {
+//    process->cgroup = Metric_instance_u64(CGROUP_CPU_STAT_USER, pid, offset, ULLONG_MAX);
+// }
+//
 static void PCPProcessList_readCGroups(PCPProcess* pp, int pid, int offset) {
    pp->cgroup = setString(PCP_PROC_CGROUPS, pid, offset, pp->cgroup);
 }
@@ -403,6 +410,11 @@ static bool PCPProcessList_updateProcesses(PCPProcessList* this, double period, 
       proc->starttime_ctime += Platform_getBootTime();
       if (tty_nr != proc->tty_nr)
          PCPProcessList_updateTTY(proc, pid, offset);
+      /* ------------------------------------------------- */
+     // unsigned long cgroup = proc->cgroup;
+     // if (cgroup != proc->tty_nr)
+     //PCPProcessList_cgroup(proc, pid, offset);
+      /* ------------------------------------------------- */
 
       float percent_cpu = (pp->utime + pp->stime - lasttimes) / period * 100.0;
       proc->percent_cpu = isnan(percent_cpu) ?

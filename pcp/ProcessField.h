@@ -43,7 +43,6 @@ in the source distribution for its full text.
    M_PSSWP = 121,                \
    CTXT = 122,                   \
    SECATTR = 123,                \
-   AUTOGROUP_ID = 127,           \
    AUTOGROUP_NICE = 128,         \
    // End of list
 
