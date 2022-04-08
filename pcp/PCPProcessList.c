@@ -28,6 +28,7 @@ in the source distribution for its full text.
 #include "pcp/PCPMetric.h"
 #include "pcp/PCPProcess.h"
 
+static int printedOnce = 1;
 
 static void PCPProcessList_updateCPUcount(PCPProcessList* this) {
    ProcessList* pl = &(this->super);
@@ -162,8 +163,27 @@ static inline ProcessState PCPProcessList_getProcessState(char state) {
 static void PCPProcessList_updateID(Process* process, int pid, int offset) {
    process->tgid = Metric_instance_u32(PCP_PROC_TGID, pid, offset, 1);
    process->ppid = Metric_instance_u32(PCP_PROC_PPID, pid, offset, 1);
-   process->mycgroup = Metric_instance_u32(PCP_PROC_PPID, pid, offset, 1);
+   process->mycgroup = Metric_instance_u64(CGROUP_CPU_STAT_USER, pid, offset, 1); // SMA: This func not good at all with cgroup
    //process->cgroup = Metric_instance_u64(PCP_PROC_PPID, pid, offset, 1);
+    /* --------------------------------------------------------- */
+   if (printedOnce == 1) {
+       fprintf(stderr, "hiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii\n");
+       fflush( stderr );
+       int i, count = PCPMetric_instanceCount(CGROUP_CPU_STAT_USER);
+       pmAtomValue* values = xCalloc(count, sizeof(pmAtomValue));
+       if (PCPMetric_values(CGROUP_CPU_STAT_USER, values, count, PM_TYPE_U64)) {
+          for (i = 0; i < count; i++) {
+              fprintf(stderr, "%lu", values[i].ull);
+              fprintf(stderr, "=>> UI: %lu\n", process->mycgroup );
+          }
+
+       }
+
+
+       fflush( stderr );
+    printedOnce = 0;
+   }
+    /* --------------------------------------------------------- */
    process->state = PCPProcessList_getProcessState(Metric_instance_char(PCP_PROC_STATE, pid, offset, '?'));
 }
 

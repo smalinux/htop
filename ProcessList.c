@@ -164,6 +164,7 @@ void ProcessList_add(ProcessList* this, Process* p) {
 
    // highlighting processes found in first scan by first scan marked "far in the past"
    p->seenStampMs = this->monotonicMs;
+   p->mycgroup = 44;
 
    Vector_add(this->processes, p);
    Hashtable_put(this->processTable, p->pid, p);

@@ -646,16 +646,16 @@ void Platform_getRelease(char** string) {
       strcat(pcp->release, " ");
    }
    /* -------------------------------------------------------- */
-   fprintf(stderr, "hiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii\n");
-   fflush( stderr );
-   int i, count = PCPMetric_instanceCount(CGROUP_CPU_STAT_USER);
-   pmAtomValue* values = xCalloc(count, sizeof(pmAtomValue));
-   if (PCPMetric_values(CGROUP_CPU_STAT_USER, values, count, PM_TYPE_U64)) {
-      for (i = 0; i < count; i++)
-          fprintf(stderr, "%lu\n", values[i].ull);
-
-   }
-   fflush( stderr );
+//   fprintf(stderr, "hiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii\n");
+//   fflush( stderr );
+//   int i, count = PCPMetric_instanceCount(CGROUP_CPU_STAT_USER);
+//   pmAtomValue* values = xCalloc(count, sizeof(pmAtomValue));
+//   if (PCPMetric_values(CGROUP_CPU_STAT_USER, values, count, PM_TYPE_U64)) {
+//      for (i = 0; i < count; i++)
+//          fprintf(stderr, "%lu\n", values[i].ull);
+//
+//   }
+//   fflush( stderr );
    /* -------------------------------------------------------- */
 
    if (pcp->release) /* cull trailing space */

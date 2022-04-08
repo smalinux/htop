@@ -256,7 +256,7 @@ typedef struct Process_ {
    /* Has no known parent process */
    bool isRoot;
 
-   pid_t mycgroup;
+   uint64_t mycgroup;
 
    /*
     * Internal state for merged Command display

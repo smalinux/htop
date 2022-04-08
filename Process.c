@@ -898,7 +898,7 @@ void Process_writeField(const Process* this, RichString* str, ProcessField field
    case PGRP: xSnprintf(buffer, n, "%*d ", Process_pidDigits, this->pgrp); break;
    case PID: xSnprintf(buffer, n, "%*d ", Process_pidDigits, this->pid); break;
    case PPID: xSnprintf(buffer, n, "%*d ", Process_pidDigits, this->ppid); break;
-   case MYCGROUP: xSnprintf(buffer, n, "%*d ", Process_pidDigits, this->mycgroup); break;
+   case MYCGROUP: xSnprintf(buffer, n, "%*lu ", Process_pidDigits, this->mycgroup); break;
    case PRIORITY:
       if (this->priority <= -100)
          xSnprintf(buffer, n, " RT ");
