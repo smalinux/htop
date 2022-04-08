@@ -123,6 +123,7 @@ static const char* Platform_metricNames[] = {
    [PCP_HINV_NCPU] = "hinv.ncpu",
    [PCP_HINV_CPUCLOCK] = "hinv.cpu.clock",
    [PCP_UNAME_SYSNAME] = "kernel.uname.sysname",
+   [MY_PCP_UNAME_SYSNAME] = "kernel.uname.sysname",
    [PCP_UNAME_RELEASE] = "kernel.uname.release",
    [PCP_UNAME_MACHINE] = "kernel.uname.machine",
    [PCP_UNAME_DISTRO] = "kernel.uname.distro",
@@ -350,6 +351,7 @@ bool Platform_init(void) {
    PCPMetric_enable(PCP_HINV_NCPU, true);
    PCPMetric_enable(PCP_PERCPU_SYSTEM, true);
    PCPMetric_enable(PCP_UNAME_SYSNAME, true);
+   PCPMetric_enable(MY_PCP_UNAME_SYSNAME, true);
    PCPMetric_enable(PCP_UNAME_RELEASE, true);
    PCPMetric_enable(PCP_UNAME_MACHINE, true);
    PCPMetric_enable(PCP_UNAME_DISTRO, true);
@@ -364,6 +366,7 @@ bool Platform_init(void) {
    PCPMetric_enable(PCP_PID_MAX, false); /* needed one time only */
    PCPMetric_enable(PCP_BOOTTIME, false);
    PCPMetric_enable(PCP_UNAME_SYSNAME, false);
+   PCPMetric_enable(MY_PCP_UNAME_SYSNAME, false);
    PCPMetric_enable(PCP_UNAME_RELEASE, false);
    PCPMetric_enable(PCP_UNAME_MACHINE, false);
    PCPMetric_enable(PCP_UNAME_DISTRO, false);
@@ -579,9 +582,16 @@ void Platform_getRelease(char** string) {
    }
 
    /* first call, extract just-sampled values */
-   pmAtomValue sysname, release, machine, distro;
+   pmAtomValue my_sysname, sysname, release, machine, distro;
    if (!PCPMetric_values(PCP_UNAME_SYSNAME, &sysname, 1, PM_TYPE_STRING))
       sysname.cp = NULL;
+
+    if (!PCPMetric_values(MY_PCP_UNAME_SYSNAME, &my_sysname, 1, PM_TYPE_STRING))
+       my_sysname.cp = NULL;
+
+    // if (!PCPMetric_values(PCP_UNAME_SYSNAME, &my_sysname, 1, PM_TYPE_STRING)); // SMA: if;;;
+    //    my_sysname.cp = strdup("my_hiiiiiiiii");
+
    if (!PCPMetric_values(PCP_UNAME_RELEASE, &release, 1, PM_TYPE_STRING))
       release.cp = NULL;
    if (!PCPMetric_values(PCP_UNAME_MACHINE, &machine, 1, PM_TYPE_STRING))
@@ -592,6 +602,8 @@ void Platform_getRelease(char** string) {
    size_t length = 16; /* padded for formatting characters */
    if (sysname.cp)
       length += strlen(sysname.cp);
+   if (my_sysname.cp)
+      length += strlen(my_sysname.cp);
    if (release.cp)
       length += strlen(release.cp);
    if (machine.cp)
@@ -600,6 +612,10 @@ void Platform_getRelease(char** string) {
       length += strlen(distro.cp);
    pcp->release = xCalloc(1, length);
 
+   if (my_sysname.cp) {
+      strcat(pcp->release, my_sysname.cp);
+      strcat(pcp->release, " ");
+   }
    if (sysname.cp) {
       strcat(pcp->release, sysname.cp);
       strcat(pcp->release, " ");
@@ -630,6 +646,7 @@ void Platform_getRelease(char** string) {
    free(machine.cp);
    free(release.cp);
    free(sysname.cp);
+   free(my_sysname.cp);
 }
 
 char* Platform_getProcessEnv(pid_t pid) {
