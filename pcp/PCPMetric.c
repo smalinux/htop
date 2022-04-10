@@ -91,20 +91,72 @@ static pmAtomValue* PCPMetric_extract(PCPMetric metric, int inst, int offset, pm
 
 pmAtomValue* PCPMetric_instance(PCPMetric metric, int inst, int offset, pmAtomValue* atom, int type) {
 
+    if (metric == CGROUP_CPU_STAT_USER)
+       fprintf(stderr, "CGROUP_CPU_STAT_USER!!!\n");
+   pmValueSet* vset = pcp->result->vset[metric];
+   if (!vset || vset->numval <= 0) {
+       //fprintf(stderr, "Noooooooooooooooooooooooooo\n");
+      return NULL;
+   }
+
+   /* fast-path using heuristic offset based on expected location */
+   if (offset >= 0 && offset < vset->numval && inst == vset->vlist[offset].inst) {
+
+       //
+    if (metric == CGROUP_CPU_STAT_USER)
+       fprintf(stderr, "Noooooooooooooooooooooooooo 1 off\n");
+       //
+      return PCPMetric_extract(metric, inst, offset, vset, atom, type);
+   }
+
+   /* slow-path using a linear search for the requested instance */
+   for (int i = 0; i < vset->numval; i++) {
+      if (inst == vset->vlist[i].inst) {
+           //fprintf(stderr, "Noooooooooooooooooooooooooo 2\n");
+         return PCPMetric_extract(metric, inst, i, vset, atom, type);
+      }
+   }
+       fflush( stderr );
+       //
+    if (metric == CGROUP_CPU_STAT_USER)
+           fprintf(stderr, "Noooooooooooooooooooooooooo 2\n");
+           //
+   return NULL;
+}
+
+pmAtomValue* MY_PCPMetric_instance(PCPMetric metric, int inst, int offset, pmAtomValue* atom, int type) {
+
+   if (pcp->result == NULL)
+      return NULL;
+
    pmValueSet* vset = pcp->result->vset[metric];
    if (!vset || vset->numval <= 0)
       return NULL;
 
-   /* fast-path using heuristic offset based on expected location */
-   if (offset >= 0 && offset < vset->numval && inst == vset->vlist[offset].inst)
-      return PCPMetric_extract(metric, inst, offset, vset, atom, type);
+   /* extract requested number of values as requested type */
+   const pmDesc* desc = &pcp->descs[metric];
 
-   /* slow-path using a linear search for the requested instance */
-   for (int i = 0; i < vset->numval; i++) {
-      if (inst == vset->vlist[i].inst)
-         return PCPMetric_extract(metric, inst, i, vset, atom, type);
+   //if (offset >= 0 ) {
+   //    fprintf(stderr, "AAAAAAAAAAAAAAAAAAAAAAAAAAA offset %d\n", offset);
+   //}
+   // if (offset < vset->numval) {
+   //     fprintf(stderr, "BBBBBBBBBBBBBBBBBBBBB 1\n");
+   // }
+
+   fprintf(stderr, "CCCCCCCCCCCCCCCCCCCCCCCC inst = %d - .inst = %d\n",
+           inst, vset->vlist[offset].inst);
+   if (inst == vset->vlist[offset].inst) {
+       fprintf(stderr, "CCCCCCCCCCCCCCCCCCCCCCCC 1\n");
    }
-   return NULL;
+
+   if (offset >= 0 && offset < vset->numval && inst == vset->vlist[offset].inst) {
+
+       fprintf(stderr, "Noooooooooooooooooooooooooo 1\n");
+      return PCPMetric_extract(metric, inst+1, offset, vset, atom, type);
+   }
+
+
+    return NULL;
 }
 
 /*

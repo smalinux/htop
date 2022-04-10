@@ -163,7 +163,17 @@ static inline ProcessState PCPProcessList_getProcessState(char state) {
 static void PCPProcessList_updateID(Process* process, int pid, int offset) {
    process->tgid = Metric_instance_u32(PCP_PROC_TGID, pid, offset, 1);
    process->ppid = Metric_instance_u32(PCP_PROC_PPID, pid, offset, 1);
-   process->mycgroup = Metric_instance_u64(CGROUP_CPU_STAT_USER, pid, offset, 1); // SMA: This func not good at all with cgroup
+   pmAtomValue value;
+static   int  xxx = 0;
+if (xxx > 114)
+    xxx = 0;
+   if( MY_PCPMetric_instance(CGROUP_CPU_STAT_USER, xxx, xxx, &value, PM_TYPE_U64) )
+       process->mycgroup = value.ull; // SMA: This func not good at all with cgroup
+   else
+       process->mycgroup = 5555;
+   xxx++;
+   fprintf(stderr, "process->mycgroup >>>>>>>>>>>>>>>>>>>>>>>>>%lu\n", process->mycgroup);
+
    //process->cgroup = Metric_instance_u64(PCP_PROC_PPID, pid, offset, 1);
     /* --------------------------------------------------------- */
    if (printedOnce == 1) {

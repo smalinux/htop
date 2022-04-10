@@ -176,6 +176,8 @@ int PCPMetric_instanceCount(PCPMetric metric);
 
 int PCPMetric_instanceOffset(PCPMetric metric, int inst);
 
+pmAtomValue* MY_PCPMetric_instance(PCPMetric metric, int inst, int offset, pmAtomValue* atom, int type);
+
 pmAtomValue* PCPMetric_instance(PCPMetric metric, int inst, int offset, pmAtomValue* atom, int type);
 
 #endif
