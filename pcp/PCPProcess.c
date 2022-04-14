@@ -29,7 +29,7 @@ const ProcessFieldData Process_fields[] = {
    [COMM] = { .name = "Command", .title = "Command ", .description = "Command line", .flags = 0, },
    [STATE] = { .name = "STATE", .title = "S ", .description = "Process state (S sleeping, R running, D disk, Z zombie, T traced, W paging, I idle)", .flags = 0, },
    [PPID] = { .name = "PPID", .title = "PPID", .description = "Parent process ID", .flags = 0, },
-   [MYCGROUP] = { .name = "MYCGROUP", .title = "MYCGROUP", .description = "=========================", .flags = 0, },
+   [MYCGROUP] = { .name = "MYCGROUP", .title = "cgroup", .description = "=========================", .flags = 0, },
    [PGRP] = { .name = "PGRP", .title = "PGRP", .description = "Process group ID", .flags = 0, },
    [SESSION] = { .name = "SESSION", .title = "SID", .description = "Process's session ID", .flags = 0, },
    [TTY] = { .name = "TTY", .title = "TTY      ", .description = "Controlling terminal", .flags = 0, },
