@@ -899,6 +899,8 @@ void Process_writeField(const Process* this, RichString* str, ProcessField field
    case PID: xSnprintf(buffer, n, "%*d ", Process_pidDigits, this->pid); break;
    case PPID: xSnprintf(buffer, n, "%*d ", Process_pidDigits, this->ppid); break;
    case MYCGROUP: xSnprintf(buffer, n, "%*lu ", Process_pidDigits, this->mycgroup); break;
+   case MYCGROUP1: xSnprintf(buffer, n, "%*lu ", Process_pidDigits, this->mycgroup1); break;
+   case MYCGROUP2: xSnprintf(buffer, n, "%*lu ", Process_pidDigits, this->mycgroup2); break;
    case PRIORITY:
       if (this->priority <= -100)
          xSnprintf(buffer, n, " RT ");
@@ -1154,6 +1156,10 @@ int Process_compareByKey_Base(const Process* p1, const Process* p2, ProcessField
       return SPACESHIP_NUMBER(p1->ppid, p2->ppid);
    case MYCGROUP:
       return SPACESHIP_NUMBER(p1->mycgroup, p2->mycgroup);
+   case MYCGROUP1:
+      return SPACESHIP_NUMBER(p1->mycgroup1, p2->mycgroup1);
+   case MYCGROUP2:
+      return SPACESHIP_NUMBER(p1->mycgroup2, p2->mycgroup2);
    case PRIORITY:
       return SPACESHIP_NUMBER(p1->priority, p2->priority);
    case PROCESSOR:

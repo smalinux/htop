@@ -167,10 +167,22 @@ static void PCPProcessList_updateID(Process* process, int pid, int offset) {
 static   int  xxx = 0;
 if (xxx > 114)
     xxx = 0;
+
    if( MY_PCPMetric_instance(CGROUP_CPU_STAT_USER, xxx, xxx, &value, PM_TYPE_U64) )
        process->mycgroup = value.ull; // SMA: This func not good at all with cgroup
    else
        process->mycgroup = 5555;
+
+   if( MY_PCPMetric_instance(CGROUP_CPU_STAT_SYSTEM, xxx, xxx, &value, PM_TYPE_U64) )
+       process->mycgroup1 = value.ull; // SMA: This func not good at all with cgroup
+   else
+       process->mycgroup1 = 5555;
+
+   if( MY_PCPMetric_instance(CGROUP_CPU_STAT_USAGE, xxx, xxx, &value, PM_TYPE_U64) )
+       process->mycgroup2 = value.ull; // SMA: This func not good at all with cgroup
+   else
+       process->mycgroup2 = 5555;
+
    xxx++;
    fprintf(stderr, "process->mycgroup >>>>>>>>>>>>>>>>>>>>>>>>>%lu\n", process->mycgroup);
 

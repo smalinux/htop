@@ -53,6 +53,8 @@ typedef enum ProcessField_ {
    PROC_EXE = 125,
    CWD = 126,
    MYCGROUP = 127,
+   MYCGROUP1 = 22,
+   MYCGROUP2 = 23,
 
    /* Platform specific fields, defined in ${platform}/ProcessField.h */
    PLATFORM_PROCESS_FIELDS
@@ -257,6 +259,8 @@ typedef struct Process_ {
    bool isRoot;
 
    uint64_t mycgroup;
+   uint64_t mycgroup1;
+   uint64_t mycgroup2;
 
    /*
     * Internal state for merged Command display

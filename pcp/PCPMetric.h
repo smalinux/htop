@@ -30,6 +30,8 @@ typedef enum PCPMetric_ {
    PCP_UNAME_SYSNAME,           /* kernel.uname.sysname */
    MY_PCP_UNAME_SYSNAME,           /* kernel.uname.sysname */
    CGROUP_CPU_STAT_USER,           /* cgroup.cpu.stat.user */
+   CGROUP_CPU_STAT_SYSTEM,           /* cgroup.cpu.stat.system */
+   CGROUP_CPU_STAT_USAGE,           /* cgroup.cpu.stat.usage */
    PCP_UNAME_RELEASE,           /* kernel.uname.release */
    PCP_UNAME_MACHINE,           /* kernel.uname.machine */
    PCP_UNAME_DISTRO,            /* kernel.uname.distro */

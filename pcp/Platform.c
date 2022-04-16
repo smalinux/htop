@@ -125,6 +125,8 @@ static const char* Platform_metricNames[] = {
    [PCP_UNAME_SYSNAME] = "kernel.uname.sysname",
    [MY_PCP_UNAME_SYSNAME] = "kernel.uname.sysname",
    [CGROUP_CPU_STAT_USER] = "cgroup.cpu.stat.user", // cgroup
+   [CGROUP_CPU_STAT_SYSTEM] = "cgroup.cpu.stat.system", // cgroup
+   [CGROUP_CPU_STAT_USAGE] = "cgroup.cpu.stat.usage", // cgroup
    [PCP_UNAME_RELEASE] = "kernel.uname.release",
    [PCP_UNAME_MACHINE] = "kernel.uname.machine",
    [PCP_UNAME_DISTRO] = "kernel.uname.distro",
@@ -354,6 +356,8 @@ bool Platform_init(void) {
    PCPMetric_enable(PCP_UNAME_SYSNAME, true);
    PCPMetric_enable(MY_PCP_UNAME_SYSNAME, true);
    PCPMetric_enable(CGROUP_CPU_STAT_USER, true);
+   PCPMetric_enable(CGROUP_CPU_STAT_SYSTEM, true);
+   PCPMetric_enable(CGROUP_CPU_STAT_USAGE, true);
    PCPMetric_enable(PCP_UNAME_RELEASE, true);
    PCPMetric_enable(PCP_UNAME_MACHINE, true);
    PCPMetric_enable(PCP_UNAME_DISTRO, true);
