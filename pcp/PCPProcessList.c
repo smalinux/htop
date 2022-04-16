@@ -318,7 +318,7 @@ static void PCPProcessList_updateTTY(Process* process, int pid, int offset) {
 // }
 //
 static void PCPProcessList_readCGroups(PCPProcess* pp, int pid, int offset) {
-   pp->cgroup = setString(PCP_PROC_CGROUPS, pid, offset, pp->cgroup);
+   //pp->cgroup = setString(PCP_PROC_CGROUPS, pid, offset, pp->cgroup);
 }
 
 static void PCPProcessList_readSecattrData(PCPProcess* pp, int pid, int offset) {
@@ -339,11 +339,14 @@ static void PCPProcessList_updateCmdline(Process* process, int pid, int offset, 
    if (!PCPMetric_instance(PCP_PROC_PSARGS, pid, offset, &value, PM_TYPE_STRING)) {
       if (process->state != ZOMBIE)
          process->isKernelThread = true;
-      Process_updateCmdline(process, NULL, 0, 0);
       return;
    }
 
    char* command = value.cp;
+   // static char xx[] = "hellllllo";
+   //command = xx;
+   int indoom = PCPMetric_InDom(CGROUP_CPU_STAT_USER);
+   pmNameInDom(indoom, pid, &command);
    int length = strlen(command);
    if (command[0] != '(') {
       process->isKernelThread = false;
