@@ -180,4 +180,6 @@ pmAtomValue* MY_PCPMetric_instance(PCPMetric metric, int inst, int offset, pmAto
 
 pmAtomValue* PCPMetric_instance(PCPMetric metric, int inst, int offset, pmAtomValue* atom, int type);
 
+pmInDom PCPMetric_InDom(PCPMetric metric);
+
 #endif

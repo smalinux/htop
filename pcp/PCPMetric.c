@@ -123,6 +123,18 @@ pmAtomValue* PCPMetric_instance(PCPMetric metric, int inst, int offset, pmAtomVa
            //
    return NULL;
 }
+pmInDom PCPMetric_InDom(PCPMetric metric) {
+   if (pcp->result == NULL)
+      return -1;
+
+   pmValueSet* vset = pcp->result->vset[metric];
+   if (!vset || vset->numval <= 0)
+      return -1;
+
+   /* extract requested number of values as requested type */
+   const pmDesc* desc = &pcp->descs[metric];
+   return desc->indom;
+}
 
 pmAtomValue* MY_PCPMetric_instance(PCPMetric metric, int inst, int offset, pmAtomValue* atom, int type) {
 
