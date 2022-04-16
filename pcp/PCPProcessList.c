@@ -355,10 +355,10 @@ static void PCPProcessList_updateCmdline(Process* process, int pid, int offset, 
    }
 
    char* command = value.cp;
-   // static char xx[] = "hellllllo";
+   //static char xx[] = "hellllllo";
    //command = xx;
-   int indoom = PCPMetric_InDom(CGROUP_CPU_STAT_USER);
-   pmNameInDom(indoom, pid, &command);
+   PCPMetric_externalName(CGROUP_CPU_STAT_USER, pid, &command);
+   // fprintf(stderr, "******************* %s\n", command);
    int length = strlen(command);
    if (command[0] != '(') {
       process->isKernelThread = false;
