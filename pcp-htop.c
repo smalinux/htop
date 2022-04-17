@@ -13,6 +13,27 @@ in the source distribution for its full text.
 #include "CommandLine.h"
 #include "Platform.h"
 
+//..........................Start three level...................................
+typedef struct {
+   int data; // could be any kind of data. ex: pmAtomValue
+   pmInDom indom; // pminfo -d cgroup.cpu.stat.user
+   pmID pmid; // pminfo -m cgroup.cpu.stat.user
+   size_t internalInstance;
+} node;
+
+static void hash_compare(ht_key_t key, void* value, void* data) {
+    node* val = (node*) value;
+    node* user_data = (node*) data;
+    if(
+            user_data->indom == val->indom &&
+            user_data->pmid == val->pmid &&
+            user_data->internalInstance == val->internalInstance) {
+
+        user_data->data = val->data;
+    }
+}
+
+//..........................End three level...................................
 // node { data & key }
 typedef struct {
    int data; // could be any kind of data.
@@ -73,6 +94,41 @@ int main(int argc, char** argv) {
    /* .......... Hashtable_delete .......... */
    Hashtable_delete(ht);
 
+   /* ...................................................................... */
+   /* .......................... Three levels key .......................... */
+   /* ...........................There is no Three levels key............... */
+   /* ............................ Becuase this prototype: ................. */
+   /* void Hashtable_put(Hashtable* this, ht_key_t key, void* value);        */
+
+
+   /* .......... Hashtable_new .......... */
+   Hashtable *hash = Hashtable_new(20, false);
+
+   /* .......... Hashtable_put .......... */
+   node n1 = { .data = 1111, .indom = 1, .pmid = 11, .internalInstance = 111};
+   //Hashtable_put(hash, n1.indom*n1.pmid, &n1);
+   Hashtable_put(hash, 1, &n1); // SMA: search how to generate unique number from 2 num
+   // indom & pmid
+   // or use hashtable->hashtable->vector
+
+   node n2 = { .data = 2222, .indom = 2, .pmid = 22, .internalInstance = 222};
+   Hashtable_put(hash, 2, &n2);
+
+   node n3 = { .data = 3333, .indom = 3, .pmid = 33, .internalInstance = 333};
+   Hashtable_put(hash, 3, &n3);
+
+   node n4 = { .data = 4444, .indom = 3, .pmid = 33, .internalInstance = 444};
+   Hashtable_put(hash, 4, &n4);
+
+   node n5 = { .data = 5555, .indom = 3, .pmid = 33, .internalInstance = 555};
+   Hashtable_put(hash, 5, &n5);
+
+
+   /* .......... Hashtable_foreach .......... */
+   node i = { .indom = 3, .pmid = 33, .internalInstance = 444 };
+   Hashtable_foreach(hash, hash_compare, &i);
+   if (i.indom)
+       fprintf(stderr, "3 levels item value = %d\n", i.data);
 
    fflush( stderr );
 
