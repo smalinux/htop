@@ -13,8 +13,21 @@ in the source distribution for its full text.
 #include "CommandLine.h"
 #include "Platform.h"
 
-static void DynamicColumn_compare(ht_key_t key, void* value, void* data) {
-    fprintf(stderr, "ffffffffffffffffff\n");
+// node { data & key }
+typedef struct {
+   int data; // could be any kind of data.
+   unsigned int key;
+} Iterator;
+
+static void compare(ht_key_t key, void* value, void* data) {
+    Iterator* val = (Iterator*) value;
+    Iterator* user_data = (Iterator*) data;
+        //fprintf(stderr, "val->data = %d - val->key = %d\n", val->data, val->key);
+        //fprintf(stderr, "data->data = %d - data->key = %d\n", val->data, val->key);
+    if(user_data->data == val->data) {
+        //fprintf(stderr, "found in key = %d\n", key);
+        user_data->key = key;
+    }
 }
 
 int main(int argc, char** argv) {
@@ -26,17 +39,17 @@ int main(int argc, char** argv) {
 
 
    /* .......... Hashtable_put .......... */
-   int x = 11;
-   int *xp = &x;
-   Hashtable_put(ht, 1, xp);
+   Iterator xp = {.data = 11, .key = 1};
+   Hashtable_put(ht, xp.key, &xp);
 
-   int y = 22;
-   int *yp = &y;
-   Hashtable_put(ht, 2, yp);
+   Iterator yp = {.data = 22, .key = 2};
+   Hashtable_put(ht, yp.key, &yp);
 
-   int z = 33;
-   int *zp = &z;
-   Hashtable_put(ht, 3, zp);
+   Iterator zp = {.data = 33, .key = 3};
+   Hashtable_put(ht, zp.key, &zp);
+
+   Iterator zzp = {.data = 33, .key = 4};
+   Hashtable_put(ht, zzp.key, &zzp);
 
 
    /* .......... Hashtable_get .......... */
@@ -45,13 +58,15 @@ int main(int argc, char** argv) {
 
 
    /* .......... Hashtable_foreach .......... */
-   int iter = 2;
-   Hashtable_foreach(ht, DynamicColumn_compare, NULL);
+   Iterator iter = { .key = 0, .data = 33 };
+   Hashtable_foreach(ht, compare, &iter);
+   if (iter.key)
+       fprintf(stderr, "item key = %d\n", iter.key);
 
 
    /* .......... Hashtable_remove .......... */
-   int *r = Hashtable_remove(ht, 2);
-   fprintf(stderr, "Hashtable_count = %d\n", *r);
+   Iterator *r = Hashtable_remove(ht, 2);
+   fprintf(stderr, "removed elm = { key = %d, val = %d }\n", r->key, r->data);
 
 
 
