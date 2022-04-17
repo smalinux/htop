@@ -13,6 +13,13 @@ in the source distribution for its full text.
 #include "CommandLine.h"
 #include "Platform.h"
 
+static int c(const void* v1, const void* v2) {
+   const Process* p1 = (const Process*)v1;
+   const Process* p2 = (const Process*)v2;
+
+   return SPACESHIP_NUMBER(p1->pid, p2->pid);
+}
+
 //..........................Start three level...................................
 typedef struct {
    int data; // could be any kind of data. ex: pmAtomValue
@@ -129,6 +136,40 @@ int main(int argc, char** argv) {
    Hashtable_foreach(hash, hash_compare, &i);
    if (i.indom)
        fprintf(stderr, "3 levels item value = %d\n", i.data);
+
+   /* ...................................................................... */
+   // ............................... Vector ...............................
+   /* ...................................................................... */
+
+   Vector *v = Vector_new(Class(Process), true, DEFAULT_SIZE);
+
+    fprintf(stderr, "Before sort: \n");
+   int d1 = 11;
+   Vector_insert(v, 1, &d1);
+
+   int d3 = 33;
+   Vector_insert(v, 3, &d3);
+
+   int d2 = 22;
+   Vector_insert(v, 2, &d2);
+
+   int d4 = 44;
+   Vector_insert(v, 4, &d4);
+
+   Object* t;
+   for(int idx = 0; idx <Vector_size(v); idx++) {
+       t = Vector_get(v, idx);
+       fprintf(stderr, "i = %d\n", *(int*)t);
+   }
+
+    fprintf(stderr, "=================\n");
+    fprintf(stderr, "After sort: \n");
+    Vector_quickSortCustomCompare(v, c);
+   for(int idx = 0; idx <Vector_size(v); idx++) {
+       t = Vector_get(v, idx);
+       fprintf(stderr, "i = %d\n", *(int*)t);
+   }
+
 
    fflush( stderr );
 
