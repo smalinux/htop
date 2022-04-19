@@ -28,8 +28,8 @@ in the source distribution for its full text.
 #define PROCESS_FLAG_LINUX_AUTOGROUP 0x00080000
 
 typedef struct myPCPProcess_ {
-    int x;
-    pmAtomValue v_list;
+    int size;
+    pmAtomValue *v_list;
 } myPCPProcess;
 
 typedef struct PCPProcess_ {

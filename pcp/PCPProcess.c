@@ -283,7 +283,7 @@ int PCPProcess_compare(const void* v1, const void* v2) {
     const myPCPProcess* p1 = (const myPCPProcess*)v1;
     const myPCPProcess* p2 = (const myPCPProcess*)v2;
 
-    return SPACESHIP_NUMBER(p1->v_list.ul, p2->v_list.ul);
+    return SPACESHIP_NUMBER(p1->v_list[0].ul, p2->v_list[0].ul);
 }
 
 const ProcessClass PCPProcess_class = {
