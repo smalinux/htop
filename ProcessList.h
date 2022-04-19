@@ -126,4 +126,6 @@ static inline Process* ProcessList_findProcess(ProcessList* this, pid_t pid) {
    return (Process*) Hashtable_get(this->processTable, pid);
 }
 
+int compareProcessByKnownParentThenNatural(const void* v1, const void* v2);
+
 #endif

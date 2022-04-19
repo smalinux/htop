@@ -249,7 +249,7 @@ static void ProcessList_buildTreeBranch(ProcessList* this, pid_t pid, int level,
    }
 }
 
-static int compareProcessByKnownParentThenNatural(const void* v1, const void* v2) {
+int compareProcessByKnownParentThenNatural(const void* v1, const void* v2) {
    const Process* p1 = (const Process*)v1;
    const Process* p2 = (const Process*)v2;
 

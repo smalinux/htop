@@ -1031,6 +1031,16 @@ const ProcessClass Process_class = {
    .writeField = Process_writeField,
 };
 
+const ProcessClass myProcess_class = {
+   .super = {
+      .extends = Class(Object),
+      .display = Process_display,
+      .delete = Process_delete,
+      .compare = Process_compare
+   },
+   .writeField = Process_writeField,
+};
+
 void Process_init(Process* this, const Settings* settings) {
    this->settings = settings;
    this->tag = false;
@@ -1093,18 +1103,15 @@ int Process_compare(const void* v1, const void* v2) {
    const Process* p1 = (const Process*)v1;
    const Process* p2 = (const Process*)v2;
 
-   const Settings* settings = p1->settings;
-   const ScreenSettings* ss = settings->ss;
 
-   ProcessField key = ScreenSettings_getActiveSortKey(ss);
-
-   int result = Process_compareByKey(p1, p2, key);
+   //fprintf( stderr, "p1 = %d, p2 = %d\n", p1->pid, p2->pid);
+   //int result = Process_compareByKey(p1, p2, 1);
 
    // Implement tie-breaker (needed to make tree mode more stable)
-   if (!result)
+   //if (!result)
       return SPACESHIP_NUMBER(p1->pid, p2->pid);
 
-   return (ScreenSettings_getActiveDirection(ss) == 1) ? result : -result;
+   //return (ScreenSettings_getActiveDirection(ss) == 1) ? result : -result;
 }
 
 int Process_compareByKey_Base(const Process* p1, const Process* p2, ProcessField key) {

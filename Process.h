@@ -307,7 +307,14 @@ typedef struct ProcessClass_ {
    const Process_CompareByKey compareByKey;
 } ProcessClass;
 
+typedef struct myProcessClass_ {
+   const ObjectClass super;
+   const Process_WriteField writeField;
+   const Process_CompareByKey compareByKey;
+} myProcessClass;
+
 #define As_Process(this_)                              ((const ProcessClass*)((this_)->super.klass))
+//#define As_Process(this_)                              ((const myProcessClass*)((this_)->super.klass))
 
 #define Process_compareByKey(p1_, p2_, key_)           (As_Process(p1_)->compareByKey ? (As_Process(p1_)->compareByKey(p1_, p2_, key_)) : Process_compareByKey_Base(p1_, p2_, key_))
 
@@ -379,6 +386,7 @@ void Process_display(const Object* cast, RichString* out);
 void Process_done(Process* this);
 
 extern const ProcessClass Process_class;
+extern const ProcessClass myProcess_class;
 
 void Process_init(Process* this, const struct Settings_* settings);
 
