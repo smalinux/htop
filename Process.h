@@ -109,6 +109,10 @@ typedef struct ProcessMergedCommand_ {
    bool prevShowThreadNames : 1;               /* whether showThreadNames was set */
 } ProcessMergedCommand;
 
+typedef struct myProcess_ {
+    int sohaib;
+} myProcess;
+
 typedef struct Process_ {
    /* Super object for emulated OOP */
    Object super;
@@ -286,7 +290,9 @@ typedef struct ProcessFieldData_ {
 
 // Implemented in platform-specific code:
 void Process_writeField(const Process* this, RichString* str, ProcessField field);
+void myProcess_writeField(const Process* this, RichString* str, ProcessField field);
 int Process_compare(const void* v1, const void* v2);
+int myProcess_compare(const void* v1, const void* v2);
 void Process_delete(Object* cast);
 extern const ProcessFieldData Process_fields[LAST_PROCESSFIELD];
 extern uint8_t Process_fieldWidths[LAST_PROCESSFIELD];
@@ -299,7 +305,9 @@ extern int Process_uidDigits;
 
 typedef Process* (*Process_New)(const struct Settings_*);
 typedef void (*Process_WriteField)(const Process*, RichString*, ProcessField);
+typedef void (*myProcess_WriteField)(const myProcess*, RichString*, ProcessField);
 typedef int (*Process_CompareByKey)(const Process*, const Process*, ProcessField);
+typedef int (*myProcess_CompareByKey)(const myProcess*, const myProcess*, ProcessField);
 
 typedef struct ProcessClass_ {
    const ObjectClass super;
@@ -309,14 +317,15 @@ typedef struct ProcessClass_ {
 
 typedef struct myProcessClass_ {
    const ObjectClass super;
-   const Process_WriteField writeField;
-   const Process_CompareByKey compareByKey;
+   const myProcess_WriteField writeField;
+   const myProcess_CompareByKey compareByKey;
 } myProcessClass;
 
 #define As_Process(this_)                              ((const ProcessClass*)((this_)->super.klass))
-//#define As_Process(this_)                              ((const myProcessClass*)((this_)->super.klass))
+#define As_myProcess(this_)                              ((const myProcessClass*)((this_)->super.klass))
 
 #define Process_compareByKey(p1_, p2_, key_)           (As_Process(p1_)->compareByKey ? (As_Process(p1_)->compareByKey(p1_, p2_, key_)) : Process_compareByKey_Base(p1_, p2_, key_))
+#define myProcess_compareByKey(p1_, p2_, key_)           (As_myProcess(p1_)->compareByKey ? (As_myProcess(p1_)->compareByKey(p1_, p2_, key_)) : Process_compareByKey_Base(p1_, p2_, key_))
 
 static inline pid_t Process_getParentPid(const Process* this) {
    return this->tgid == this->pid ? this->ppid : this->tgid;
@@ -386,7 +395,7 @@ void Process_display(const Object* cast, RichString* out);
 void Process_done(Process* this);
 
 extern const ProcessClass Process_class;
-extern const ProcessClass myProcess_class;
+extern const myProcessClass myProcess_class;
 
 void Process_init(Process* this, const struct Settings_* settings);
 

@@ -264,6 +264,10 @@ int compareProcessByKnownParentThenNatural(const void* v1, const void* v2) {
    return Process_compare(v1, v2);
 }
 
+int mycompareProcessByKnownParentThenNatural(const void* v1, const void* v2) {
+   return myProcess_compare(v1, v2);
+}
+
 // Builds a sorted tree from scratch, without relying on previously gathered information
 static void ProcessList_buildTree(ProcessList* this) {
    Vector_prune(this->displayList);

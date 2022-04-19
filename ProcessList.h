@@ -127,5 +127,6 @@ static inline Process* ProcessList_findProcess(ProcessList* this, pid_t pid) {
 }
 
 int compareProcessByKnownParentThenNatural(const void* v1, const void* v2);
+int mycompareProcessByKnownParentThenNatural(const void* v1, const void* v2);
 
 #endif

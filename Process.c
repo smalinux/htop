@@ -1031,12 +1031,12 @@ const ProcessClass Process_class = {
    .writeField = Process_writeField,
 };
 
-const ProcessClass myProcess_class = {
+const myProcessClass myProcess_class = {
    .super = {
       .extends = Class(Object),
       .display = Process_display,
       .delete = Process_delete,
-      .compare = Process_compare
+      .compare = myProcess_compare
    },
    .writeField = Process_writeField,
 };
@@ -1112,6 +1112,13 @@ int Process_compare(const void* v1, const void* v2) {
       return SPACESHIP_NUMBER(p1->pid, p2->pid);
 
    //return (ScreenSettings_getActiveDirection(ss) == 1) ? result : -result;
+}
+
+int myProcess_compare(const void* v1, const void* v2) {
+    const myProcess* p1 = (const myProcess*)v1;
+    const myProcess* p2 = (const myProcess*)v2;
+
+    return SPACESHIP_NUMBER(p1->sohaib, p2->sohaib);
 }
 
 int Process_compareByKey_Base(const Process* p1, const Process* p2, ProcessField key) {
