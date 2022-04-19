@@ -155,4 +155,6 @@ const char* Platform_dynamicColumnInit(unsigned int key);
 
 bool Platform_dynamicColumnWriteField(const Process* proc, RichString* str, unsigned int key);
 
+int Platform_processCompare(const void* v1, const void* v2);
+
 #endif

@@ -816,3 +816,7 @@ bool Platform_dynamicColumnWriteField(const Process* proc, RichString* str, unsi
    }
    return false;
 }
+
+int Platform_processCompare(const void* v1, const void* v2) {
+    return PCPProcess_compare(v1, v2);
+}

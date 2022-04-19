@@ -1115,10 +1115,7 @@ int Process_compare(const void* v1, const void* v2) {
 }
 
 int myProcess_compare(const void* v1, const void* v2) {
-    const myProcess* p1 = (const myProcess*)v1;
-    const myProcess* p2 = (const myProcess*)v2;
-
-    return SPACESHIP_NUMBER(p1->sohaib, p2->sohaib);
+    return Platform_processCompare(v1, v2);
 }
 
 int Process_compareByKey_Base(const Process* p1, const Process* p2, ProcessField key) {

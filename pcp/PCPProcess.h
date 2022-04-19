@@ -17,6 +17,8 @@ in the source distribution for its full text.
 #include "Process.h"
 #include "Settings.h"
 
+#include <pcp/pmapi.h>
+
 
 #define PROCESS_FLAG_LINUX_CGROUP    0x00000800
 #define PROCESS_FLAG_LINUX_OOM       0x00001000
@@ -24,6 +26,11 @@ in the source distribution for its full text.
 #define PROCESS_FLAG_LINUX_CTXT      0x00004000
 #define PROCESS_FLAG_LINUX_SECATTR   0x00008000
 #define PROCESS_FLAG_LINUX_AUTOGROUP 0x00080000
+
+typedef struct myPCPProcess_ {
+    int x;
+    pmAtomValue v_list;
+} myPCPProcess;
 
 typedef struct PCPProcess_ {
    Process super;
@@ -92,11 +99,13 @@ typedef struct PCPProcess_ {
 extern const ProcessFieldData Process_fields[LAST_PROCESSFIELD];
 
 extern const ProcessClass PCPProcess_class;
+extern const ProcessClass myPCPProcess_class;
 
 Process* PCPProcess_new(const Settings* settings);
 
 void Process_delete(Object* cast);
 
 bool Process_isThread(const Process* this);
+int PCPProcess_compare(const void* v1, const void* v2);
 
 #endif

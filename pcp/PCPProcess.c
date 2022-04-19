@@ -279,9 +279,27 @@ static int PCPProcess_compareByKey(const Process* v1, const Process* v2, Process
    }
 }
 
+int PCPProcess_compare(const void* v1, const void* v2) {
+    const myPCPProcess* p1 = (const myPCPProcess*)v1;
+    const myPCPProcess* p2 = (const myPCPProcess*)v2;
+
+    return SPACESHIP_NUMBER(p1->v_list.ul, p2->v_list.ul);
+}
+
 const ProcessClass PCPProcess_class = {
    .super = {
       .extends = Class(Process),
+      .display = Process_display,
+      .delete = Process_delete,
+      .compare = Process_compare
+   },
+   .writeField = PCPProcess_writeField,
+   .compareByKey = PCPProcess_compareByKey
+};
+
+const ProcessClass myPCPProcess_class = {
+   .super = {
+      .extends = Class(myProcess),
       .display = Process_display,
       .delete = Process_delete,
       .compare = Process_compare

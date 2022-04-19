@@ -18,12 +18,13 @@ int main(int argc, char** argv) {
    const char* name = "pcp-htop";
    pmSetProgname(name);
 
-   Vector* v = Vector_new(Class(myProcess), false, DEFAULT_SIZE);
 
-   myProcess p1 = {.sohaib = 555};
-   myProcess p2 = {.sohaib = 8888};
-   myProcess p3 = {.sohaib = 4};
-   myProcess p4 = {.sohaib = 66};
+   Vector* v = Vector_new(Class(myPCPProcess), false, DEFAULT_SIZE);
+
+   myPCPProcess p1 = {.v_list.ul = 555};
+   myPCPProcess p2 = {.v_list.ul = 8888};
+   myPCPProcess p3 = {.v_list.ul = 4};
+   myPCPProcess p4 = {.v_list.ul = 66};
 
 
    Vector_insert(v, 1, &p1);
@@ -32,10 +33,10 @@ int main(int argc, char** argv) {
    Vector_insert(v, 4, &p4);
 
    fprintf(stderr, "-------------------Before----------------------\n");
-   myProcess *tmp;
+   myPCPProcess *tmp;
    for (int i = 0; i < Vector_size(v); i++) {
-       tmp = (myProcess*)Vector_get(v, i);
-       fprintf(stderr, "%d = %d\n", i, tmp->sohaib);
+       tmp = (myPCPProcess*)Vector_get(v, i);
+       fprintf(stderr, "%d = %d\n", i, tmp->v_list.ul);
    }
 
 
@@ -45,8 +46,8 @@ int main(int argc, char** argv) {
    fprintf(stderr, "-----------------------After-----------------------\n");
 
    for (int i = 0; i < Vector_size(v); i++) {
-       tmp = (myProcess*)Vector_get(v, i);
-       fprintf(stderr, "%d = %d\n", i, tmp->sohaib);
+       tmp = (myPCPProcess*)Vector_get(v, i);
+       fprintf(stderr, "%d = %d\n", i, tmp->v_list.ul);
    }
 
 
