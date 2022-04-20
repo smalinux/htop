@@ -244,6 +244,11 @@ static const char* Platform_metricNames[] = {
    [PCP_PROC_SMAPS_SWAP] = "proc.smaps.swap",
    [PCP_PROC_SMAPS_SWAPPSS] = "proc.smaps.swappss",
 
+   [CGROUP_CPU_STAT_SYSTEM] = "cgroup.cpu.stat.system", // cgroup
+   [CGROUP_CPU_STAT_USAGE] = "cgroup.cpu.stat.usage", // cgroup
+   [CGROUP_CPU_STAT_USER] = "cgroup.cpu.stat.user", // cgroup
+
+
    [PCP_METRIC_COUNT] = NULL
 };
 
@@ -353,6 +358,11 @@ bool Platform_init(void) {
    PCPMetric_enable(PCP_UNAME_RELEASE, true);
    PCPMetric_enable(PCP_UNAME_MACHINE, true);
    PCPMetric_enable(PCP_UNAME_DISTRO, true);
+
+
+   PCPMetric_enable(CGROUP_CPU_STAT_USER, true);
+   PCPMetric_enable(CGROUP_CPU_STAT_USAGE, true);
+   PCPMetric_enable(CGROUP_CPU_STAT_SYSTEM, true);
 
    for (size_t i = pcp->columns.offset; i < pcp->columns.offset + pcp->columns.count; i++)
       PCPMetric_enable(i, true);
