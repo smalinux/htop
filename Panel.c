@@ -20,6 +20,7 @@ in the source distribution for its full text.
 #include "ProvideCurses.h"
 #include "RichString.h"
 #include "XUtils.h"
+#include "Generic.h"
 
 
 const PanelClass Panel_class = {
@@ -277,12 +278,16 @@ void Panel_draw(Panel* this, ScreenSettings* ss, bool force_redraw, bool focus, 
    if (this->needsRedraw || force_redraw) {
       int line = 0;
       for (int i = first; line < h && i < upTo; i++) {
-         const Object* itemObj = Vector_get(this->items, i);
+         Object* itemObj = Vector_get(this->items, i);
          RichString_begin(item);
          // SMALINUX this invoke display from Process Class
          // I have to take other direction from here: cgroup->display()
          if( ss->type != 555 )
-             Object_display(itemObj, &item);
+            Object_display(itemObj, &item);
+         else {
+            Object_setClass(itemObj, Class(Generic));
+            Object_display(itemObj, &item);
+         }
          //CRT_handleSIGSEGV(9);
          int itemLen = RichString_sizeVal(item);
          int amt = MINIMUM(itemLen - scrollH, this->w);
@@ -308,27 +313,35 @@ void Panel_draw(Panel* this, ScreenSettings* ss, bool force_redraw, bool focus, 
       }
 
    } else {
-      const Object* oldObj = Vector_get(this->items, this->oldSelected);
+      Object* oldObj = Vector_get(this->items, this->oldSelected);
       RichString_begin(old);
-     if( ss->type != 555 )
-          Object_display(oldObj, &old);
+      if( ss->type != 555 )
+         Object_display(oldObj, &old);
+      else {
+         Object_setClass(oldObj, Class(Generic));
+         Object_display(oldObj, &old);
+      }
       int oldLen = RichString_sizeVal(old);
-      const Object* newObj = Vector_get(this->items, this->selected);
+      Object* newObj = Vector_get(this->items, this->selected);
       RichString_begin(new);
-     if( ss->type != 555 )
-          Object_display(newObj, &new);
+      if( ss->type != 555 )
+         Object_display(newObj, &new);
+      else {
+         Object_setClass(newObj, Class(Generic));
+         Object_display(newObj, &new);
+      }
       int newLen = RichString_sizeVal(new);
       this->selectedLen = newLen;
       mvhline(y + this->oldSelected - first, x + 0, ' ', this->w);
       if (scrollH < oldLen)
          RichString_printoffnVal(old, y + this->oldSelected - first, x,
-            scrollH, MINIMUM(oldLen - scrollH, this->w));
+               scrollH, MINIMUM(oldLen - scrollH, this->w));
       attrset(selectionColor);
       mvhline(y + this->selected - first, x + 0, ' ', this->w);
       RichString_setAttr(&new, selectionColor);
       if (scrollH < newLen)
          RichString_printoffnVal(new, y + this->selected - first, x,
-            scrollH, MINIMUM(newLen - scrollH, this->w));
+               scrollH, MINIMUM(newLen - scrollH, this->w));
       attrset(CRT_colors[RESET_COLOR]);
       RichString_delete(&new);
       RichString_delete(&old);
@@ -355,7 +368,7 @@ bool Panel_onKey(Panel* this, int key) {
 
    const int size = Vector_size(this->items);
 
-   #define PANEL_SCROLL(amount)                                                                                     \
+#define PANEL_SCROLL(amount)                                                                                     \
    do {                                                                                                             \
       this->selected += (amount);                                                                                   \
       this->scrollV = CLAMP(this->scrollV + (amount), 0, MAXIMUM(0, (size - this->h - Panel_headerHeight(this))));  \
@@ -363,75 +376,75 @@ bool Panel_onKey(Panel* this, int key) {
    } while (0)
 
    switch (key) {
-   case KEY_DOWN:
-   case KEY_CTRL('N'):
-   #ifdef KEY_C_DOWN
-   case KEY_C_DOWN:
-   #endif
-      this->selected++;
-      break;
+      case KEY_DOWN:
+      case KEY_CTRL('N'):
+#ifdef KEY_C_DOWN
+      case KEY_C_DOWN:
+#endif
+         this->selected++;
+         break;
 
-   case KEY_UP:
-   case KEY_CTRL('P'):
-   #ifdef KEY_C_UP
-   case KEY_C_UP:
-   #endif
-      this->selected--;
-      break;
+      case KEY_UP:
+      case KEY_CTRL('P'):
+#ifdef KEY_C_UP
+      case KEY_C_UP:
+#endif
+         this->selected--;
+         break;
 
-   case KEY_LEFT:
-   case KEY_CTRL('B'):
-      if (this->scrollH > 0) {
-         this->scrollH -= MAXIMUM(CRT_scrollHAmount, 0);
+      case KEY_LEFT:
+      case KEY_CTRL('B'):
+         if (this->scrollH > 0) {
+            this->scrollH -= MAXIMUM(CRT_scrollHAmount, 0);
+            this->needsRedraw = true;
+         }
+         break;
+
+      case KEY_RIGHT:
+      case KEY_CTRL('F'):
+         this->scrollH += CRT_scrollHAmount;
          this->needsRedraw = true;
-      }
-      break;
+         break;
 
-   case KEY_RIGHT:
-   case KEY_CTRL('F'):
-      this->scrollH += CRT_scrollHAmount;
-      this->needsRedraw = true;
-      break;
+      case KEY_PPAGE:
+         PANEL_SCROLL(-(this->h - Panel_headerHeight(this)));
+         break;
 
-   case KEY_PPAGE:
-      PANEL_SCROLL(-(this->h - Panel_headerHeight(this)));
-      break;
+      case KEY_NPAGE:
+         PANEL_SCROLL(+(this->h - Panel_headerHeight(this)));
+         break;
 
-   case KEY_NPAGE:
-      PANEL_SCROLL(+(this->h - Panel_headerHeight(this)));
-      break;
+      case KEY_WHEELUP:
+         PANEL_SCROLL(-CRT_scrollWheelVAmount);
+         break;
 
-   case KEY_WHEELUP:
-      PANEL_SCROLL(-CRT_scrollWheelVAmount);
-      break;
+      case KEY_WHEELDOWN:
+         PANEL_SCROLL(+CRT_scrollWheelVAmount);
+         break;
 
-   case KEY_WHEELDOWN:
-      PANEL_SCROLL(+CRT_scrollWheelVAmount);
-      break;
+      case KEY_HOME:
+         this->selected = 0;
+         break;
 
-   case KEY_HOME:
-      this->selected = 0;
-      break;
+      case KEY_END:
+         this->selected = size - 1;
+         break;
 
-   case KEY_END:
-      this->selected = size - 1;
-      break;
-
-   case KEY_CTRL('A'):
-   case '^':
-      this->scrollH = 0;
-      this->needsRedraw = true;
-      break;
-   case KEY_CTRL('E'):
-   case '$':
-      this->scrollH = MAXIMUM(this->selectedLen - this->w, 0);
-      this->needsRedraw = true;
-      break;
-   default:
-      return false;
+      case KEY_CTRL('A'):
+      case '^':
+         this->scrollH = 0;
+         this->needsRedraw = true;
+         break;
+      case KEY_CTRL('E'):
+      case '$':
+         this->scrollH = MAXIMUM(this->selectedLen - this->w, 0);
+         this->needsRedraw = true;
+         break;
+      default:
+         return false;
    }
 
-   #undef PANEL_SCROLL
+#undef PANEL_SCROLL
 
    // ensure selection within bounds
    if (this->selected < 0 || size == 0) {
