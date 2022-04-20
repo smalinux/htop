@@ -186,13 +186,14 @@ static void ScreenManager_drawScreenTabs(ScreenManager* this) {
 }
 
 static void ScreenManager_drawPanels(ScreenManager* this, int focus, bool force_redraw) {
-   if (this->settings->screenTabs) {
+   if (this->settings->screenTabs) { // dito
       ScreenManager_drawScreenTabs(this);
    }
    const int nPanels = this->panelCount;
    for (int i = 0; i < nPanels; i++) {
       Panel* panel = (Panel*) Vector_get(this->panels, i);
       Panel_draw(panel,
+              this->settings->ss,
                  force_redraw,
                  i == focus,
                  panel != (Panel*)this->state->mainPanel || !this->state->hideProcessSelection,

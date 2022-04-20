@@ -17,6 +17,7 @@ in the source distribution for its full text.
 #include "Object.h"
 #include "RichString.h"
 #include "Vector.h"
+#include "Settings.h"
 
 
 struct Panel_;
@@ -130,7 +131,7 @@ int Panel_size(const Panel* this);
 
 void Panel_setSelected(Panel* this, int selected);
 
-void Panel_draw(Panel* this, bool force_redraw, bool focus, bool highlightSelected, bool hideFunctionBar);
+void Panel_draw(Panel* this, ScreenSettings *ss, bool force_redraw, bool focus, bool highlightSelected, bool hideFunctionBar);
 
 void Panel_splice(Panel* this, Vector* from);
 

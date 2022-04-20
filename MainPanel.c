@@ -75,6 +75,9 @@ static HandlerResult MainPanel_eventHandler(Panel* super, int ch) {
    Settings* settings = this->state->settings;
    ScreenSettings* ss = settings->ss;
 
+   if (String_eq(ss->name, "cgroup")) {
+       ss->type = 555; // assign inDom here;
+   }
    if (EVENT_IS_HEADER_CLICK(ch)) {
       int x = EVENT_HEADER_CLICK_GET_X(ch);
       const ProcessList* pl = this->state->pl;

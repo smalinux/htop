@@ -978,8 +978,10 @@ void Process_writeField(const Process* this, RichString* str, ProcessField field
 void Process_display(const Object* cast, RichString* out) {
    const Process* this = (const Process*) cast;
    const ProcessField* fields = this->settings->ss->fields;
-   for (int i = 0; fields[i]; i++)
-      As_Process(this)->writeField(this, out, fields[i]);
+   //if(!String_eq(this->settings->ss->name, "cgroup")) {
+       for (int i = 0; fields[i]; i++)
+          As_Process(this)->writeField(this, out, fields[i]);
+   //}
 
    if (this->settings->shadowOtherUsers && this->st_uid != Process_getuid) {
       RichString_setAttr(out, CRT_colors[PROCESS_SHADOW]);

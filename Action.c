@@ -391,7 +391,7 @@ static Htop_Reaction actionKill(State* st) {
    if (sgn && sgn->key != 0) {
       preSelectedSignal = sgn->key;
       Panel_setHeader((Panel*)st->mainPanel, "Sending...");
-      Panel_draw((Panel*)st->mainPanel, false, true, true, State_hideFunctionBar(st));
+      Panel_draw((Panel*)st->mainPanel, st->settings->ss, false, true, true, State_hideFunctionBar(st));
       refresh();
       MainPanel_foreachProcess(st->mainPanel, Process_sendSignal, (Arg) { .i = sgn->key }, NULL);
       napms(500);
