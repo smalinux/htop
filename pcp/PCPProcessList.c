@@ -393,7 +393,7 @@ static bool PCPProcessList_updateProcesses(PCPProcessList* this, double period, 
       pp->offset = offset >= 0 ? offset : 0;
 
    /* Start REMOVEME */
-      PCPProcessList_cgroups(proc, pid, offset);
+      //PCPProcessList_cgroups(proc, pid, offset);
    /* End REMOVEME */
       /*
        * These conditions will not trigger on first occurrence, cause we need to
