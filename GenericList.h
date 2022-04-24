@@ -35,24 +35,27 @@ typedef struct GenericList_ {
 
    Vector* processes;
    Hashtable* processTable;
+   ScreenSettings ss;
 
    bool needsSort;
 
+   char* key; /* SMA: read this for config files...  */
    //Hashtable* dynamicMeters;  /* runtime-discovered meters */
    //Hashtable* dynamicColumns; /* runtime-discovered Columns */
 
+   /* key == name.indom */ // save int htoprc
+
    Panel* panel;
    uid_t userId;
-   int ttt;
+   int ttt; // SMALINUX REMOVEME
 
    unsigned int totalTasks;
 } GenericList;
 
 typedef struct GenericLists_ {
    Hashtable *table;
-   void *ontherhash;
-   int tst;
-   char* name;
+   int tst; // SMALINUX REMOVEME
+   size_t count; /* total count for all GenericList */
 } GenericLists;
 
 

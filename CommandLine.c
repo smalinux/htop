@@ -324,13 +324,22 @@ int CommandLine_run(const char* name, int argc, char** argv) {
    /* Unbuffered output */
    setvbuf(stdout, NULL, _IONBF, 0);
 
-   GenericList ggg = {.ttt = 100};
+   GenericList gl = {.ttt = 100, .ss = { .type = 100}};
+   ScreenSettings ss;
 
-   GenericLists_add(gls, &ggg);
+   GenericLists_add(gls, &gl);
 
    GenericList *temp = Hashtable_get(gls->table, 100);
 
-   fprintf(stderr, "glists %d\n", temp->ttt);
+   gl.ttt = 200;
+   ss.type = 200;
+   gl.ss = ss;
+
+   GenericLists_add(gls, &gl);
+
+   fprintf(stderr, "glists %d, type = %d\n", temp->ttt, temp->ss.type);
+   temp = Hashtable_get(gls->table, 200);
+   fprintf(stderr, "glists %d, type = %d\n", temp->ttt, temp->ss.type);
 
    //GenericLists_add(gls, g);
 

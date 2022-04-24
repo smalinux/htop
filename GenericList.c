@@ -33,11 +33,12 @@ GenericLists* GenericLists_new(void) { // aka PCPDynamicColumn_new
 
 void GenericLists_add(GenericLists* this, GenericList* g)
 {
+   // SMA: split this to 2 functions: new & init
    GenericList* gl = xCalloc(1, sizeof(GenericList));
 
    gl->ttt = g->ttt;
-   // gl->needsSort = g->needsSort;
-   // etc ...
+   gl->ss = g->ss;
+
    Hashtable_put(genericlists->table, gl->ttt, gl);
 }
 
