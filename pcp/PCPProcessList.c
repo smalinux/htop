@@ -27,6 +27,7 @@ in the source distribution for its full text.
 
 #include "pcp/PCPMetric.h"
 #include "pcp/PCPProcess.h"
+#include "GenericList.h"
 
 
 static void PCPProcessList_updateCPUcount(PCPProcessList* this) {
@@ -66,6 +67,10 @@ static char* setUser(UsersTable* this, unsigned int uid, int pid, int offset) {
 ProcessList* ProcessList_new(UsersTable* usersTable, Hashtable* dynamicMeters, Hashtable* dynamicColumns, Hashtable* pidMatchList, uid_t userId) {
    PCPProcessList* this = xCalloc(1, sizeof(PCPProcessList));
    ProcessList* super = &(this->super);
+
+   GenericList gl = {.ttt = 100, .ss = { .type = 100}};
+
+   GenericLists_add(&gl);
 
    ProcessList_init(super, Class(PCPProcess), usersTable, dynamicMeters, dynamicColumns, pidMatchList, userId);
 

@@ -70,7 +70,7 @@ GenericLists* GenericLists_new(void);
 
 void GenericLists_done(Hashtable* gls);
 
-void GenericLists_add(GenericLists* this, GenericList* g);
+void GenericLists_add(GenericList* g);
 
 void GenericLists_remove(GenericList* this,  GenericList* g);
 

@@ -319,23 +319,24 @@ int CommandLine_run(const char* name, int argc, char** argv) {
    if (!dc)
       dc = Hashtable_new(0, true);
 
+   ProcessList* pl = ProcessList_new(ut, dm, dc, flags.pidMatchList, flags.userId);
+
    /* SMA: Start tmp test -------------------------------------------------- */
 
    /* Unbuffered output */
    setvbuf(stdout, NULL, _IONBF, 0);
 
-   GenericList gl = {.ttt = 100, .ss = { .type = 100}};
+   GenericList gl;
    ScreenSettings ss;
 
-   GenericLists_add(gls, &gl);
 
-   GenericList *temp = Hashtable_get(gls->table, 100);
 
    gl.ttt = 200;
    ss.type = 200;
    gl.ss = ss;
 
-   GenericLists_add(gls, &gl);
+   GenericLists_add(&gl);
+   GenericList *temp = Hashtable_get(gls->table, 100);
 
    fprintf(stderr, "glists %d, type = %d\n", temp->ttt, temp->ss.type);
    temp = Hashtable_get(gls->table, 200);
@@ -346,7 +347,6 @@ int CommandLine_run(const char* name, int argc, char** argv) {
    // SMA: REMOVEME
    /* SMA: End tmp test ---------------------------------------------------- */
 
-   ProcessList* pl = ProcessList_new(ut, dm, dc, flags.pidMatchList, flags.userId);
 
    Settings* settings = Settings_new(pl->activeCPUs, dc);
    pl->settings = settings;

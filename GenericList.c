@@ -31,7 +31,7 @@ GenericLists* GenericLists_new(void) { // aka PCPDynamicColumn_new
    return genericlists;
 }
 
-void GenericLists_add(GenericLists* this, GenericList* g)
+void GenericLists_add(GenericList* g)
 {
    // SMA: split this to 2 functions: new & init
    GenericList* gl = xCalloc(1, sizeof(GenericList));
