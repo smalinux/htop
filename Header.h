@@ -12,12 +12,14 @@ in the source distribution for its full text.
 #include "ProcessList.h"
 #include "Settings.h"
 #include "Vector.h"
+#include "GenericList.h"
 
 
 typedef struct Header_ {
    Vector** columns;
    Settings* settings;
    ProcessList* pl;
+   GenericList* gl;
    HeaderLayout headerLayout;
    int pad;
    int height;

@@ -16,6 +16,7 @@ in the source distribution for its full text.
 #include "Object.h"
 #include "ProcessField.h" // SMA REMOVEME
 #include "RichString.h"
+#include "Settings.h"
 
 
 typedef struct Generic_ {
@@ -23,11 +24,10 @@ typedef struct Generic_ {
    Object super;
 
    /* Pointer to quasi-global data structures */
-   const struct ProcessList_* processList;
+   const struct GenericList_* GenericList;
    const struct Settings_* settings;
 
-   /* Process identifier */
-   pid_t pid; // SMA REMOVEME
+   int id; // SMA REMOVEME
 
    /* Parent process identifier */
    pid_t ppid; // SMA REMOVEME
@@ -41,7 +41,7 @@ void Generic_writeField(const Generic* this, RichString* str);
 int Generic_compare(const void* v1, const void* v2);
 void Generic_delete(Object* cast);
 
-typedef Generic* (*Generic_New)(const struct Settings_*); // SMALINUX FIX ProcessList
+typedef Generic* (*Generic_New)(const struct Settings_*);
 //typedef void (*Generic_WriteField)(const Generic*, RichString*, ProcessField); // SMA PID
 typedef void (*Generic_WriteField)(const Generic*, RichString*);
 //typedef int (*Generic_CompareByKey)(const Generic*, const Generic*, ProcessField); // SMA PMID
@@ -59,5 +59,7 @@ typedef struct GenericClass_ {
 
 void Generic_display(const Object* cast, RichString* out);
 extern const GenericClass Generic_class;
+
+void Generic_init(Generic* this, const Settings* settings);
 
 #endif

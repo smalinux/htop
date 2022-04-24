@@ -11,4 +11,45 @@ in the source distribution for its full text.
 
 #include "Hashtable.h"
 #include "pcp/PCPGenericList.h"
+#include "pcp/PCPGeneric.h"
+#include "GenericList.h"
 
+static bool PCPGenericList_updateGenerics(PCPGenericList* this) // SMA xxg this
+{
+   /*
+    * PCPGenericList ===> this
+    * GenericList ======> gl
+    */
+   const GenericLists* gls = GenericLists_getGenericLists();
+
+   GenericList *myscreen = Hashtable_get(gls->table, 100);
+
+   // Check Why this is wrrrrrrrrrrrrrrrrrrrong
+   GenericList* gl = (GenericList*) this; // Check Why this is wrrrrrrrrrrrrrrrrrrrong // SMA xxg this
+   // Check Why this is wrrrrrrrrrrrrrrrrrrrong
+   const Settings* settings = gl->settings;
+
+   int pid = -1, offset = -1;
+   //while (PCPMetric_iterate(PCP_PROC_PID, &pid, &offset)) {
+      Generic* g = GenericList_getGeneric(myscreen, pid, PCPGeneric_new);
+      PCPGeneric* gg = (PCPGeneric*) g;
+
+      fprintf(stderr, "hiiiiii\n");
+      gg->love = 44;
+      fprintf(stderr, "%d\n", gg->love);
+      fprintf(stderr, "%d\n", gg->GenericFieldsCount);
+      PCPGenericField* gf = (PCPGenericField*)Hashtable_get(gg->genericFields, 0);
+      fprintf(stderr, "value %d, pmid %d, offset %d, index %d\n",
+            gf->value->ul, gf->pmid, gf->offset, gf->index);
+   //}
+   return 0; // bool ??!!
+}
+
+void GenericList_goThroughEntries(GenericList * super, bool pauseProcessUpdate)
+{
+   PCPGenericList* this = (PCPGenericList*) super;
+   const Settings* settings = super->settings;
+   //fprintf(stderr, "hiiiiii\n");
+   //PCPGenericList_updateGenerics(this, period, &timestamp);
+   PCPGenericList_updateGenerics(this);
+}

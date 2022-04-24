@@ -68,8 +68,10 @@ ProcessList* ProcessList_new(UsersTable* usersTable, Hashtable* dynamicMeters, H
    PCPProcessList* this = xCalloc(1, sizeof(PCPProcessList));
    ProcessList* super = &(this->super);
 
+   // SMA REMOVEME
    GenericList gl = {.ttt = 100, .ss = { .type = 100}};
 
+   // SMA REMOVEME
    GenericLists_add(&gl);
 
    ProcessList_init(super, Class(PCPProcess), usersTable, dynamicMeters, dynamicColumns, pidMatchList, userId);

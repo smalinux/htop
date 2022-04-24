@@ -11,17 +11,18 @@ in the source distribution for its full text.
 
 #include <stddef.h>
 
+#include "GenericList.h"
 #include "Hashtable.h"
 
-typedef struct PCPGenericLists_ {
-   Hashtable* table;
-   size_t count;  /* count of dynamic meters discovered by scan */ // SMALINUX:
-   size_t offset; /* start offset into the Platform metric array */ // SMALINUX
-   size_t cursor; /* identifier allocator for each new metric used */ // SMALINUX
-} PCPGenericLists;
+typedef struct PCPGenericList_ {
+   GenericList super;
+   // SMA; keymetric;   PCPMetric_iterate
+} PCPGenericList;
 
-void PCPGenericLists_init(PCPGenericLists* genericlists);
+void PCPGenericList_init(PCPGenericList* genericlists);
 
 void PCPGenericLists_done(Hashtable* table);
+
+void GenericList_goThroughEntries(GenericList * super,bool pauseProcessUpdate);
 
 #endif

@@ -17,7 +17,29 @@ in the source distribution for its full text.
 #include "Generic.h"
 #include "ProvideCurses.h"
 #include "RichString.h"
+#include "Platform.h"
+#include "Hashtable.h"
 #include "XUtils.h"
+
+Generic* PCPGeneric_new(const Settings* settings) {
+   PCPGeneric* this = xCalloc(1, sizeof(PCPGeneric));
+   Object_setClass(this, Class(PCPGeneric));
+
+   // SMA: Start Hard code
+   // this->GenericFieldsCount = settings->ss->ColumnsCount; // SMA do it
+   this->GenericFieldsCount = 3;
+   this->genericFields = Hashtable_new(3, false); // 3 -> 0  && add/remove via Columns panel
+
+   // SMA this should be done via PCPMetric_iterate,
+   // SMA this function just for mallocs...
+   pmAtomValue atom = {.ul = 1};
+   PCPGenericField gf = {.index = 1, .offset = 1, .pmid = 111, .value = &atom};
+   Hashtable_put(this->genericFields, 0, &gf);
+   // SMA: End Hard code
+
+   Generic_init(&this->super, settings);
+   return &this->super;
+}
 
 
 void PCPGeneric_display(const Object* cast, RichString* out) {

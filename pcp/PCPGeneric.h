@@ -16,10 +16,24 @@ in the source distribution for its full text.
 #include "Object.h"
 #include "Generic.h"
 #include "Settings.h"
+#include "Platform.h"
+#include "Hashtable.h"
+
+
+typedef struct PCPGenericField_ {
+   pmAtomValue* value;
+   pmID pmid;
+   int offset;
+   int index; // SMA should not use pmid as column index because the user can dublicate the same column;
+} PCPGenericField;
 
 typedef struct PCPGeneric_ {
    Generic super;
-   // SMALINUX: Define node & vector .. here :)
+   int love; // SMA REMOVEME
+
+   Hashtable* genericFields; // rename to just fields
+   int GenericFieldsCount; // rename to FieldCount
+   int sortKey;
 } PCPGeneric;
 
 void PCPGeneric_delete(Object* cast);

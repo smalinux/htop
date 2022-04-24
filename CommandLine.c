@@ -336,13 +336,19 @@ int CommandLine_run(const char* name, int argc, char** argv) {
    gl.ss = ss;
 
    GenericLists_add(&gl);
-   GenericList *temp = Hashtable_get(gls->table, 100);
+   GenericList *myscreen = Hashtable_get(gls->table, 100);
 
-   fprintf(stderr, "glists %d, type = %d\n", temp->ttt, temp->ss.type);
-   temp = Hashtable_get(gls->table, 200);
-   fprintf(stderr, "glists %d, type = %d\n", temp->ttt, temp->ss.type);
+   fprintf(stderr, "glists %d, type = %d\n", myscreen->ttt, myscreen->ss.type);
+   myscreen = Hashtable_get(gls->table, 200);
+   fprintf(stderr, "glists %d, type = %d\n", myscreen->ttt, myscreen->ss.type);
 
-   //GenericLists_add(gls, g);
+   /* SMA myscreen: now I have a pointer to my first screen */
+
+   Generic gg = {.id = 111};
+   GenericList_add(myscreen, &gg);
+   Generic *myrow = (Generic*)Hashtable_get(myscreen->genericTable, 111);
+   fprintf(stderr, "myrow %d\n", myrow->id);
+   /* SMA myrow: now I have a pointer to my first row */
 
    // SMA: REMOVEME
    /* SMA: End tmp test ---------------------------------------------------- */

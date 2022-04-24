@@ -15,6 +15,7 @@ in the source distribution for its full text.
 #include "Hashtable.h"
 #include "Macros.h"
 #include "Platform.h"
+#include "Generic.h"
 #include "Vector.h"
 #include "XUtils.h"
 
@@ -23,7 +24,8 @@ in the source distribution for its full text.
 GenericLists *genericlists;
 
 // SMA: this is just a hash hold other GenericLists
-GenericLists* GenericLists_new(void) { // aka PCPDynamicColumn_new
+GenericLists* GenericLists_new(void) // aka PCPDynamicColumn_new
+{
    //return Platform_genericLists(); // SMA: don't call platform here,
    genericlists = xCalloc(1, sizeof(GenericLists));
    genericlists->table =  Hashtable_new(0, false);
@@ -36,26 +38,26 @@ void GenericLists_add(GenericList* g)
    // SMA: split this to 2 functions: new & init
    GenericList* gl = xCalloc(1, sizeof(GenericList));
 
+   gl->genericRow = Vector_new(Class(Generic), true, DEFAULT_SIZE);
+   gl->genericTable = Hashtable_new(200, false); // SMA use PCPMetric_instanceCount
+
    gl->ttt = g->ttt;
    gl->ss = g->ss;
 
    Hashtable_put(genericlists->table, gl->ttt, gl);
 }
 
-void GenericLists_remove(GenericList* this,  GenericList* g)
-{
+void GenericLists_remove(GenericList* this,  GenericList* g) { }
 
+const GenericLists* GenericLists_getGenericLists()
+{
+   return genericlists;
 }
 
-static void GenericLists_delete(Hashtable* gls) // aka PCPDynamicColumns_delete
-{
+// aka PCPDynamicColumns_delete
+static void GenericLists_delete(Hashtable* gls) { }
 
-}
-
-void GenericLists_done(Hashtable* gls) // aka PCPDynamicColumns_done
-{
-   //GenericLists_delete
-}
+void GenericLists_done(Hashtable* gls) { }
 
 /* SMA: End GenericList(s) ------------------------------------------------- */
 
@@ -63,25 +65,40 @@ GenericList* GenericList_init(GenericList* this, const ObjectClass* klass, Users
    return this;
 }
 
-void GenericList_done(GenericList* this) {
+void GenericList_done(GenericList* this) { }
+
+void GenericList_printHeader(const GenericList* this, RichString* header) { }
+
+void GenericList_add(GenericList* this, Generic* g)
+{
+   g->GenericList = this;
+
+   Vector_add(this->genericRow, g);
+   Hashtable_put(this->genericTable, g->id, g);
 }
 
-void GenericList_printHeader(const GenericList* this, RichString* header) {
+void GenericList_remove(GenericList* this, const Process* p) { }
+
+ProcessField GenericList_keyAt(const GenericList* this, int at) { }
+
+Generic* GenericList_getGeneric(GenericList* this, pid_t pid, Generic_New constructor)
+{
+   Generic* proc = (Generic*) Hashtable_get(this->genericTable, pid);
+   fprintf(stderr, "nnnnnnnnnnnnnn\n");
+   //*preExisting = proc != NULL;
+   if (proc) {
+      //assert(Vector_indexOf(this->processes, proc, Process_pidCompare) != -1);
+      //assert(proc->pid == pid);
+   } else {
+      proc = constructor(this->settings);
+      //assert(proc->cmdline == NULL);
+      proc->ppid = 3333;
+   }
+   return proc;
 }
 
-void GenericList_add(GenericList* this, Process* p) {
+void GenericList_scan(GenericList* this, bool pauseProcessUpdate) // SMA xxxg
+{
+   GenericList_goThroughEntries(this, 0); // SMA xxg this
 }
 
-void GenericList_remove(GenericList* this, const Process* p) {
-}
-
-ProcessField GenericList_keyAt(const GenericList* this, int at) {
-}
-
-Process* GenericList_getProcess(GenericList* this, pid_t pid, bool* preExisting, Process_New constructor) {
-   //Process* proc = (Process*) Hashtable_get(this->processTable, pid);
-   //return generic;
-}
-
-void GenericList_scan(GenericList* this, bool pauseProcessUpdate) {
-}

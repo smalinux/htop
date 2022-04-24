@@ -44,6 +44,15 @@ int Generic_compare(const void* v1, const void* v2) {
    return 0;
 }
 
+void Generic_init(Generic* this, const Settings* settings) {
+   this->settings = settings;
+
+   // this->
+
+
+}
+
+
 //void Process_writeField(const Process* this, RichString* str, ProcessField field) {
 void Generic_writeField(const Generic* this, RichString* str) {
 }

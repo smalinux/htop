@@ -33,8 +33,8 @@ in the source distribution for its full text.
 typedef struct GenericList_ {
    const Settings* settings;
 
-   Vector* processes;
-   Hashtable* processTable;
+   Vector* genericRow;
+   Hashtable* genericTable;
    ScreenSettings ss;
 
    bool needsSort;
@@ -74,6 +74,8 @@ void GenericLists_add(GenericList* g);
 
 void GenericLists_remove(GenericList* this,  GenericList* g);
 
+const GenericLists* GenericLists_getGenericLists(void);
+
 /* GenericList */
 GenericList* GenericList_init(GenericList* this, const ObjectClass* klass, UsersTable* usersTable, Hashtable* dynamicMeters, Hashtable* dynamicColumns, Hashtable* pidMatchList, uid_t userId);
 
@@ -83,7 +85,7 @@ void GenericList_setPanel(GenericList* this, Panel* panel);
 
 void GenericList_printHeader(const GenericList* this, RichString* header);
 
-void GenericList_add(GenericList* this, Process* p);
+void GenericList_add(GenericList* this, Generic* p);
 
 void GenericList_remove(GenericList* this, const Process* p);
 
@@ -97,12 +99,12 @@ void GenericList_collapseAllBranches(GenericList* this);
 
 void GenericList_rebuildPanel(GenericList* this);
 
-Process* GenericList_getProcess(GenericList* this, pid_t pid, bool* preExisting, Process_New constructor);
+Generic* GenericList_getGeneric(GenericList* this, pid_t pid, Generic_New constructor);
 
 void GenericList_scan(GenericList* this, bool pauseProcessUpdate);
 
 static inline Process* GenericList_findProcess(GenericList* this, pid_t pid) {
-   return (Process*) Hashtable_get(this->processTable, pid);
+   return (Process*) Hashtable_get(this->genericTable, pid);
 }
 
 
