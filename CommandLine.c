@@ -25,6 +25,7 @@ in the source distribution for its full text.
 #include "CRT.h"
 #include "DynamicColumn.h"
 #include "DynamicMeter.h"
+#include "GenericList.h"
 #include "Hashtable.h"
 #include "Header.h"
 #include "IncSet.h"
@@ -283,6 +284,11 @@ static void setCommFilter(State* state, char** commFilter) {
    *commFilter = NULL;
 }
 
+typedef struct { // SMA: REMOVEME
+   int data; // could be any kind of data.
+   unsigned int key;
+} Iterator;
+
 int CommandLine_run(const char* name, int argc, char** argv) {
 
    /* initialize locale */
@@ -309,8 +315,27 @@ int CommandLine_run(const char* name, int argc, char** argv) {
    UsersTable* ut = UsersTable_new();
    Hashtable* dc = DynamicColumns_new();
    Hashtable* dm = DynamicMeters_new();
+   GenericLists* gls = GenericLists_new();
    if (!dc)
       dc = Hashtable_new(0, true);
+
+   /* SMA: Start tmp test -------------------------------------------------- */
+
+   /* Unbuffered output */
+   setvbuf(stdout, NULL, _IONBF, 0);
+
+   GenericList ggg = {.ttt = 100};
+
+   GenericLists_add(gls, &ggg);
+
+   GenericList *temp = Hashtable_get(gls->table, 100);
+
+   fprintf(stderr, "glists %d\n", temp->ttt);
+
+   //GenericLists_add(gls, g);
+
+   // SMA: REMOVEME
+   /* SMA: End tmp test ---------------------------------------------------- */
 
    ProcessList* pl = ProcessList_new(ut, dm, dc, flags.pidMatchList, flags.userId);
 
@@ -404,6 +429,7 @@ int CommandLine_run(const char* name, int argc, char** argv) {
    Settings_delete(settings);
    DynamicColumns_delete(dc);
    DynamicMeters_delete(dm);
+   //GenericLists_delete(gls);
 
    return 0;
 }

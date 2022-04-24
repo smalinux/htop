@@ -383,6 +383,7 @@ pcp_platform_headers = \
 	pcp/PCPDynamicColumn.h \
 	pcp/PCPDynamicMeter.h \
 	pcp/PCPGeneric.h \
+	pcp/PCPGenericList.h \
 	pcp/PCPMetric.h \
 	pcp/PCPProcess.h \
 	pcp/PCPProcessList.h \
@@ -398,6 +399,7 @@ pcp_platform_sources = \
 	pcp/PCPDynamicColumn.c \
 	pcp/PCPDynamicMeter.c \
 	pcp/PCPGeneric.c \
+	pcp/PCPGenericList.c \
 	pcp/PCPMetric.c \
 	pcp/PCPProcess.c \
 	pcp/PCPProcessList.c \

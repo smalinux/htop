@@ -38,6 +38,7 @@ in the source distribution for its full text.
 
 #include "pcp/PCPDynamicColumn.h"
 #include "pcp/PCPDynamicMeter.h"
+#include "pcp/PCPGenericList.h"
 #include "pcp/PCPMetric.h"
 
 
