@@ -46,6 +46,7 @@ typedef struct {
    bool allBranchesCollapsed;
    int type; // == inDom for PCP .. zero otherwise
    int ColumnsCount;
+   bool generic;
 } ScreenSettings;
 
 typedef struct Settings_ {

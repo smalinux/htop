@@ -85,7 +85,7 @@ void GenericList_setPanel(GenericList* this, Panel* panel);
 
 void GenericList_printHeader(const GenericList* this, RichString* header);
 
-void GenericList_add(GenericList* this, Generic* p);
+void GenericList_add(GenericList* this, Generic* g);
 
 void GenericList_remove(GenericList* this, const Process* p);
 

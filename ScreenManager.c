@@ -196,7 +196,6 @@ static void ScreenManager_drawPanels(ScreenManager* this, int focus, bool force_
    for (int i = 0; i < nPanels; i++) {
       Panel* panel = (Panel*) Vector_get(this->panels, i);
       Panel_draw(panel,
-              this->settings->ss,
                  force_redraw,
                  i == focus,
                  panel != (Panel*)this->state->mainPanel || !this->state->hideProcessSelection,

@@ -217,7 +217,7 @@ void Panel_splice(Panel* this, Vector* from) {
    this->needsRedraw = true;
 }
 
-void Panel_draw(Panel* this, ScreenSettings* ss, bool force_redraw, bool focus, bool highlightSelected, bool hideFunctionBar) {
+void Panel_draw(Panel* this, bool force_redraw, bool focus, bool highlightSelected, bool hideFunctionBar) {
    assert (this != NULL);
 
    int size = Vector_size(this->items);
@@ -282,12 +282,7 @@ void Panel_draw(Panel* this, ScreenSettings* ss, bool force_redraw, bool focus, 
          RichString_begin(item);
          // SMALINUX this invoke display from Process Class
          // I have to take other direction from here: cgroup->display()
-         if( ss->type != 555 )
             Object_display(itemObj, &item);
-         else {
-            Object_setClass(itemObj, Class(Generic));
-            Object_display(itemObj, &item);
-         }
          //CRT_handleSIGSEGV(9);
          int itemLen = RichString_sizeVal(item);
          int amt = MINIMUM(itemLen - scrollH, this->w);
@@ -315,21 +310,11 @@ void Panel_draw(Panel* this, ScreenSettings* ss, bool force_redraw, bool focus, 
    } else {
       Object* oldObj = Vector_get(this->items, this->oldSelected);
       RichString_begin(old);
-      if( ss->type != 555 )
          Object_display(oldObj, &old);
-      else {
-         Object_setClass(oldObj, Class(Generic));
-         Object_display(oldObj, &old);
-      }
       int oldLen = RichString_sizeVal(old);
       Object* newObj = Vector_get(this->items, this->selected);
       RichString_begin(new);
-      if( ss->type != 555 )
          Object_display(newObj, &new);
-      else {
-         Object_setClass(newObj, Class(Generic));
-         Object_display(newObj, &new);
-      }
       int newLen = RichString_sizeVal(new);
       this->selectedLen = newLen;
       mvhline(y + this->oldSelected - first, x + 0, ' ', this->w);

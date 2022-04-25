@@ -331,6 +331,7 @@ int CommandLine_run(const char* name, int argc, char** argv) {
 
 
 
+   /* SMA myscreen: now I have a pointer to my first screen */
    gl.ttt = 200;
    ss.type = 200;
    gl.ss = ss;
@@ -342,13 +343,19 @@ int CommandLine_run(const char* name, int argc, char** argv) {
    myscreen = Hashtable_get(gls->table, 200);
    fprintf(stderr, "glists %d, type = %d\n", myscreen->ttt, myscreen->ss.type);
 
-   /* SMA myscreen: now I have a pointer to my first screen */
 
+   /* SMA hashtable manipulation: now I have a pointer to my first row */
    Generic gg = {.id = 111};
    GenericList_add(myscreen, &gg);
-   Generic *myrow = (Generic*)Hashtable_get(myscreen->genericTable, 111);
-   fprintf(stderr, "myrow %d\n", myrow->id);
-   /* SMA myrow: now I have a pointer to my first row */
+   Generic *myrow_hash = (Generic*)Hashtable_get(myscreen->genericTable, 111);
+   fprintf(stderr, "myrow_hash %d \n", myrow_hash->id);
+
+   /* SMA Vector manipulation */
+   Vector_add(myscreen->genericRow, &gg);
+   Generic *myrow_vector = (Generic*)Vector_get(myscreen->genericRow, 0);
+   fprintf(stderr, "myrow_vector %d \n", myrow_vector->id);
+
+
 
    // SMA: REMOVEME
    /* SMA: End tmp test ---------------------------------------------------- */
@@ -395,6 +402,7 @@ int CommandLine_run(const char* name, int argc, char** argv) {
       .settings = settings,
       .ut = ut,
       .pl = pl,
+      .gl = myscreen,
       .mainPanel = panel,
       .header = header,
       .pauseProcessUpdate = false,
@@ -408,9 +416,10 @@ int CommandLine_run(const char* name, int argc, char** argv) {
    ScreenManager* scr = ScreenManager_new(header, settings, &state, true);
    ScreenManager_add(scr, (Panel*) panel, -1);
 
-   ProcessList_scan(pl, false);
+   ProcessList_scan(pl, false); // SMA startup scan. I stoped it because I
+   //want to study ScreenManager
    CommandLine_delay(pl, 75);
-   ProcessList_scan(pl, false);
+   //ProcessList_scan(pl, false);
 
    if (settings->ss->allBranchesCollapsed)
       ProcessList_collapseAllBranches(pl);
