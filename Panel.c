@@ -217,7 +217,7 @@ void Panel_splice(Panel* this, Vector* from) {
    this->needsRedraw = true;
 }
 
-void Panel_draw(Panel* this, bool force_redraw, bool focus, bool highlightSelected, bool hideFunctionBar) {
+void Panel_draw(Panel* this, const Settings* settings, bool force_redraw, bool focus, bool highlightSelected, bool hideFunctionBar) {
    assert (this != NULL);
 
    int size = Vector_size(this->items);
@@ -282,7 +282,13 @@ void Panel_draw(Panel* this, bool force_redraw, bool focus, bool highlightSelect
          RichString_begin(item);
          // SMALINUX this invoke display from Process Class
          // I have to take other direction from here: cgroup->display()
+         if (String_eq(settings->ss->name, "cgroup")) {
+            Object_setClass(itemObj, Class(Generic));
+            // Object_displayFn(itemObj); // SMA
             Object_display(itemObj, &item);
+         } else {
+            Object_display(itemObj, &item);
+         }
          //CRT_handleSIGSEGV(9);
          int itemLen = RichString_sizeVal(item);
          int amt = MINIMUM(itemLen - scrollH, this->w);

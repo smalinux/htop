@@ -37,7 +37,7 @@ in the source distribution for its full text.
 #endif
 
 void Generic_display(const Object* cast, RichString* out) {
-   fprintf(stderr, "hiiiiiiiiii\n");
+   fprintf(stderr, "hiiiiiiiiii fff\n");
 }
 
 int Generic_compare(const void* v1, const void* v2) {

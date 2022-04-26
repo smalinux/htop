@@ -189,13 +189,37 @@ static void ScreenManager_drawScreenTabs(ScreenManager* this) {
 }
 
 static void ScreenManager_drawPanels(ScreenManager* this, int focus, bool force_redraw) {
+   // SMA Start SMA make your own items vector
+   Vector* myVec = Vector_new(Class(Process), false, DEFAULT_SIZE);
+
+   Process p1 = {.user = strdup("Power")};
+   Process p2 = {.user = strdup("Power")};
+   Process p3 = {.user = strdup("Power")};
+   Process p4 = {.user = strdup("Power")};
+   Process p5 = {.user = strdup("Power")};
+
+   Vector_add(myVec, &p1);
+   Vector_add(myVec, &p2);
+   Vector_add(myVec, &p3);
+   Vector_add(myVec, &p4);
+   Vector_add(myVec, &p5);
+
+   // SMA End SMA make your own items vector
+
+
    if (this->settings->screenTabs) { // dito
       ScreenManager_drawScreenTabs(this);
    }
    const int nPanels = this->panelCount;
    for (int i = 0; i < nPanels; i++) {
       Panel* panel = (Panel*) Vector_get(this->panels, i);
+      if (String_eq(this->settings->ss->name, "cgroup")) { // switch between ProcessList & GenericList
+
+         fprintf(stderr, "--------------------------------------\n");
+         panel->items = myVec; // Orchestration
+      }
       Panel_draw(panel,
+            this->settings,
                  force_redraw,
                  i == focus,
                  panel != (Panel*)this->state->mainPanel || !this->state->hideProcessSelection,
@@ -225,7 +249,7 @@ void ScreenManager_run(ScreenManager* this, Panel** lastFocus, int* lastKey, con
    this->name = name;
 
    while (!quit) {
-      if (this->header) {
+      if (this->header) { // dito ...........................
          checkRecalculation(this, &oldTime, &sortTimeout, &redraw, &rescan, &timedOut, &force_redraw);
       }
 

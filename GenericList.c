@@ -84,7 +84,7 @@ ProcessField GenericList_keyAt(const GenericList* this, int at) { }
 Generic* GenericList_getGeneric(GenericList* this, pid_t pid, Generic_New constructor)
 {
    Generic* proc = (Generic*) Hashtable_get(this->genericTable, pid);
-   fprintf(stderr, "nnnnnnnnnnnnnn\n");
+   //fprintf(stderr, "nnnnnnnnnnnnnn\n");
    //*preExisting = proc != NULL;
    if (proc) {
       //assert(Vector_indexOf(this->processes, proc, Process_pidCompare) != -1);
