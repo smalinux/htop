@@ -41,9 +41,12 @@ Generic* PCPGeneric_new(const Settings* settings) {
    return &this->super;
 }
 
+static void PCPGeneric_writeField(const Process* this, RichString* str, int field) {
+   fprintf(stderr, "PCPGeneric_writeField\n");
+}
 
 void PCPGeneric_display(const Object* cast, RichString* out) {
-   fprintf(stderr, "hiiiiiiiiii\n");
+   fprintf(stderr, "PCPGeneric_display\n");
 }
 
 const GenericClass PCPGeneric_class = {
@@ -53,6 +56,6 @@ const GenericClass PCPGeneric_class = {
       //.delete = PCPGeneric_delete,
       //.compare = PCPGeneric_compare,
    },
-   //.writeField = PCPGeneric_writeField,
+   .writeField = PCPGeneric_writeField,
    //.compareByKey = PCPGeneric_compareByKey,
 };

@@ -36,15 +36,12 @@ typedef struct Generic_ {
 
 
 // Implemented in platform-specific code:
-//void Generic_writeField(const Generic* this, RichString* str, ProcessField field); // SMA: PMID
-void Generic_writeField(const Generic* this, RichString* str);
+void Generic_writeField(const Generic* this, RichString* str, int field);
 int Generic_compare(const void* v1, const void* v2);
 void Generic_delete(Object* cast);
 
 typedef Generic* (*Generic_New)(const struct Settings_*);
-//typedef void (*Generic_WriteField)(const Generic*, RichString*, ProcessField); // SMA PID
-typedef void (*Generic_WriteField)(const Generic*, RichString*);
-//typedef int (*Generic_CompareByKey)(const Generic*, const Generic*, ProcessField); // SMA PMID
+typedef void (*Generic_WriteField)(const Generic*, RichString*, int field);
 typedef int (*Generic_CompareByKey)(const Generic*, const Generic*);
 
 typedef struct GenericClass_ {
@@ -61,5 +58,11 @@ void Generic_display(const Object* cast, RichString* out);
 extern const GenericClass Generic_class;
 
 void Generic_init(Generic* this, const Settings* settings);
+
+/* Just a wrapper to Platform/ PCPGeneric_addField
+ * I will need those in Columns Panel
+ * Maybe I will need Generic_updateField also ... */
+void Generic_addField(Generic* this /* maybe I will add more params */);
+void Generic_removeField(Generic* this);
 
 #endif

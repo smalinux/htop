@@ -26,8 +26,8 @@ in the source distribution for its full text.
 #include "CRT.h"
 #include "Macros.h"
 #include "Platform.h"
-#include "ProcessList.h"
 #include "DynamicColumn.h"
+#include "GenericList.h"
 #include "RichString.h"
 #include "Settings.h"
 #include "XUtils.h"
@@ -37,7 +37,10 @@ in the source distribution for its full text.
 #endif
 
 void Generic_display(const Object* cast, RichString* out) {
-   fprintf(stderr, "hiiiiiiiiii fff\n");
+   const Process* this = (const Process*) cast;
+   fprintf(stderr, "- Generic_display\n");
+   //for (int i = 0; fields[i]; i++) // SMA use generic fields
+      As_Process(this)->writeField(this, out, 0); // 0 == loop over fields
 }
 
 int Generic_compare(const void* v1, const void* v2) {
@@ -52,10 +55,24 @@ void Generic_init(Generic* this, const Settings* settings) {
 
 }
 
+void Generic_writeField(const Generic* this, RichString* str, int field) {
+   char buffer[256];
+   size_t n = sizeof(buffer);
+   int attr = CRT_colors[DEFAULT_COLOR];
+   fprintf(stderr, "- Generic_writeField\n");
 
-//void Process_writeField(const Process* this, RichString* str, ProcessField field) {
-void Generic_writeField(const Generic* this, RichString* str) {
+   switch (field) {
+      case 0: {
+   //xSnprintf(buffer, n, "%*d ", Process_pidDigits, this->pid);
+   xSnprintf(buffer, n, "%*d ", 10, 777);
+   break;
+              }
+      case 1: fprintf(stderr, "1- Generic_writeField\n"); return;
+      case 2: fprintf(stderr, "2- Generic_writeField\n"); return;
+   }
+   RichString_appendAscii(str, attr, buffer);
 }
+
 
 const GenericClass Generic_class = {
    .super = {

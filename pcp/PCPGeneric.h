@@ -23,7 +23,7 @@ in the source distribution for its full text.
 typedef struct PCPGenericField_ {
    pmAtomValue* value;
    pmID pmid;
-   int offset;
+   int offset; // Add this to Generic.h not PCPGeneric.h
    int index; // SMA should not use pmid as column index because the user can dublicate the same column;
 } PCPGenericField;
 
@@ -43,6 +43,12 @@ int PCPGeneric_compare(const void* v1, const void* v2);
 extern const GenericClass PCPGeneric_class;
 
 Generic* PCPGeneric_new(const Settings* settings);
+
+/* Reference:  GenericList_add ...
+ * to add new column , aka PCPGenericField
+ */
+void PCPGeneric_addField(PCPGeneric* this /* maybe I will add more params */);
+void PCPGeneric_removeField(PCPGeneric* this);
 
 void Generic_delete(Object* cast);
 
