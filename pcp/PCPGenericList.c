@@ -35,7 +35,7 @@ static bool PCPGenericList_updateGenerics(PCPGenericList* this) // SMA xxg this
       PCPGeneric* gg = (PCPGeneric*) g;
 
       // -------------------------- Fill -------------------------------
-      fprintf(stderr, "hiiiiii\n");
+      //fprintf(stderr, "hiiiiii\n");
       gg->love = 44;
       g->id = 777;
       // -------------------------- Add --------------------------------
@@ -43,11 +43,11 @@ static bool PCPGenericList_updateGenerics(PCPGenericList* this) // SMA xxg this
          GenericList_add(myscreen, g);
       */
       // ---------------------------------------------------------------
-      fprintf(stderr, "%d\n", gg->love);
-      fprintf(stderr, "%d\n", gg->GenericFieldsCount);
+      //fprintf(stderr, "%d\n", gg->love);
+      //fprintf(stderr, "%d\n", gg->GenericFieldsCount);
       PCPGenericField* gf = (PCPGenericField*)Hashtable_get(gg->genericFields, 0);
-      fprintf(stderr, "value %d, pmid %d, offset %d, index %d\n",
-            gf->value->ul, gf->pmid, gf->offset, gf->index);
+      //fprintf(stderr, "value %d, pmid %d, offset %d, index %d\n",
+            //gf->value->ul, gf->pmid, gf->offset, gf->index);
 
       // genericRow Vector
       /*

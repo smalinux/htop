@@ -132,32 +132,30 @@ void ProcessList_printHeader(const ProcessList* this, RichString* header) {
 
    ProcessField key = ScreenSettings_getActiveSortKey(ss);
 
-   if (!String_eq(ss->name, "cgroup")) {
-       for (int i = 0; fields[i]; i++) {
-          int color;
-          if (ss->treeView && ss->treeViewAlwaysByPID) {
-             color = CRT_colors[PANEL_HEADER_FOCUS];
-          } else if (key == fields[i]) {
-             color = CRT_colors[PANEL_SELECTION_FOCUS];
-          } else {
-             color = CRT_colors[PANEL_HEADER_FOCUS];
-          }
+   for (int i = 0; fields[i]; i++) {
+      int color;
+      if (ss->treeView && ss->treeViewAlwaysByPID) {
+         color = CRT_colors[PANEL_HEADER_FOCUS];
+      } else if (key == fields[i]) {
+         color = CRT_colors[PANEL_SELECTION_FOCUS];
+      } else {
+         color = CRT_colors[PANEL_HEADER_FOCUS];
+      }
 
-          RichString_appendWide(header, color, alignedProcessFieldTitle(this, fields[i]));
-          if (key == fields[i] && RichString_getCharVal(*header, RichString_size(header) - 1) == ' ') {
-             bool ascending = ScreenSettings_getActiveDirection(ss) == 1;
-             RichString_rewind(header, 1);  // rewind to override space
-             RichString_appendnWide(header,
-                                    CRT_colors[PANEL_SELECTION_FOCUS],
-                                    CRT_treeStr[ascending ? TREE_STR_ASC : TREE_STR_DESC],
-                                    1);
-          }
-          if (COMM == fields[i] && settings->showMergedCommand) {
-             RichString_appendAscii(header, color, "(merged)");
-          }
-       }
-
+      RichString_appendWide(header, color, alignedProcessFieldTitle(this, fields[i]));
+      if (key == fields[i] && RichString_getCharVal(*header, RichString_size(header) - 1) == ' ') {
+         bool ascending = ScreenSettings_getActiveDirection(ss) == 1;
+         RichString_rewind(header, 1);  // rewind to override space
+         RichString_appendnWide(header,
+               CRT_colors[PANEL_SELECTION_FOCUS],
+               CRT_treeStr[ascending ? TREE_STR_ASC : TREE_STR_DESC],
+               1);
+      }
+      if (COMM == fields[i] && settings->showMergedCommand) {
+         RichString_appendAscii(header, color, "(merged)");
+      }
    }
+
 }
 
 void ProcessList_add(ProcessList* this, Process* p) {
