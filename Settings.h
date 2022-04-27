@@ -64,6 +64,7 @@ typedef struct Settings_ {
    int colorScheme;
    int delay;
 
+   bool SetupScreenActive;
    bool countCPUsFromOne;
    bool detailedCPUTime;
    bool showCPUUsage;

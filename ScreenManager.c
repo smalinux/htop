@@ -214,7 +214,8 @@ static void ScreenManager_drawPanels(ScreenManager* this, int focus, bool force_
    for (int i = 0; i < nPanels; i++) {
       Panel* panel = (Panel*) Vector_get(this->panels, i);
       /* switch between ProcessList & GenericList */
-      if (String_eq(this->settings->ss->name, "cgroup")) {
+      if (String_eq(this->settings->ss->name, "cgroup") &&
+            !this->settings->SetupScreenActive ) {
 
          fprintf(stderr, "--------------------------------------\n");
          panel->items = myVec; // Orchestration
