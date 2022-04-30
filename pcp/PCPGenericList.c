@@ -14,7 +14,7 @@ in the source distribution for its full text.
 #include "pcp/PCPGeneric.h"
 #include "GenericList.h"
 
-static bool PCPGenericList_updateGenerics(PCPGenericList* this) // SMA xxg this
+static bool PCPGenericList_updateGenericList(PCPGenericList* this) // SMA xxg this
 {
    /*
     * PCPGenericList ===> this
@@ -25,7 +25,7 @@ static bool PCPGenericList_updateGenerics(PCPGenericList* this) // SMA xxg this
    GenericList *myscreen = Hashtable_get(gls->table, 100);
 
    // Check Why this is wrrrrrrrrrrrrrrrrrrrong
-   GenericList* gl = (GenericList*) this; // Check Why this is wrrrrrrrrrrrrrrrrrrrong // SMA xxg this
+   GenericList* gl = (GenericList*) this; // SMA xxg this
    // Check Why this is wrrrrrrrrrrrrrrrrrrrong
    const Settings* settings = gl->settings;
 
@@ -35,28 +35,47 @@ static bool PCPGenericList_updateGenerics(PCPGenericList* this) // SMA xxg this
       PCPGeneric* gg = (PCPGeneric*) g;
 
       // -------------------------- Fill -------------------------------
-      //fprintf(stderr, "hiiiiii\n");
-      gg->love = 44;
-      g->id = 777;
-      // -------------------------- Add --------------------------------
-      /*
-         GenericList_add(myscreen, g);
-      */
-      // ---------------------------------------------------------------
-      //fprintf(stderr, "%d\n", gg->love);
-      //fprintf(stderr, "%d\n", gg->GenericFieldsCount);
-      PCPGenericField* gf = (PCPGenericField*)Hashtable_get(gg->genericFields, 0);
-      //fprintf(stderr, "value %d, pmid %d, offset %d, index %d\n",
-            //gf->value->ul, gf->pmid, gf->offset, gf->index);
 
-      // genericRow Vector
-      /*
-         for (int i = 0; i < Vector_size(myscreen->genericRow); i++)
+      // SMA Start add & assing fields(columns).
+      fprintf(stderr, "test: add new field w/ loop over all fields:\n");
+
+      PCPGenericField * field = PCPGeneric_addField(gg, NULL);
+      field->value->ul = 9999;
+
+      field = PCPGeneric_addField(gg, NULL);
+      field->value->ul = 8888;
+
+      field = PCPGeneric_addField(gg, NULL);
+      field->value->ul = 7777;
+
+      field = PCPGeneric_addField(gg, NULL);
+      field->value->ul = 6666;
+
+      PCPGeneric_removeField(gg); // will remove the last one == 6666
+      PCPGeneric_removeField(gg); // will remove the last one == 7777
+      // SMA End add & assing Fields.
+
+
+      // SMA: Test: Start print all rows & its node for testing
+      fprintf(stderr, ">>>>>>>>>>>>>>>>>>>>>>>>> row size %d\n\n", Vector_size(myscreen->genericRow));
+      for (int i = 0; i < Vector_size(myscreen->genericRow); i++)
+      {
+         Generic* row = (Generic*)Vector_get(myscreen->genericRow, i);
+         PCPGeneric* gr = (PCPGeneric*) row;
+         fprintf(stderr, "Generic row %d, has %d columns\n", row->id, gr->fieldsCount);
+
+         for (int n = 0; n < gg->fieldsCount; n++)
          {
-            Generic* genericRow = (Generic*)Vector_get(myscreen->genericRow, i);
-            fprintf(stderr, "genericRow %d\n", genericRow->id);
+            PCPGenericField* f = Hashtable_get(gg->fields, n);
+            fprintf(stderr, "field %d its value = %d\n", n, f->value->ul);
          }
-      */
+         fprintf(stderr, "\n");
+      }
+      // SMA: Test: End print all rows & its node for testing
+
+      // -------------------------- Add --------------------------------
+         GenericList_add(myscreen, g); // keep this last line
+      // ---------------------------------------------------------------
    //}
    return 0; // bool ??!!
 }
@@ -67,5 +86,5 @@ void GenericList_goThroughEntries(GenericList * super, bool pauseProcessUpdate)
    const Settings* settings = super->settings;
    //fprintf(stderr, "hiiiiii\n");
    //PCPGenericList_updateGenerics(this, period, &timestamp);
-   PCPGenericList_updateGenerics(this);
+   PCPGenericList_updateGenericList(this);
 }

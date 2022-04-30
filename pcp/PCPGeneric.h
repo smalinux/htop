@@ -31,8 +31,8 @@ typedef struct PCPGeneric_ {
    Generic super;
    int love; // SMA REMOVEME
 
-   Hashtable* genericFields; // rename to just fields
-   int GenericFieldsCount; // rename to FieldCount
+   Hashtable* fields; // rename to just fields
+   int fieldsCount; // rename to FieldCount
    int sortKey;
 } PCPGeneric;
 
@@ -44,10 +44,10 @@ extern const GenericClass PCPGeneric_class;
 
 Generic* PCPGeneric_new(const Settings* settings);
 
-/* Reference:  GenericList_add ...
- * to add new column , aka PCPGenericField
- */
-void PCPGeneric_addField(PCPGeneric* this /* maybe I will add more params */);
+// Reference:  GenericList_add ...
+// do alloc. - this is used in PCPMetric_iterate
+// to add new column (aka, node. aka, one field, aka PCPGenericField
+PCPGenericField* PCPGeneric_addField(PCPGeneric* this, const Settings* settings);
 void PCPGeneric_removeField(PCPGeneric* this);
 
 void Generic_delete(Object* cast);
