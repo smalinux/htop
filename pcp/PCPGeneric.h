@@ -44,7 +44,7 @@ extern const GenericClass PCPGeneric_class;
 
 Generic* PCPGeneric_new(const Settings* settings);
 
-// Reference:  GenericList_add ...
+// Reference:  GenericList_addGeneric ...
 // do alloc. - this is used in PCPMetric_iterate
 // to add new column (aka, node. aka, one field, aka PCPGenericField
 PCPGenericField* PCPGeneric_addField(PCPGeneric* this, const Settings* settings);

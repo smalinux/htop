@@ -1,13 +1,3 @@
-//
-//
-//
-//
-// SMALINUX: rename any thing refer to process like pidMatchList,
-// pauseProcessUpdate
-//
-// add missing includes... && compare with ProcessList.h file
-//
-//
 #ifndef HEADER_GenericList
 #define HEADER_GenericList
 /*
@@ -33,23 +23,21 @@ in the source distribution for its full text.
 typedef struct GenericList_ {
    const Settings* settings;
 
-   Vector* genericRow;
+   Vector* genericRow; /* every row == One Sturct Generic */
    Hashtable* genericTable;
-   ScreenSettings ss;
+
+   ScreenSettings ss; /* each GenericList has its own screenSettings */
 
    bool needsSort;
 
-   char* key; /* SMA: read this for config files...  */
-   //Hashtable* dynamicMeters;  /* runtime-discovered meters */
-   //Hashtable* dynamicColumns; /* runtime-discovered Columns */
-
-   /* key == name.indom */ // save int htoprc
-
    Panel* panel;
-   uid_t userId;
+
    int ttt; // SMALINUX REMOVEME
 
-   unsigned int totalTasks;
+   int offset;
+   int id; /* GenericList id == offset */
+
+   unsigned int totalRows;
 } GenericList;
 
 typedef struct GenericLists_ {
@@ -60,52 +48,51 @@ typedef struct GenericLists_ {
 
 
 /* Implemented by platforms */
-GenericList* GenericList_new(UsersTable* usersTable, Hashtable* dynamicMeters, Hashtable* dynamicColumns, Hashtable* pidMatchList, uid_t userId);
-void GenericList_delete(GenericList* gl);
+GenericList* GenericList_addPlatformList(GenericList *super);
+void GenericList_removePlatformList(GenericList *super);
 void GenericList_goThroughEntries(GenericList* super, bool pauseProcessUpdate);
-bool GenericList_isCPUonline(const GenericList* super, unsigned int id);
 
-/* GenericLists */
-GenericLists* GenericLists_new(void);
 
-void GenericLists_done(Hashtable* gls);
+/* Generic Lists */
+GenericLists* GenericList_new(void);
 
-void GenericLists_add(GenericList* g);
+void GenericList_delete(GenericLists* gls);
 
-void GenericLists_remove(GenericList* this,  GenericList* g);
+const GenericLists* GenericList_getGenericLists(void);
 
-const GenericLists* GenericLists_getGenericLists(void);
+/* One Generic List */
+void GenericList_addList(GenericList* g);
 
-/* GenericList */
-GenericList* GenericList_init(GenericList* this, const ObjectClass* klass, UsersTable* usersTable, Hashtable* dynamicMeters, Hashtable* dynamicColumns, Hashtable* pidMatchList, uid_t userId);
+void GenericList_removeList(GenericList* g);
 
-void GenericList_done(GenericList* this);
+/* struct Generic */
+Generic* GenericList_getGeneric(GenericList* this, Generic_New constructor);
 
+void GenericList_addGeneric(GenericList* this, Generic* g);
+
+void GenericList_removeGeneric(GenericList* this);
+
+/* helpers functions */
 void GenericList_setPanel(GenericList* this, Panel* panel);
 
-void GenericList_printHeader(const GenericList* this, RichString* header);
+void GenericList_printHeader(const GenericList* this, RichString* header); // TODO
 
-void GenericList_add(GenericList* this, Generic* g);
+void GenericList_updateDisplayList(GenericList* this); // TODO
 
-void GenericList_remove(GenericList* this, const Process* p);
+//GenericField GenericList_keyAt(const GenericList* this, int at); // TODO
 
-void GenericList_updateDisplayList(GenericList* this);
+void GenericList_expandTree(GenericList* this); // TODO
 
-ProcessField GenericList_keyAt(const GenericList* this, int at);
+void GenericList_collapseAllBranches(GenericList* this); // TODO
 
-void GenericList_expandTree(GenericList* this);
+void GenericList_rebuildPanel(GenericList* this); // TODO
 
-void GenericList_collapseAllBranches(GenericList* this);
+void GenericList_scan(GenericList* this, bool pauseGenericUpdate);
 
-void GenericList_rebuildPanel(GenericList* this);
-
-Generic* GenericList_getGeneric(GenericList* this, pid_t pid, Generic_New constructor);
-
-void GenericList_scan(GenericList* this, bool pauseProcessUpdate);
-
-static inline Process* GenericList_findProcess(GenericList* this, pid_t pid) {
+/*
+static inline Process* GenericList_findProcess(GenericList* this, pid_t pid) { // TODO
    return (Process*) Hashtable_get(this->genericTable, pid);
 }
-
+*/
 
 #endif

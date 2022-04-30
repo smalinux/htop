@@ -20,85 +20,84 @@ in the source distribution for its full text.
 #include "XUtils.h"
 
 
-/* SMA: Start GenericList(s) ----------------------------------------------- */
 GenericLists *genericlists;
 
-// SMA: this is just a hash hold other GenericLists
-GenericLists* GenericLists_new(void) // aka PCPDynamicColumn_new
+GenericLists* GenericList_new(void)
 {
-   //return Platform_genericLists(); // SMA: don't call platform here,
    genericlists = xCalloc(1, sizeof(GenericLists));
    genericlists->table =  Hashtable_new(0, false);
 
    return genericlists;
 }
 
-void GenericLists_add(GenericList* g)
+void GenericList_delete(GenericLists* gls)
 {
-   // SMA: split this to 2 functions: new & init
-   GenericList* gl = xCalloc(1, sizeof(GenericList));
+   Hashtable_delete(gls->table);
+   free(gls);
+}
 
-   gl->genericRow = Vector_new(Class(Generic), true, DEFAULT_SIZE);
-   gl->genericTable = Hashtable_new(200, false); // SMA use PCPMetric_instanceCount
+void GenericList_addList(GenericList* g)
+{
+   GenericList* gl = GenericList_addPlatformList(g);
 
-   gl->ttt = g->ttt;
-   gl->ss = g->ss;
+   gl->genericRow = Vector_new(Class(Generic), false, DEFAULT_SIZE);
+   gl->genericTable = Hashtable_new(200, false);
+
+   gl->ttt = g->ttt; // SMA REMOVEME
+   gl->ss = g->ss; // SMA REMOVEME
 
    Hashtable_put(genericlists->table, gl->ttt, gl);
 }
 
-void GenericLists_remove(GenericList* this,  GenericList* g) { }
+void GenericList_removeList(GenericList* this)
+{
+   // loop & free fields & Generics
+   Hashtable_delete(this->genericTable);
+   Vector_delete(this->genericRow);
 
-const GenericLists* GenericLists_getGenericLists()
+   GenericList_removePlatformList(this);
+}
+
+const GenericLists* GenericList_getGenericLists()
 {
    return genericlists;
 }
 
-// aka PCPDynamicColumns_delete
-static void GenericLists_delete(Hashtable* gls) { }
-
-void GenericLists_done(Hashtable* gls) { }
-
-/* SMA: End GenericList(s) ------------------------------------------------- */
-
-GenericList* GenericList_init(GenericList* this, const ObjectClass* klass, UsersTable* usersTable, Hashtable* dynamicMeters, Hashtable* dynamicColumns, Hashtable* pidMatchList, uid_t userId) {
-   return this;
-}
-
-void GenericList_done(GenericList* this) { }
-
-void GenericList_printHeader(const GenericList* this, RichString* header) { }
-
-void GenericList_add(GenericList* this, Generic* g)
+void GenericList_addGeneric(GenericList* this, Generic* g)
 {
    g->GenericList = this;
 
    Vector_add(this->genericRow, g);
-   Hashtable_put(this->genericTable, g->id, g);
+   Hashtable_put(this->genericTable, g->id, g); // id ?? or totalRows ?
 }
 
-void GenericList_remove(GenericList* this, const Process* p) { }
-
-ProcessField GenericList_keyAt(const GenericList* this, int at) { }
-
-Generic* GenericList_getGeneric(GenericList* this, pid_t pid, Generic_New constructor)
+void GenericList_removeGeneric(GenericList* this)
 {
-   Generic* proc = (Generic*) Hashtable_get(this->genericTable, pid);
-   //fprintf(stderr, "nnnnnnnnnnnnnn\n");
-   //*preExisting = proc != NULL;
-   if (proc) {
-      //assert(Vector_indexOf(this->processes, proc, Process_pidCompare) != -1);
-      //assert(proc->pid == pid);
-   } else {
-      proc = constructor(this->settings);
-      //assert(proc->cmdline == NULL);
-      proc->ppid = 3333;
-   }
-   return proc;
+   int idx;
+
+   idx = Vector_size(this->genericRow);
+   Vector_remove(this->genericRow, idx);
+
+   this->totalRows--;
+   // freefields(); here
+   //free(g);     this last element
 }
 
-void GenericList_scan(GenericList* this, bool pauseProcessUpdate) // SMA xxxg
+Generic* GenericList_getGeneric(GenericList* this, Generic_New constructor)
+{
+   Generic* g;
+   g = constructor(this->settings);
+   g->ppid = 3333; // SMA REMOVEME
+
+   return g;
+}
+
+void GenericList_scan(GenericList* this, bool pauseGenericUpdate) // SMA xxxg // TODO
 {
    GenericList_goThroughEntries(this, 0); // SMA xxg this
+}
+
+void GenericList_setPanel(GenericList* this, Panel* panel) {
+   this->panel = panel;
 }
 

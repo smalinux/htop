@@ -16,13 +16,14 @@ in the source distribution for its full text.
 
 typedef struct PCPGenericList_ {
    GenericList super;
+   int test; // SMA REMOVEME
    // SMA; keymetric;   PCPMetric_iterate
 } PCPGenericList;
 
-void PCPGenericList_init(PCPGenericList* genericlists);
-
-void PCPGenericLists_done(Hashtable* table);
-
 void GenericList_goThroughEntries(GenericList * super,bool pauseProcessUpdate);
+
+GenericList* GenericList_addPlatformList(GenericList *super);
+
+void GenericList_removePlatformList(GenericList *super);
 
 #endif

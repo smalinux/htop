@@ -315,13 +315,21 @@ int CommandLine_run(const char* name, int argc, char** argv) {
    UsersTable* ut = UsersTable_new();
    Hashtable* dc = DynamicColumns_new();
    Hashtable* dm = DynamicMeters_new();
-   GenericLists* gls = GenericLists_new();
+   GenericLists* gls = GenericList_new();
    if (!dc)
       dc = Hashtable_new(0, true);
 
    ProcessList* pl = ProcessList_new(ut, dm, dc, flags.pidMatchList, flags.userId);
 
    /* SMA: Start tmp test -------------------------------------------------- */
+
+
+   // SMA REMOVEME
+   GenericList ggg = {.ttt = 100, .ss = { .type = 100}};
+
+   GenericList_addList(&ggg);
+   // SMA REMOVEME
+
 
    /* Unbuffered output */
    setvbuf(stdout, NULL, _IONBF, 0);
@@ -336,7 +344,7 @@ int CommandLine_run(const char* name, int argc, char** argv) {
    ss.type = 200;
    gl.ss = ss;
 
-   GenericLists_add(&gl);
+   GenericList_addList(&gl);
    GenericList *myscreen = Hashtable_get(gls->table, 100);
 
    fprintf(stderr, "glists %d, type = %d\n", myscreen->ttt, myscreen->ss.type);
@@ -346,7 +354,7 @@ int CommandLine_run(const char* name, int argc, char** argv) {
 
    /* SMA hashtable manipulation: now I have a pointer to my first row */
    Generic gg = {.id = 111};
-   GenericList_add(myscreen, &gg);
+   GenericList_addGeneric(myscreen, &gg);
    Generic *myrow_hash = (Generic*)Hashtable_get(myscreen->genericTable, 111);
    fprintf(stderr, "myrow_hash %d \n", myrow_hash->id);
 
@@ -356,6 +364,7 @@ int CommandLine_run(const char* name, int argc, char** argv) {
    fprintf(stderr, "myrow_vector %d \n", myrow_vector->id);
 
 
+   GenericList_removeList(myscreen);
 
    // SMA: REMOVEME
    /* SMA: End tmp test ---------------------------------------------------- */
@@ -453,7 +462,7 @@ int CommandLine_run(const char* name, int argc, char** argv) {
    Settings_delete(settings);
    DynamicColumns_delete(dc);
    DynamicMeters_delete(dm);
-   //GenericLists_delete(gls);
+   GenericList_delete(gls);
 
    return 0;
 }

@@ -20,9 +20,10 @@ static bool PCPGenericList_updateGenericList(PCPGenericList* this) // SMA xxg th
     * PCPGenericList ===> this
     * GenericList ======> gl
     */
-   const GenericLists* gls = GenericLists_getGenericLists();
+   const GenericLists* gls = GenericList_getGenericLists();
 
    GenericList *myscreen = Hashtable_get(gls->table, 100);
+   PCPGenericList *pcpmyscreen = (PCPGenericList*) myscreen;
 
    // Check Why this is wrrrrrrrrrrrrrrrrrrrong
    GenericList* gl = (GenericList*) this; // SMA xxg this
@@ -31,7 +32,10 @@ static bool PCPGenericList_updateGenericList(PCPGenericList* this) // SMA xxg th
 
    int pid = -1, offset = -1;
    //while (PCPMetric_iterate(PCP_PROC_PID, &pid, &offset)) {
-      Generic* g = GenericList_getGeneric(myscreen, pid, PCPGeneric_new);
+      Generic* g = GenericList_getGeneric(myscreen, PCPGeneric_new);
+
+      myscreen->totalRows++;
+
       PCPGeneric* gg = (PCPGeneric*) g;
 
       // -------------------------- Fill -------------------------------
@@ -57,12 +61,12 @@ static bool PCPGenericList_updateGenericList(PCPGenericList* this) // SMA xxg th
 
 
       // SMA: Test: Start print all rows & its node for testing
-      fprintf(stderr, ">>>>>>>>>>>>>>>>>>>>>>>>> row size %d\n\n", Vector_size(myscreen->genericRow));
+      //fprintf(stderr, ">>>>>>>>>>>>>>>>>>>>>>>>> row size %d\n\n", Vector_size(myscreen->genericRow));
+      fprintf(stderr, ">>>>>>>>>>>>>>>>>>>>>>>>> row size %d\n\n", myscreen->totalRows);
+      fprintf(stderr, "PCPGenericList->test %d\n", pcpmyscreen->test);
       for (int i = 0; i < Vector_size(myscreen->genericRow); i++)
       {
-         Generic* row = (Generic*)Vector_get(myscreen->genericRow, i);
-         PCPGeneric* gr = (PCPGeneric*) row;
-         fprintf(stderr, "Generic row %d, has %d columns\n", row->id, gr->fieldsCount);
+         fprintf(stderr, "Generic row %d, has %d columns\n", myscreen->totalRows, Vector_size(myscreen->genericRow));
 
          for (int n = 0; n < gg->fieldsCount; n++)
          {
@@ -74,8 +78,14 @@ static bool PCPGenericList_updateGenericList(PCPGenericList* this) // SMA xxg th
       // SMA: Test: End print all rows & its node for testing
 
       // -------------------------- Add --------------------------------
-         GenericList_add(myscreen, g); // keep this last line
+         GenericList_addGeneric(myscreen, g); // keep this last line
       // ---------------------------------------------------------------
+
+      // ------------- Remove Generic (just for testing) ---------------
+      if(myscreen->totalRows == 5)
+         GenericList_removeGeneric(myscreen);
+      // ---------------------------------------------------------------
+
    //}
    return 0; // bool ??!!
 }
@@ -84,7 +94,21 @@ void GenericList_goThroughEntries(GenericList * super, bool pauseProcessUpdate)
 {
    PCPGenericList* this = (PCPGenericList*) super;
    const Settings* settings = super->settings;
-   //fprintf(stderr, "hiiiiii\n");
-   //PCPGenericList_updateGenerics(this, period, &timestamp);
+
    PCPGenericList_updateGenericList(this);
+}
+
+GenericList* GenericList_addPlatformList(GenericList *super)
+{
+   PCPGenericList* this = xCalloc(1, sizeof(PCPGenericList));
+   super = &(this->super);
+   this->test = 66; // SMA REMOVEME
+
+   return super;
+}
+
+void GenericList_removePlatformList(GenericList *gl)
+{
+   PCPGenericList* this = (PCPGenericList*) gl;
+   free(this);
 }
