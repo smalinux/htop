@@ -37,21 +37,11 @@ Generic* PCPGeneric_new(const Settings* settings) {
 void Generic_delete(Object* cast) {
    PCPGeneric* this = (PCPGeneric*) cast;
 
-   for(int i = 0; i <= this->fieldsCount; i++) {
+   for(int i = 0; i <= this->fieldsCount; i++)
       PCPGeneric_removeField(this);
-      fprintf(stderr,">>>>>>>>>>>>>> %d <<<<<<<<<<<<<<<\n", i); // SMA REMOVEME
-   }
+
    Generic_done((Generic*)cast);
-
    free(this);
-}
-
-static void PCPGeneric_writeField(const Generic* this, RichString* str, int field) {
-   fprintf(stderr, "PCPGeneric_writeField\n");
-}
-
-void PCPGeneric_display(const Object* cast, RichString* out) {
-   fprintf(stderr, "PCPGeneric_display\n");
 }
 
 PCPGenericField* PCPGeneric_addField(PCPGeneric* this, const Settings* settings)
@@ -79,13 +69,32 @@ void PCPGeneric_removeField(PCPGeneric* this)
    this->fieldsCount--;
 }
 
+static void PCPGeneric_writeField(const Generic* this, RichString* str, int field) {
+   fprintf(stderr, ".......PCPGeneric_writeField\n");
+}
+
+void PCPGeneric_display(const Object* cast, RichString* out) {
+   fprintf(stderr, "PCPGeneric_display\n");
+}
+
+static int PCPGeneric_compareByKey(const Generic* v1, const Generic* v2, int key) {
+   const PCPGeneric* g1 = (const PCPGeneric*)v1;
+   const PCPGeneric* g2 = (const PCPGeneric*)v2;
+
+   switch (key) {
+      case 0:
+         return 0;
+      default:
+         return 0;
+   }
+}
+
 const GenericClass PCPGeneric_class = {
    .super = {
       .extends = Class(Generic),
-      .display = PCPGeneric_display,
-      //.delete = PCPGeneric_delete,
-      //.compare = PCPGeneric_compare,
+      .display = Generic_display,
+      .compare = Generic_compare,
    },
    .writeField = PCPGeneric_writeField,
-   //.compareByKey = PCPGeneric_compareByKey,
+   .compareByKey = PCPGeneric_compareByKey,
 };

@@ -27,10 +27,7 @@ typedef struct Generic_ {
    const struct GenericList_* GenericList;
    const struct Settings_* settings;
 
-   int id; // SMA REMOVEME
-
-   /* Parent process identifier */
-   pid_t ppid; // SMA REMOVEME
+   int gtest; // SMA REMOVEME
 
 } Generic;
 
@@ -42,7 +39,7 @@ void Generic_delete(Object* cast);
 
 typedef Generic* (*Generic_New)(const struct Settings_*);
 typedef void (*Generic_WriteField)(const Generic*, RichString*, int field);
-typedef int (*Generic_CompareByKey)(const Generic*, const Generic*);
+typedef int (*Generic_CompareByKey)(const Generic*, const Generic*, int key);
 
 typedef struct GenericClass_ {
    const ObjectClass super;
@@ -59,7 +56,7 @@ extern const GenericClass Generic_class;
 
 void Generic_init(Generic* this, const Settings* settings);
 
-void Generic_done(Generic* this);
+void Generic_done(Generic* this); // TODO
 
 void Generic_addField(Generic* this); // TODO
 void Generic_removeField(Generic* this); // TODO

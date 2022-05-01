@@ -43,10 +43,9 @@ void GenericList_addList(GenericList* l)
    gl->genericRow = Vector_new(Class(Generic), false, DEFAULT_SIZE);
    gl->genericTable = Hashtable_new(200, false);
 
-   gl->ttt = l->ttt; // SMA REMOVEME
-   gl->ss = l->ss; // SMA REMOVEME
+   gl->ss = l->ss; // SMA
 
-   Hashtable_put(genericlists->table, gl->ttt, gl);
+   Hashtable_put(genericlists->table, 100, gl); // SMA FIXME 100 hard code
 
    /* init */
    gl->totalRows = 0;
@@ -54,7 +53,7 @@ void GenericList_addList(GenericList* l)
 
 void GenericList_removeList(GenericList* this)
 {
-   // loop & free fields & Generics
+   // loop & GenericList_removeGeneric()
    Hashtable_delete(this->genericTable);
    Vector_delete(this->genericRow);
 
@@ -91,7 +90,6 @@ Generic* GenericList_getGeneric(GenericList* this, Generic_New constructor)
 {
    Generic* g;
    g = constructor(this->settings);
-   g->ppid = 3333; // SMA REMOVEME
 
    return g;
 }

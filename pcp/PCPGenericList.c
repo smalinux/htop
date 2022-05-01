@@ -38,6 +38,8 @@ static bool PCPGenericList_updateGenericList(PCPGenericList* this) // SMA xxg th
 
       // -------------------------- Fill -------------------------------
 
+      g->gtest = 666666;
+
       // SMA Start add & assing fields(columns).
       fprintf(stderr, "test: add new field w/ loop over all fields:\n");
 

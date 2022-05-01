@@ -41,8 +41,6 @@ typedef struct GenericList_ {
 
    bool rebuildFields;
 
-   int ttt; // SMALINUX REMOVEME
-
    int offset;
 
    int id; /* GenericList id == offset */
@@ -52,7 +50,6 @@ typedef struct GenericList_ {
 
 typedef struct GenericLists_ {
    Hashtable *table;
-   int tst; // SMALINUX REMOVEME
    size_t count; /* total count for all GenericList */
 } GenericLists;
 

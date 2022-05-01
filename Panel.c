@@ -285,7 +285,6 @@ void Panel_draw(Panel* this, const Settings* settings, bool force_redraw, bool f
          if (String_eq(settings->ss->name, "cgroup") && !settings->SetupScreenActive)
             Object_setClass(itemObj, Class(Generic));
          Object_display(itemObj, &item);
-         //CRT_handleSIGSEGV(9);
          int itemLen = RichString_sizeVal(item);
          int amt = MINIMUM(itemLen - scrollH, this->w);
          if (highlightSelected && i == this->selected) {

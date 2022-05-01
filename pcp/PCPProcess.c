@@ -198,7 +198,7 @@ static void PCPProcess_writeField(const Process* this, RichString* str, ProcessF
    RichString_appendWide(str, attr, buffer);
 }
 
-static double adjustNaN(double num) {
+static double adjustNaN(double num) { // SMA ???
    if (isnan(num))
       return -0.0005;
 

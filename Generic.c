@@ -36,16 +36,6 @@ in the source distribution for its full text.
 #include <sys/mkdev.h>
 #endif
 
-void Generic_display(const Object* cast, RichString* out) {
-   const Process* this = (const Process*) cast;
-   fprintf(stderr, "- Generic_display\n");
-   //for (int i = 0; fields[i]; i++) // SMA use generic fields
-      As_Process(this)->writeField(this, out, 0); // 0 == loop over fields
-}
-
-int Generic_compare(const void* v1, const void* v2) {
-   return 0;
-}
 
 void Generic_init(Generic* this, const Settings* settings) {
    this->settings = settings;
@@ -78,11 +68,24 @@ void Generic_writeField(const Generic* this, RichString* str, int field) {
    RichString_appendAscii(str, attr, buffer);
 }
 
+void Generic_display(const Object* cast, RichString* out) {
+   const Generic* this = (const Generic*) cast;
+   //const ProcessField* fields = this->settings->ss->fields;
+   //for (int i = 0; fields[i]; i++) // SMA use generic fields
+      As_Generic(this)->writeField(this, out, 0); // 0 == loop over fields
+
+   assert(RichString_size(out) > 0);
+}
+
+int Generic_compare(const void* v1, const void* v2) {
+   return 0;
+}
+
 const GenericClass Generic_class = {
    .super = {
       .extends = Class(Object),
       .display = Generic_display,
-      .compare = Generic_compare
+      .compare = Generic_compare,
    },
    .writeField = Generic_writeField,
 };

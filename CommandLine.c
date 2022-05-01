@@ -284,11 +284,6 @@ static void setCommFilter(State* state, char** commFilter) {
    *commFilter = NULL;
 }
 
-typedef struct { // SMA: REMOVEME
-   int data; // could be any kind of data.
-   unsigned int key;
-} Iterator;
-
 int CommandLine_run(const char* name, int argc, char** argv) {
 
    /* initialize locale */
@@ -325,7 +320,7 @@ int CommandLine_run(const char* name, int argc, char** argv) {
 
 
    // SMA REMOVEME
-   GenericList gl1 = {.ttt = 100, .ss = { .type = 100}};
+   GenericList gl1;
 
    GenericList_addList(&gl1);
    // SMA REMOVEME
@@ -334,25 +329,8 @@ int CommandLine_run(const char* name, int argc, char** argv) {
    /* Unbuffered output */
    setvbuf(stdout, NULL, _IONBF, 0);
 
-   GenericList gl;
-   ScreenSettings ss;
 
 
-
-   /* SMA myscreen: now I have a pointer to my first screen */
-   gl.ttt = 200;
-   ss.type = 200;
-   gl.ss = ss;
-
-   GenericList_addList(&gl);
-   GenericList *myscreen = Hashtable_get(gls->table, 100);
-
-   fprintf(stderr, "glists %d, type = %d\n", myscreen->ttt, myscreen->ss.type);
-   myscreen = Hashtable_get(gls->table, 200);
-   fprintf(stderr, "glists %d, type = %d\n", myscreen->ttt, myscreen->ss.type);
-
-
-   GenericList_removeList(myscreen);
 
    // SMA: REMOVEME
    /* SMA: End tmp test ---------------------------------------------------- */
@@ -399,7 +377,6 @@ int CommandLine_run(const char* name, int argc, char** argv) {
       .settings = settings,
       .ut = ut,
       .pl = pl,
-      .gl = myscreen,
       .mainPanel = panel,
       .header = header,
       .pauseProcessUpdate = false,
@@ -450,6 +427,8 @@ int CommandLine_run(const char* name, int argc, char** argv) {
    Settings_delete(settings);
    DynamicColumns_delete(dc);
    DynamicMeters_delete(dm);
+   //GenericList_removeList(&gl1); // SMA FIXME Broken function
+
    GenericList_delete(gls);
 
    return 0;
