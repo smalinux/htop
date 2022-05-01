@@ -59,10 +59,11 @@ extern const GenericClass Generic_class;
 
 void Generic_init(Generic* this, const Settings* settings);
 
-/* Just a wrapper to Platform/ PCPGeneric_addField
- * I will need those in Columns Panel
- * Maybe I will need Generic_updateField also ... */
-void Generic_addField(Generic* this /* maybe I will add more params */);
-void Generic_removeField(Generic* this);
+void Generic_done(Generic* this);
+
+void Generic_addField(Generic* this); // TODO
+void Generic_removeField(Generic* this); // TODO
+void Generic_updateField(Generic* this); // TODO
+void Generic_rebuildFields(Generic* this); // TODO
 
 #endif

@@ -34,8 +34,6 @@ static bool PCPGenericList_updateGenericList(PCPGenericList* this) // SMA xxg th
    //while (PCPMetric_iterate(PCP_PROC_PID, &pid, &offset)) {
       Generic* g = GenericList_getGeneric(myscreen, PCPGeneric_new);
 
-      myscreen->totalRows++;
-
       PCPGeneric* gg = (PCPGeneric*) g;
 
       // -------------------------- Fill -------------------------------
@@ -62,11 +60,11 @@ static bool PCPGenericList_updateGenericList(PCPGenericList* this) // SMA xxg th
 
       // SMA: Test: Start print all rows & its node for testing
       //fprintf(stderr, ">>>>>>>>>>>>>>>>>>>>>>>>> row size %d\n\n", Vector_size(myscreen->genericRow));
-      fprintf(stderr, ">>>>>>>>>>>>>>>>>>>>>>>>> row size %d\n\n", myscreen->totalRows);
+      fprintf(stderr, ">>>>>>>>>>>>>>>>>>>>>>>>> totalRows %d\n\n", myscreen->totalRows);
       fprintf(stderr, "PCPGenericList->test %d\n", pcpmyscreen->test);
       for (int i = 0; i < Vector_size(myscreen->genericRow); i++)
       {
-         fprintf(stderr, "Generic row %d, has %d columns\n", myscreen->totalRows, Vector_size(myscreen->genericRow));
+         fprintf(stderr, "Generic row %d - %d\n", myscreen->totalRows, Vector_size(myscreen->genericRow));
 
          for (int n = 0; n < gg->fieldsCount; n++)
          {
@@ -82,8 +80,9 @@ static bool PCPGenericList_updateGenericList(PCPGenericList* this) // SMA xxg th
       // ---------------------------------------------------------------
 
       // ------------- Remove Generic (just for testing) ---------------
-      if(myscreen->totalRows == 5)
+      if(myscreen->totalRows > 5) {
          GenericList_removeGeneric(myscreen);
+      }
       // ---------------------------------------------------------------
 
    //}

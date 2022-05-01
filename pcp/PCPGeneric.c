@@ -21,17 +21,32 @@ in the source distribution for its full text.
 #include "Hashtable.h"
 #include "XUtils.h"
 
+
 Generic* PCPGeneric_new(const Settings* settings) {
    PCPGeneric* this = xCalloc(1, sizeof(PCPGeneric));
    Object_setClass(this, Class(PCPGeneric));
 
    this->fields = Hashtable_new(0, false);
 
+   this->fieldsCount = 0;
+
    Generic_init(&this->super, settings);
    return &this->super;
 }
 
-static void PCPGeneric_writeField(const Process* this, RichString* str, int field) {
+void Generic_delete(Object* cast) {
+   PCPGeneric* this = (PCPGeneric*) cast;
+
+   for(int i = 0; i <= this->fieldsCount; i++) {
+      PCPGeneric_removeField(this);
+      fprintf(stderr,">>>>>>>>>>>>>> %d <<<<<<<<<<<<<<<\n", i); // SMA REMOVEME
+   }
+   Generic_done((Generic*)cast);
+
+   free(this);
+}
+
+static void PCPGeneric_writeField(const Generic* this, RichString* str, int field) {
    fprintf(stderr, "PCPGeneric_writeField\n");
 }
 
@@ -56,10 +71,11 @@ PCPGenericField* PCPGeneric_addField(PCPGeneric* this, const Settings* settings)
 
 void PCPGeneric_removeField(PCPGeneric* this)
 {
-   PCPGenericField* field = Hashtable_get(this->fields, this->fieldsCount);
-   //free(field->value); // uncomment == segment fault
+   int idx = this->fieldsCount -1;
 
-   Hashtable_remove(this->fields, this->fieldsCount);
+   PCPGenericField* field = Hashtable_get(this->fields, idx);
+   free(field->value);
+   Hashtable_remove(this->fields, idx);
    this->fieldsCount--;
 }
 

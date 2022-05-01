@@ -20,6 +20,11 @@ in the source distribution for its full text.
 #include "UsersTable.h"
 #include "Vector.h"
 
+typedef struct FieldUI_ {
+   int test; // SMA REMOVEME
+
+} FieldUI;
+
 typedef struct GenericList_ {
    const Settings* settings;
 
@@ -32,9 +37,14 @@ typedef struct GenericList_ {
 
    Panel* panel;
 
+   Hashtable* fieldUI;
+
+   bool rebuildFields;
+
    int ttt; // SMALINUX REMOVEME
 
    int offset;
+
    int id; /* GenericList id == offset */
 
    unsigned int totalRows;

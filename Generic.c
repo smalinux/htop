@@ -51,8 +51,13 @@ void Generic_init(Generic* this, const Settings* settings) {
    this->settings = settings;
 
    // this->
+   // this->
+}
 
-
+void Generic_done(Generic* this) {
+   assert (this != NULL);
+   // freeFields here
+   // Reference: Process_done
 }
 
 void Generic_writeField(const Generic* this, RichString* str, int field) {
@@ -73,14 +78,11 @@ void Generic_writeField(const Generic* this, RichString* str, int field) {
    RichString_appendAscii(str, attr, buffer);
 }
 
-
 const GenericClass Generic_class = {
    .super = {
       .extends = Class(Object),
       .display = Generic_display,
-      //.delete = Generic_delete,
       .compare = Generic_compare
    },
    .writeField = Generic_writeField,
 };
-

@@ -36,17 +36,20 @@ void GenericList_delete(GenericLists* gls)
    free(gls);
 }
 
-void GenericList_addList(GenericList* g)
+void GenericList_addList(GenericList* l)
 {
-   GenericList* gl = GenericList_addPlatformList(g);
+   GenericList* gl = GenericList_addPlatformList(l);
 
    gl->genericRow = Vector_new(Class(Generic), false, DEFAULT_SIZE);
    gl->genericTable = Hashtable_new(200, false);
 
-   gl->ttt = g->ttt; // SMA REMOVEME
-   gl->ss = g->ss; // SMA REMOVEME
+   gl->ttt = l->ttt; // SMA REMOVEME
+   gl->ss = l->ss; // SMA REMOVEME
 
    Hashtable_put(genericlists->table, gl->ttt, gl);
+
+   /* init */
+   gl->totalRows = 0;
 }
 
 void GenericList_removeList(GenericList* this)
@@ -65,22 +68,23 @@ const GenericLists* GenericList_getGenericLists()
 
 void GenericList_addGeneric(GenericList* this, Generic* g)
 {
-   g->GenericList = this;
 
    Vector_add(this->genericRow, g);
-   Hashtable_put(this->genericTable, g->id, g); // id ?? or totalRows ?
+   Hashtable_put(this->genericTable, this->totalRows, g);
+   this->totalRows++;
 }
 
 void GenericList_removeGeneric(GenericList* this)
 {
-   int idx;
+   int idx = this->totalRows -1;
+   Object* last = Vector_get(this->genericRow, idx);
 
-   idx = Vector_size(this->genericRow);
+   Generic_delete(last);
+
    Vector_remove(this->genericRow, idx);
+   Hashtable_remove(this->genericTable, idx);
 
    this->totalRows--;
-   // freefields(); here
-   //free(g);     this last element
 }
 
 Generic* GenericList_getGeneric(GenericList* this, Generic_New constructor)

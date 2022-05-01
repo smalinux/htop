@@ -325,9 +325,9 @@ int CommandLine_run(const char* name, int argc, char** argv) {
 
 
    // SMA REMOVEME
-   GenericList ggg = {.ttt = 100, .ss = { .type = 100}};
+   GenericList gl1 = {.ttt = 100, .ss = { .type = 100}};
 
-   GenericList_addList(&ggg);
+   GenericList_addList(&gl1);
    // SMA REMOVEME
 
 
@@ -350,18 +350,6 @@ int CommandLine_run(const char* name, int argc, char** argv) {
    fprintf(stderr, "glists %d, type = %d\n", myscreen->ttt, myscreen->ss.type);
    myscreen = Hashtable_get(gls->table, 200);
    fprintf(stderr, "glists %d, type = %d\n", myscreen->ttt, myscreen->ss.type);
-
-
-   /* SMA hashtable manipulation: now I have a pointer to my first row */
-   Generic gg = {.id = 111};
-   GenericList_addGeneric(myscreen, &gg);
-   Generic *myrow_hash = (Generic*)Hashtable_get(myscreen->genericTable, 111);
-   fprintf(stderr, "myrow_hash %d \n", myrow_hash->id);
-
-   /* SMA Vector manipulation */
-   Vector_add(myscreen->genericRow, &gg);
-   Generic *myrow_vector = (Generic*)Vector_get(myscreen->genericRow, 0);
-   fprintf(stderr, "myrow_vector %d \n", myrow_vector->id);
 
 
    GenericList_removeList(myscreen);
