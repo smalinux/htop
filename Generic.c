@@ -59,7 +59,7 @@ void Generic_writeField(const Generic* this, RichString* str, int field) {
    switch (field) {
       case 0: {
    //xSnprintf(buffer, n, "%*d ", Process_pidDigits, this->pid);
-   xSnprintf(buffer, n, "%*d ", 10, 777);
+   xSnprintf(buffer, n, "%*d ", 10, this->gtest);
    break;
               }
       case 1: fprintf(stderr, "1- Generic_writeField\n"); return;

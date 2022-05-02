@@ -108,7 +108,7 @@ void ScreenManager_resize(ScreenManager* this) {
 
 static void checkRecalculation(ScreenManager* this, double* oldTime, int* sortTimeout, bool* redraw, bool* rescan, bool* timedOut, bool *force_redraw) {
    ProcessList* pl = this->header->pl;
-   GenericList* gl = this->header->gl;
+   GenericList* gl = this->header->gl; // SMA REMOVEME, call all your lists instead.
 
    Platform_gettime_realtime(&pl->realtime, &pl->realtimeMs);
    double newTime = ((double)pl->realtime.tv_sec * 10) + ((double)pl->realtime.tv_usec / 100000);
@@ -192,17 +192,17 @@ static void ScreenManager_drawPanels(ScreenManager* this, int focus, bool force_
    // SMA Start SMA make your own items vector
    Vector* myVec = Vector_new(Class(Process), false, DEFAULT_SIZE);
 
-   Process p1 = {.user = strdup("Power")};
-   Process p2 = {.user = strdup("Power")};
-   Process p3 = {.user = strdup("Power")};
-   Process p4 = {.user = strdup("Power")};
-   Process p5 = {.user = strdup("Power")};
+   Generic g1 = {.gtest = 666666};
+   Generic g2 = {.gtest = 666666};
+   Generic g3 = {.gtest = 666666};
+   Generic g4 = {.gtest = 666666};
+   Generic g5 = {.gtest = 666666};
 
-   Vector_add(myVec, &p1);
-   Vector_add(myVec, &p2);
-   Vector_add(myVec, &p3);
-   Vector_add(myVec, &p4);
-   Vector_add(myVec, &p5);
+   Vector_add(myVec, &g1);
+   Vector_add(myVec, &g2);
+   Vector_add(myVec, &g3);
+   Vector_add(myVec, &g4);
+   Vector_add(myVec, &g5);
 
    // SMA End SMA make your own items vector
 

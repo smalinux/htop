@@ -38,8 +38,6 @@ static bool PCPGenericList_updateGenericList(PCPGenericList* this) // SMA xxg th
 
       // -------------------------- Fill -------------------------------
 
-      g->gtest = 666666;
-
       // SMA Start add & assing fields(columns).
       fprintf(stderr, "test: add new field w/ loop over all fields:\n");
 
@@ -82,7 +80,7 @@ static bool PCPGenericList_updateGenericList(PCPGenericList* this) // SMA xxg th
       // ---------------------------------------------------------------
 
       // ------------- Remove Generic (just for testing) ---------------
-      if(myscreen->totalRows > 5) {
+      if(myscreen->totalRows > 10) {
          GenericList_removeGeneric(myscreen);
       }
       // ---------------------------------------------------------------
