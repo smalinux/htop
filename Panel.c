@@ -20,7 +20,7 @@ in the source distribution for its full text.
 #include "ProvideCurses.h"
 #include "RichString.h"
 #include "XUtils.h"
-#include "Generic.h"
+#include "pcp/PCPGeneric.h"
 
 
 const PanelClass Panel_class = {
@@ -283,7 +283,7 @@ void Panel_draw(Panel* this, const Settings* settings, bool force_redraw, bool f
          // SMALINUX this invoke display from Process Class
          // I have to take other direction from here: cgroup->display()
          if (String_eq(settings->ss->name, "cgroup") && !settings->SetupScreenActive)
-            Object_setClass(itemObj, Class(Generic));
+            Object_setClass(itemObj, Class(PCPGeneric));
          Object_display(itemObj, &item);
          int itemLen = RichString_sizeVal(item);
          int amt = MINIMUM(itemLen - scrollH, this->w);
