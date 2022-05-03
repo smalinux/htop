@@ -385,12 +385,14 @@ int CommandLine_run(const char* name, int argc, char** argv) {
       .hideProcessSelection = false,
    };
 
-   BaseLists_setState((BaseLists*)plp, &state);
+   ProcessListPanel_setState(plp, &state);
+   BaseLists_setState(panel, &state);
    if (flags.commFilter)
       setCommFilter(&state, &(flags.commFilter));
 
    ScreenManager* scr = ScreenManager_new(header, settings, &state, true);
    ScreenManager_add(scr, (Panel*) plp, -1);
+   ScreenManager_add(scr, (Panel*) panel, -1);
 
 
 
