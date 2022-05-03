@@ -33,6 +33,7 @@ myhtopsources = \
 	AffinityPanel.c \
 	AvailableColumnsPanel.c \
 	AvailableMetersPanel.c \
+	BaseLists.c \
 	BatteryMeter.c \
 	CPUMeter.c \
 	CRT.c \
@@ -49,9 +50,9 @@ myhtopsources = \
 	DisplayOptionsPanel.c \
 	DynamicColumn.c \
 	DynamicMeter.c \
-	Generic.c \
 	EnvScreen.c \
 	FunctionBar.c \
+	Generic.c \
 	GenericList.c \
 	Hashtable.c \
 	Header.c \
@@ -61,7 +62,6 @@ myhtopsources = \
 	InfoScreen.c \
 	ListItem.c \
 	LoadAverageMeter.c \
-	BaseLists.c \
 	MemoryMeter.c \
 	MemorySwapMeter.c \
 	Meter.c \
@@ -73,6 +73,7 @@ myhtopsources = \
 	Panel.c \
 	Process.c \
 	ProcessList.c \
+	ProcessListPanel.c \
 	ProcessLocksScreen.c \
 	RichString.c \
 	ScreenManager.c \
@@ -94,6 +95,7 @@ myhtopheaders = \
 	AffinityPanel.h \
 	AvailableColumnsPanel.h \
 	AvailableMetersPanel.h \
+	BaseLists.h \
 	BatteryMeter.h \
 	CPUMeter.h \
 	CRT.h \
@@ -110,9 +112,9 @@ myhtopheaders = \
 	DisplayOptionsPanel.h \
 	DynamicColumn.h \
 	DynamicMeter.h \
-	Generic.h \
 	EnvScreen.h \
 	FunctionBar.h \
+	Generic.h \
 	GenericList.h \
 	Hashtable.h \
 	Header.h \
@@ -124,7 +126,6 @@ myhtopheaders = \
 	ListItem.h \
 	LoadAverageMeter.h \
 	Macros.h \
-	BaseLists.h \
 	MemoryMeter.h \
 	MemorySwapMeter.h \
 	Meter.h \
@@ -136,6 +137,7 @@ myhtopheaders = \
 	Panel.h \
 	Process.h \
 	ProcessList.h \
+	ProcessListPanel.h \
 	ProcessLocksScreen.h \
 	ProvideCurses.h \
 	RichString.h \

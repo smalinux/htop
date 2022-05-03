@@ -30,6 +30,7 @@ in the source distribution for its full text.
 #include "Header.h"
 #include "IncSet.h"
 #include "BaseLists.h"
+#include "ProcessListPanel.h"
 #include "MetersPanel.h"
 #include "Panel.h"
 #include "Platform.h"
@@ -369,7 +370,8 @@ int CommandLine_run(const char* name, int argc, char** argv) {
    CRT_init(settings, flags.allowUnicode);
 
    BaseLists* panel = BaseLists_new();
-   ProcessList_setPanel(pl, (Panel*) panel);
+   ProcessListPanel* plp = ProcessListPanel_new();
+   ProcessList_setPanel(pl, (Panel*) plp);
 
    BaseLists_updateLabels(panel, settings->ss->treeView, flags.commFilter);
 
@@ -377,18 +379,18 @@ int CommandLine_run(const char* name, int argc, char** argv) {
       .settings = settings,
       .ut = ut,
       .pl = pl,
-      .BaseLists = panel,
+      .BaseLists = (BaseLists*)plp,
       .header = header,
       .pauseProcessUpdate = false,
       .hideProcessSelection = false,
    };
 
-   BaseLists_setState(panel, &state);
+   BaseLists_setState((BaseLists*)plp, &state);
    if (flags.commFilter)
       setCommFilter(&state, &(flags.commFilter));
 
    ScreenManager* scr = ScreenManager_new(header, settings, &state, true);
-   ScreenManager_add(scr, (Panel*) panel, -1);
+   ScreenManager_add(scr, (Panel*) plp, -1);
 
 
 
