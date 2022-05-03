@@ -71,6 +71,10 @@ void PCPGeneric_removeField(PCPGeneric* this)
 
 static void PCPGeneric_writeField(const Generic* this, RichString* str, int field) {
    fprintf(stderr, ".......PCPGeneric_writeField\n");
+
+
+
+   Generic_writeField(this, str, field);
 }
 
 void PCPGeneric_display(const Object* cast, RichString* out) {
