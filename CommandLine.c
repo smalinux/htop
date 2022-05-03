@@ -390,6 +390,31 @@ int CommandLine_run(const char* name, int argc, char** argv) {
    ScreenManager* scr = ScreenManager_new(header, settings, &state, true);
    ScreenManager_add(scr, (Panel*) panel, -1);
 
+
+
+
+   fprintf(stderr, "8888888888888888888888888888888888888888888888\n");
+   const Settings* s = settings;
+
+   // print settings->screens->name
+   for(unsigned int i = 0; i < s->nScreens; i++) {
+      fprintf(stderr, "=> %s\n", s->screens[i]->name);
+      ScreenSettings* ScS = s->screens[i];
+      // print ScreenSettings->fields
+      for(unsigned int y = 0; ScS->fields[y]; y++)
+      {
+         fprintf(stderr, "%s, ", Process_fields[ScS->fields[y]].name);
+         //fprintf(stderr, "   %d,", ScS->fields[y]);
+      }
+      fprintf(stderr, "\n");
+
+   }
+   fprintf(stderr, "9999999999999999999999999999999999999999999999\n");
+
+
+
+
+
    ProcessList_scan(pl, false); // SMA startup scan. I stoped it because I
    //want to study ScreenManager
    CommandLine_delay(pl, 75);
@@ -399,6 +424,7 @@ int CommandLine_run(const char* name, int argc, char** argv) {
       ProcessList_collapseAllBranches(pl);
 
    ScreenManager_run(scr, NULL, NULL, NULL);
+
 
    Platform_done();
 
