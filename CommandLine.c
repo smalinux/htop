@@ -29,7 +29,7 @@ in the source distribution for its full text.
 #include "Hashtable.h"
 #include "Header.h"
 #include "IncSet.h"
-#include "MainPanel.h"
+#include "BaseLists.h"
 #include "MetersPanel.h"
 #include "Panel.h"
 #include "Platform.h"
@@ -275,7 +275,7 @@ static void CommandLine_delay(ProcessList* pl, unsigned long millisec) {
 
 static void setCommFilter(State* state, char** commFilter) {
    ProcessList* pl = state->pl;
-   IncSet* inc = state->mainPanel->inc;
+   IncSet* inc = state->BaseLists->inc;
 
    IncSet_setFilter(inc, *commFilter);
    pl->incFilter = IncSet_filter(inc);
@@ -368,22 +368,22 @@ int CommandLine_run(const char* name, int argc, char** argv) {
 
    CRT_init(settings, flags.allowUnicode);
 
-   MainPanel* panel = MainPanel_new();
+   BaseLists* panel = BaseLists_new();
    ProcessList_setPanel(pl, (Panel*) panel);
 
-   MainPanel_updateLabels(panel, settings->ss->treeView, flags.commFilter);
+   BaseLists_updateLabels(panel, settings->ss->treeView, flags.commFilter);
 
    State state = {
       .settings = settings,
       .ut = ut,
       .pl = pl,
-      .mainPanel = panel,
+      .BaseLists = panel,
       .header = header,
       .pauseProcessUpdate = false,
       .hideProcessSelection = false,
    };
 
-   MainPanel_setState(panel, &state);
+   BaseLists_setState(panel, &state);
    if (flags.commFilter)
       setCommFilter(&state, &(flags.commFilter));
 

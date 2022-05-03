@@ -33,7 +33,7 @@ in the source distribution for its full text.
 #include "HugePageMeter.h"
 #include "LoadAverageMeter.h"
 #include "Macros.h"
-#include "MainPanel.h"
+#include "BaseLists.h"
 #include "Meter.h"
 #include "MemoryMeter.h"
 #include "MemorySwapMeter.h"
@@ -152,7 +152,7 @@ static Htop_Reaction Platform_actionSetIOPriority(State* st) {
    if (Settings_isReadonly())
       return HTOP_OK;
 
-   const LinuxProcess* p = (const LinuxProcess*) Panel_getSelected((Panel*)st->mainPanel);
+   const LinuxProcess* p = (const LinuxProcess*) Panel_getSelected((Panel*)st->BaseLists);
    if (!p)
       return HTOP_OK;
 
@@ -161,7 +161,7 @@ static Htop_Reaction Platform_actionSetIOPriority(State* st) {
    const void* set = Action_pickFromVector(st, ioprioPanel, 20, true);
    if (set) {
       IOPriority ioprio2 = IOPriorityPanel_getIOPriority(ioprioPanel);
-      bool ok = MainPanel_foreachProcess(st->mainPanel, LinuxProcess_setIOPriority, (Arg) { .i = ioprio2 }, NULL);
+      bool ok = BaseLists_foreachProcess(st->BaseLists, LinuxProcess_setIOPriority, (Arg) { .i = ioprio2 }, NULL);
       if (!ok) {
          beep();
       }
@@ -170,13 +170,13 @@ static Htop_Reaction Platform_actionSetIOPriority(State* st) {
    return HTOP_REFRESH | HTOP_REDRAW_BAR | HTOP_UPDATE_PANELHDR;
 }
 
-static bool Platform_changeAutogroupPriority(MainPanel* panel, int delta) {
+static bool Platform_changeAutogroupPriority(BaseLists* panel, int delta) {
    if (LinuxProcess_isAutogroupEnabled() == false) {
       beep();
       return false;
    }
    bool anyTagged;
-   bool ok = MainPanel_foreachProcess(panel, LinuxProcess_changeAutogroupPriorityBy, (Arg) { .i = delta }, &anyTagged);
+   bool ok = BaseLists_foreachProcess(panel, LinuxProcess_changeAutogroupPriorityBy, (Arg) { .i = delta }, &anyTagged);
    if (!ok)
       beep();
    return anyTagged;
@@ -186,7 +186,7 @@ static Htop_Reaction Platform_actionHigherAutogroupPriority(State* st) {
    if (Settings_isReadonly())
       return HTOP_OK;
 
-   bool changed = Platform_changeAutogroupPriority(st->mainPanel, -1);
+   bool changed = Platform_changeAutogroupPriority(st->BaseLists, -1);
    return changed ? HTOP_REFRESH : HTOP_OK;
 }
 
@@ -194,7 +194,7 @@ static Htop_Reaction Platform_actionLowerAutogroupPriority(State* st) {
    if (Settings_isReadonly())
       return HTOP_OK;
 
-   bool changed = Platform_changeAutogroupPriority(st->mainPanel, 1);
+   bool changed = Platform_changeAutogroupPriority(st->BaseLists, 1);
    return changed ? HTOP_REFRESH : HTOP_OK;
 }
 

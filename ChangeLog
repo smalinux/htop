@@ -224,7 +224,7 @@ What's new in version 3.0.4
 * Handle absence of package CPU temperature
 * Meter: restore non-wide-character build
 * LibSensors: restore temperature for Raspberry Pi
-* MainPanel: do not reset hideProcessSelection on KEY_SHUFFLE
+* BaseLists: do not reset hideProcessSelection on KEY_SHUFFLE
 * BarMeter: rework text padding
 * Panel: rework drawing of FunctionBar
 * Meter: fix artifacts with very tiny width

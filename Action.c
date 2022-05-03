@@ -24,7 +24,7 @@ in the source distribution for its full text.
 #include "InfoScreen.h"
 #include "ListItem.h"
 #include "Macros.h"
-#include "MainPanel.h"
+#include "BaseLists.h"
 #include "OpenFilesScreen.h"
 #include "Process.h"
 #include "ProcessLocksScreen.h"
@@ -42,18 +42,18 @@ in the source distribution for its full text.
 
 
 Object* Action_pickFromVector(State* st, Panel* list, int x, bool followProcess) {
-   MainPanel* mainPanel = st->mainPanel;
+   BaseLists* BaseLists = st->BaseLists;
    Header* header = st->header;
 
-   int y = ((Panel*)mainPanel)->y;
+   int y = ((Panel*)BaseLists)->y;
    ScreenManager* scr = ScreenManager_new(header, st->settings, st, false);
    scr->allowFocusChange = false;
    ScreenManager_add(scr, list, x);
-   ScreenManager_add(scr, (Panel*)mainPanel, -1);
+   ScreenManager_add(scr, (Panel*)BaseLists, -1);
    Panel* panelFocus;
    int ch;
    bool unfollow = false;
-   int pid = followProcess ? MainPanel_selectedPid(mainPanel) : -1;
+   int pid = followProcess ? BaseLists_selectedPid(BaseLists) : -1;
    if (followProcess && header->pl->following == -1) {
       header->pl->following = pid;
       unfollow = true;
@@ -63,11 +63,11 @@ Object* Action_pickFromVector(State* st, Panel* list, int x, bool followProcess)
       header->pl->following = -1;
    }
    ScreenManager_delete(scr);
-   Panel_move((Panel*)mainPanel, 0, y);
-   Panel_resize((Panel*)mainPanel, COLS, LINES - y - 1);
+   Panel_move((Panel*)BaseLists, 0, y);
+   Panel_resize((Panel*)BaseLists, COLS, LINES - y - 1);
    if (panelFocus == list && ch == 13) {
       if (followProcess) {
-         const Process* selected = (const Process*)Panel_getSelected((Panel*)mainPanel);
+         const Process* selected = (const Process*)Panel_getSelected((Panel*)BaseLists);
          if (selected && selected->pid == pid)
             return Panel_getSelected(list);
 
@@ -93,9 +93,9 @@ static void Action_runSetup(State* st) {
    }
 }
 
-static bool changePriority(MainPanel* panel, int delta) {
+static bool changePriority(BaseLists* panel, int delta) {
    bool anyTagged;
-   bool ok = MainPanel_foreachProcess(panel, Process_changePriorityBy, (Arg) { .i = delta }, &anyTagged);
+   bool ok = BaseLists_foreachProcess(panel, Process_changePriorityBy, (Arg) { .i = delta }, &anyTagged);
    if (!ok)
       beep();
    return anyTagged;
@@ -251,15 +251,15 @@ static Htop_Reaction actionExpandOrCollapseAllBranches(State* st) {
 }
 
 static Htop_Reaction actionIncFilter(State* st) {
-   IncSet* inc = (st->mainPanel)->inc;
-   IncSet_activate(inc, INC_FILTER, (Panel*)st->mainPanel);
+   IncSet* inc = (st->BaseLists)->inc;
+   IncSet_activate(inc, INC_FILTER, (Panel*)st->BaseLists);
    st->pl->incFilter = IncSet_filter(inc);
    return HTOP_REFRESH | HTOP_KEEP_FOLLOWING;
 }
 
 static Htop_Reaction actionIncSearch(State* st) {
-   IncSet_reset(st->mainPanel->inc, INC_SEARCH);
-   IncSet_activate(st->mainPanel->inc, INC_SEARCH, (Panel*)st->mainPanel);
+   IncSet_reset(st->BaseLists->inc, INC_SEARCH);
+   IncSet_activate(st->BaseLists->inc, INC_SEARCH, (Panel*)st->BaseLists);
    return HTOP_REFRESH | HTOP_KEEP_FOLLOWING;
 }
 
@@ -267,7 +267,7 @@ static Htop_Reaction actionHigherPriority(State* st) {
    if (Settings_isReadonly())
       return HTOP_OK;
 
-   bool changed = changePriority(st->mainPanel, -1);
+   bool changed = changePriority(st->BaseLists, -1);
    return changed ? HTOP_REFRESH : HTOP_OK;
 }
 
@@ -275,7 +275,7 @@ static Htop_Reaction actionLowerPriority(State* st) {
    if (Settings_isReadonly())
       return HTOP_OK;
 
-   bool changed = changePriority(st->mainPanel, 1);
+   bool changed = changePriority(st->BaseLists, 1);
    return changed ? HTOP_REFRESH : HTOP_OK;
 }
 
@@ -286,7 +286,7 @@ static Htop_Reaction actionInvertSortOrder(State* st) {
 }
 
 static Htop_Reaction actionExpandOrCollapse(State* st) {
-   bool changed = expandCollapse((Panel*)st->mainPanel);
+   bool changed = expandCollapse((Panel*)st->BaseLists);
    return changed ? HTOP_RECALCULATE : HTOP_OK;
 }
 
@@ -294,7 +294,7 @@ static Htop_Reaction actionCollapseIntoParent(State* st) {
    if (!st->settings->ss->treeView) {
       return HTOP_OK;
    }
-   bool changed = collapseIntoParent((Panel*)st->mainPanel);
+   bool changed = collapseIntoParent((Panel*)st->BaseLists);
    return changed ? HTOP_RECALCULATE : HTOP_OK;
 }
 
@@ -353,7 +353,7 @@ static Htop_Reaction actionSetAffinity(State* st) {
       return HTOP_OK;
 
 #if (defined(HAVE_LIBHWLOC) || defined(HAVE_AFFINITY))
-   const Process* p = (const Process*) Panel_getSelected((Panel*)st->mainPanel);
+   const Process* p = (const Process*) Panel_getSelected((Panel*)st->BaseLists);
    if (!p)
       return HTOP_OK;
 
@@ -368,7 +368,7 @@ static Htop_Reaction actionSetAffinity(State* st) {
    const void* set = Action_pickFromVector(st, affinityPanel, width, true);
    if (set) {
       Affinity* affinity2 = AffinityPanel_getAffinity(affinityPanel, st->pl);
-      bool ok = MainPanel_foreachProcess(st->mainPanel, Affinity_set, (Arg) { .v = affinity2 }, NULL);
+      bool ok = BaseLists_foreachProcess(st->BaseLists, Affinity_set, (Arg) { .v = affinity2 }, NULL);
       if (!ok)
          beep();
       Affinity_delete(affinity2);
@@ -391,10 +391,10 @@ static Htop_Reaction actionKill(State* st) {
    const ListItem* sgn = (ListItem*) Action_pickFromVector(st, signalsPanel, 14, true);
    if (sgn && sgn->key != 0) {
       preSelectedSignal = sgn->key;
-      Panel_setHeader((Panel*)st->mainPanel, "Sending...");
-      Panel_draw((Panel*)st->mainPanel, st->settings, false, true, true, State_hideFunctionBar(st));
+      Panel_setHeader((Panel*)st->BaseLists, "Sending...");
+      Panel_draw((Panel*)st->BaseLists, st->settings, false, true, true, State_hideFunctionBar(st));
       refresh();
-      MainPanel_foreachProcess(st->mainPanel, Process_sendSignal, (Arg) { .i = sgn->key }, NULL);
+      BaseLists_foreachProcess(st->BaseLists, Process_sendSignal, (Arg) { .i = sgn->key }, NULL);
       napms(500);
    }
    Panel_delete((Object*)signalsPanel);
@@ -421,8 +421,8 @@ static Htop_Reaction actionFilterByUser(State* st) {
 }
 
 Htop_Reaction Action_follow(State* st) {
-   st->pl->following = MainPanel_selectedPid(st->mainPanel);
-   Panel_setSelectionColor((Panel*)st->mainPanel, PANEL_SELECTION_FOLLOW);
+   st->pl->following = BaseLists_selectedPid(st->BaseLists);
+   Panel_setSelectionColor((Panel*)st->BaseLists, PANEL_SELECTION_FOLLOW);
    return HTOP_KEEP_FOLLOWING;
 }
 
@@ -435,7 +435,7 @@ static Htop_Reaction actionLsof(State* st) {
    if (Settings_isReadonly())
       return HTOP_OK;
 
-   const Process* p = (Process*) Panel_getSelected((Panel*)st->mainPanel);
+   const Process* p = (Process*) Panel_getSelected((Panel*)st->BaseLists);
    if (!p)
       return HTOP_OK;
 
@@ -448,7 +448,7 @@ static Htop_Reaction actionLsof(State* st) {
 }
 
 static Htop_Reaction actionShowLocks(State* st) {
-   const Process* p = (Process*) Panel_getSelected((Panel*)st->mainPanel);
+   const Process* p = (Process*) Panel_getSelected((Panel*)st->BaseLists);
    if (!p)
       return HTOP_OK;
    ProcessLocksScreen* pls = ProcessLocksScreen_new(p);
@@ -463,7 +463,7 @@ static Htop_Reaction actionStrace(State* st) {
    if (Settings_isReadonly())
       return HTOP_OK;
 
-   const Process* p = (Process*) Panel_getSelected((Panel*)st->mainPanel);
+   const Process* p = (Process*) Panel_getSelected((Panel*)st->BaseLists);
    if (!p)
       return HTOP_OK;
 
@@ -479,12 +479,12 @@ static Htop_Reaction actionStrace(State* st) {
 }
 
 static Htop_Reaction actionTag(State* st) {
-   Process* p = (Process*) Panel_getSelected((Panel*)st->mainPanel);
+   Process* p = (Process*) Panel_getSelected((Panel*)st->BaseLists);
    if (!p)
       return HTOP_OK;
 
    Process_toggleTag(p);
-   Panel_onKey((Panel*)st->mainPanel, KEY_DOWN);
+   Panel_onKey((Panel*)st->BaseLists, KEY_DOWN);
    return HTOP_OK;
 }
 
@@ -658,24 +658,24 @@ static Htop_Reaction actionHelp(State* st) {
 }
 
 static Htop_Reaction actionUntagAll(State* st) {
-   for (int i = 0; i < Panel_size((Panel*)st->mainPanel); i++) {
-      Process* p = (Process*) Panel_get((Panel*)st->mainPanel, i);
+   for (int i = 0; i < Panel_size((Panel*)st->BaseLists); i++) {
+      Process* p = (Process*) Panel_get((Panel*)st->BaseLists, i);
       p->tag = false;
    }
    return HTOP_REFRESH;
 }
 
 static Htop_Reaction actionTagAllChildren(State* st) {
-   Process* p = (Process*) Panel_getSelected((Panel*)st->mainPanel);
+   Process* p = (Process*) Panel_getSelected((Panel*)st->BaseLists);
    if (!p)
       return HTOP_OK;
 
-   tagAllChildren((Panel*)st->mainPanel, p);
+   tagAllChildren((Panel*)st->BaseLists, p);
    return HTOP_OK;
 }
 
 static Htop_Reaction actionShowEnvScreen(State* st) {
-   Process* p = (Process*) Panel_getSelected((Panel*)st->mainPanel);
+   Process* p = (Process*) Panel_getSelected((Panel*)st->BaseLists);
    if (!p)
       return HTOP_OK;
 
@@ -688,7 +688,7 @@ static Htop_Reaction actionShowEnvScreen(State* st) {
 }
 
 static Htop_Reaction actionShowCommandScreen(State* st) {
-   Process* p = (Process*) Panel_getSelected((Panel*)st->mainPanel);
+   Process* p = (Process*) Panel_getSelected((Panel*)st->BaseLists);
    if (!p)
       return HTOP_OK;
 
