@@ -19,6 +19,7 @@ in the source distribution for its full text.
 #include "ProvideCurses.h"
 #include "Settings.h"
 #include "XUtils.h"
+#include "pcp/PCPGeneric.h"
 
 
 static const char* const MainFunctions[]     = {"Help  ", "Setup ", "Search", "Filter", "Tree  ", "SortBy", "Nice -", "Nice +", "Kill  ", "Quit  ", NULL};
@@ -216,7 +217,7 @@ const PanelClass MainPanel_class = {
 
 MainPanel* MainPanel_new() {
    MainPanel* this = AllocThis(MainPanel);
-   Panel_init((Panel*) this, 1, 1, 1, 1, Class(Process), false, FunctionBar_new(Settings_isReadonly() ? MainFunctions_ro : MainFunctions, NULL, NULL));
+   Panel_init((Panel*) this, 1, 1, 1, 1, Class(PCPGeneric), false, FunctionBar_new(Settings_isReadonly() ? MainFunctions_ro : MainFunctions, NULL, NULL));
    this->keys = xCalloc(KEY_MAX, sizeof(Htop_Action));
    this->inc = IncSet_new(MainPanel_getFunctionBar(this));
 

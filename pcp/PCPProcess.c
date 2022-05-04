@@ -19,6 +19,8 @@ in the source distribution for its full text.
 #include "ProvideCurses.h"
 #include "RichString.h"
 #include "XUtils.h"
+#include "pcp/PCPGeneric.h"
+#include "Generic.h"
 
 #include "pcp/PCPDynamicColumn.h"
 
@@ -90,7 +92,7 @@ const ProcessFieldData Process_fields[] = {
 
 Process* PCPProcess_new(const Settings* settings) {
    PCPProcess* this = xCalloc(1, sizeof(PCPProcess));
-   Object_setClass(this, Class(PCPProcess));
+   Object_setClass(this, Class(PCPGeneric));
    Process_init(&this->super, settings);
    return &this->super;
 }
@@ -281,7 +283,7 @@ static int PCPProcess_compareByKey(const Process* v1, const Process* v2, Process
 
 const ProcessClass PCPProcess_class = {
    .super = {
-      .extends = Class(Process),
+      .extends = Class(Generic),
       .display = Process_display,
       .delete = Process_delete,
       .compare = Process_compare

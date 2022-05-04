@@ -23,6 +23,7 @@ in the source distribution for its full text.
 #include "ProvideCurses.h"
 #include "XUtils.h"
 #include "GenericList.h"
+#include "pcp/PCPGeneric.h"
 
 
 ScreenManager* ScreenManager_new(Header* header, const Settings* settings, const State* state, bool owner) {
@@ -190,7 +191,7 @@ static void ScreenManager_drawScreenTabs(ScreenManager* this) {
 
 static void ScreenManager_drawPanels(ScreenManager* this, int focus, bool force_redraw) {
    // SMA Start SMA make your own items vector
-   Vector* myVec = Vector_new(Class(Process), false, DEFAULT_SIZE);
+   Vector* myVec = Vector_new(Class(PCPGeneric), false, DEFAULT_SIZE);
 
    Generic g1 = {.gtest = 666666};
    Generic g2 = {.gtest = 666666};
@@ -214,12 +215,6 @@ static void ScreenManager_drawPanels(ScreenManager* this, int focus, bool force_
    for (int i = 0; i < nPanels; i++) {
       Panel* panel = (Panel*) Vector_get(this->panels, i);
       /* switch between ProcessList & GenericList */
-      if (String_eq(this->settings->ss->name, "cgroup") &&
-            !this->settings->SetupScreenActive ) {
-
-         fprintf(stderr, "--------------------------------------\n");
-         panel->items = myVec; // Orchestration
-      }
       Panel_draw(panel,
             this->settings,
                  force_redraw,
