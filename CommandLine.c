@@ -388,9 +388,9 @@ int CommandLine_run(const char* name, int argc, char** argv) {
       setCommFilter(&state, &(flags.commFilter));
 
    ScreenManager* scr = ScreenManager_new(header, settings, &state, true);
-   ScreenManager* ssr = ScreenManager_new(header, settings, &state, true);
+   //ScreenManager* ssr = ScreenManager_new(header, settings, &state, true);
    ScreenManager_add(scr, (Panel*) panel, -1);
-   ScreenManager_add(ssr, (Panel*) panel, -1);
+   //ScreenManager_add(ssr, (Panel*) panel, -1);
 
    ProcessList_scan(pl, false); // SMA startup scan. I stoped it because I
    //want to study ScreenManager
@@ -401,7 +401,7 @@ int CommandLine_run(const char* name, int argc, char** argv) {
       ProcessList_collapseAllBranches(pl);
 
    ScreenManager_run(scr, NULL, NULL, NULL);
-   ScreenManager_run(ssr, NULL, NULL, NULL);
+   //ScreenManager_run(ssr, NULL, NULL, NULL);
 
    Platform_done();
 
