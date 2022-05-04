@@ -371,13 +371,13 @@ int CommandLine_run(const char* name, int argc, char** argv) {
    MainPanel* panel = MainPanel_new();
    ProcessList_setPanel(pl, (Panel*) panel);
 
-   MainPanel_updateLabels(panel, settings->ss->treeView, flags.commFilter);
+   //MainPanel_updateLabels(panel, settings->ss->treeView, flags.commFilter);
 
    State state = {
       .settings = settings,
       .ut = ut,
       .pl = pl,
-      .mainPanel = panel,
+      //.mainPanel = panel,
       .header = header,
       .pauseProcessUpdate = false,
       .hideProcessSelection = false,
