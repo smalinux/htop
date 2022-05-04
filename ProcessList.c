@@ -370,16 +370,62 @@ void ProcessList_collapseAllBranches(ProcessList* this) {
 
 void ProcessList_rebuildPanel(ProcessList* this) {
    ProcessList_updateDisplayList(this);
-   int idx = 0;
+
+   const char* incFilter = this->incFilter;
+
+   const int currPos = Panel_getSelectedIndex(this->panel);
+   const int currScrollV = this->panel->scrollV;
+   const int currSize = Panel_size(this->panel);
+
+   Panel_prune(this->panel);
+
+   /* Follow main process if followed a userland thread and threads are now hidden */
+   const Settings* settings = this->settings;
+   if (this->following != -1 && settings->hideUserlandThreads) {
+      const Process* followedProcess = (const Process*) Hashtable_get(this->processTable, this->following);
+      if (followedProcess && Process_isThread(followedProcess) && Hashtable_get(this->processTable, followedProcess->tgid) != NULL) {
+         this->following = followedProcess->tgid;
+      }
+   }
+
    const int processCount = Vector_size(this->displayList);
+   int idx = 0;
+   bool foundFollowed = false;
+
    for (int i = 0; i < processCount; i++) {
       Process* p = (Process*) Vector_get(this->displayList, i);
 
+      if ( (!p->show)
+         || (this->userId != (uid_t) -1 && (p->st_uid != this->userId))
+         || (incFilter && !(String_contains_i(Process_getCommand(p), incFilter, true)))
+         || (this->pidMatchList && !Hashtable_get(this->pidMatchList, p->tgid)) )
+         continue;
+
       Panel_set(this->panel, idx, (Object*)p);
 
+      if (this->following != -1 && p->pid == this->following) {
+         foundFollowed = true;
+         Panel_setSelected(this->panel, idx);
+         this->panel->scrollV = currScrollV;
+      }
       idx++;
    }
 
+   if (this->following != -1 && !foundFollowed) {
+      /* Reset if current followed pid not found */
+      this->following = -1;
+      Panel_setSelectionColor(this->panel, PANEL_SELECTION_FOCUS);
+   }
+
+   if (this->following == -1) {
+      /* If the last item was selected, keep the new last item selected */
+      if (currPos > 0 && currPos == currSize - 1)
+         Panel_setSelected(this->panel, Panel_size(this->panel) - 1);
+      else
+         Panel_setSelected(this->panel, currPos);
+
+      this->panel->scrollV = currScrollV;
+   }
 }
 
 Process* ProcessList_getProcess(ProcessList* this, pid_t pid, bool* preExisting, Process_New constructor) {
