@@ -369,7 +369,6 @@ int CommandLine_run(const char* name, int argc, char** argv) {
    CRT_init(settings, flags.allowUnicode);
 
    MainPanel* panel = MainPanel_new();
-   ProcessList_setPanel(pl, (Panel*) panel);
 
    //MainPanel_updateLabels(panel, settings->ss->treeView, flags.commFilter);
 
@@ -383,11 +382,15 @@ int CommandLine_run(const char* name, int argc, char** argv) {
       .hideProcessSelection = false,
    };
 
-   MainPanel_setState(panel, &state);
+   panel->state = &state;
+   ////MainPanel_setState(panel, &state);
+   pl->panel = (Panel*)panel;
+   //ProcessList_setPanel(pl, (Panel*) panel);
+
    if (flags.commFilter)
       setCommFilter(&state, &(flags.commFilter));
 
-   ScreenManager* scr = ScreenManager_new(header, settings, &state, true);
+   ScreenManager* scr = ScreenManager_new(header, settings, panel->state, true);
    //ScreenManager* ssr = ScreenManager_new(header, settings, &state, true);
    ScreenManager_add(scr, (Panel*) panel, -1);
    //ScreenManager_add(ssr, (Panel*) panel, -1);
