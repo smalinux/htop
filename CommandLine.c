@@ -377,7 +377,7 @@ int CommandLine_run(const char* name, int argc, char** argv) {
       .settings = settings,
       .ut = ut,
       .pl = pl,
-      //.mainPanel = panel,
+      .mainPanel = panel, // comment this line to break signal panel ( press 'k' button )
       .header = header,
       .pauseProcessUpdate = false,
       .hideProcessSelection = false,
