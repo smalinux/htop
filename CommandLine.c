@@ -385,7 +385,7 @@ int CommandLine_run(const char* name, int argc, char** argv) {
 
    panel->state = &state;
    ////MainPanel_setState(panel, &state);
-   pl->panel = (Panel*)dummyPanel;
+   pl->panel = (Panel*)panel;
    //ProcessList_setPanel(pl, (Panel*) panel);
 
    if (flags.commFilter)
@@ -403,6 +403,10 @@ int CommandLine_run(const char* name, int argc, char** argv) {
 
    if (settings->ss->allBranchesCollapsed)
       ProcessList_collapseAllBranches(pl);
+
+
+
+
 
    ScreenManager_run(scr, NULL, NULL, NULL);
    //ScreenManager_run(ssr, NULL, NULL, NULL);

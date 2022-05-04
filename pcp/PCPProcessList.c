@@ -28,6 +28,7 @@ in the source distribution for its full text.
 #include "pcp/PCPMetric.h"
 #include "pcp/PCPProcess.h"
 #include "GenericList.h"
+#include "pcp/PCPGeneric.h"
 
 
 static void PCPProcessList_updateCPUcount(PCPProcessList* this) {
@@ -68,7 +69,7 @@ ProcessList* ProcessList_new(UsersTable* usersTable, Hashtable* dynamicMeters, H
    PCPProcessList* this = xCalloc(1, sizeof(PCPProcessList));
    ProcessList* super = &(this->super);
 
-   ProcessList_init(super, Class(PCPProcess), usersTable, dynamicMeters, dynamicColumns, pidMatchList, userId);
+   ProcessList_init(super, Class(PCPGeneric), usersTable, dynamicMeters, dynamicColumns, pidMatchList, userId);
 
    struct timeval timestamp;
    gettimeofday(&timestamp, NULL);
