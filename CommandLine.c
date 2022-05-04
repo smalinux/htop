@@ -369,6 +369,7 @@ int CommandLine_run(const char* name, int argc, char** argv) {
    CRT_init(settings, flags.allowUnicode);
 
    MainPanel* panel = MainPanel_new();
+   MainPanel* dummyPanel = MainPanel_new();
 
    //MainPanel_updateLabels(panel, settings->ss->treeView, flags.commFilter);
 
@@ -384,7 +385,7 @@ int CommandLine_run(const char* name, int argc, char** argv) {
 
    panel->state = &state;
    ////MainPanel_setState(panel, &state);
-   pl->panel = (Panel*)panel;
+   pl->panel = (Panel*)dummyPanel;
    //ProcessList_setPanel(pl, (Panel*) panel);
 
    if (flags.commFilter)
