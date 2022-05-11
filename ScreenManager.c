@@ -139,7 +139,35 @@ static void checkRecalculation(ScreenManager* this, double* oldTime, int* sortTi
       *redraw = true;
    }
    if (*redraw) {
-      ProcessList_rebuildPanel(pl);
+      if (String_eq(this->settings->ss->name, "cgroup"))
+      {
+      /* SMA: start temp... */
+         //Vector_delete(pl->panel->items); // clear .......... obsolete.
+         Panel_prune(pl->panel); // clear ......................
+         Vector* myVec = Vector_new(Class(Generic), false, DEFAULT_SIZE);
+         int idx = 0;
+
+         static Generic g1 = {.gtest = 5};
+         static Generic g2 = {.gtest = 5};
+         static Generic g3 = {.gtest = 5};
+
+         Vector_add(myVec, &g1);
+         Vector_add(myVec, &g2);
+         Vector_add(myVec, &g3);
+
+         const int processCount = Vector_size(myVec);
+
+         for (int i = 0; i < processCount; i++) {
+            Generic* p = (Generic*) Vector_get(myVec, i);
+            Object_setClass(p, Class(Generic));
+            Panel_set(pl->panel, idx, (Object*)p);
+            idx++;
+         }
+
+      /* SMA: end temp... */
+      } else {
+         ProcessList_rebuildPanel(pl);
+      }
       Header_draw(this->header);
    }
    *rescan = false;
