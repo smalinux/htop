@@ -408,6 +408,7 @@ void ProcessList_rebuildPanel(ProcessList* this) {
    const int processCount = Vector_size(myVec);
    for (int i = 0; i < processCount; i++) {
       Generic* p = (Generic*) Vector_get(myVec, i);
+      Object_setClass(p, Class(Generic));
 
       //if ( (!p->show)
       //   || (this->userId != (uid_t) -1 && (p->st_uid != this->userId))

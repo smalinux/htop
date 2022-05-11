@@ -282,7 +282,6 @@ void Panel_draw(Panel* this, const Settings* settings, bool force_redraw, bool f
          RichString_begin(item);
          // SMALINUX this invoke display from Process Class
          // I have to take other direction from here: cgroup->display()
-            Object_setClass(itemObj, Class(Generic));
          Object_display(itemObj, &item);
          int itemLen = RichString_sizeVal(item);
          int amt = MINIMUM(itemLen - scrollH, this->w);
