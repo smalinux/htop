@@ -388,27 +388,12 @@ void ProcessList_rebuildPanel(ProcessList* this) {
    //   }
    //}
 
+   const int processCount = Vector_size(this->displayList);
    int idx = 0;
    //bool foundFollowed = false;
 
-   Vector* myVec = Vector_new(Class(Generic), false, DEFAULT_SIZE);
-
-   static Generic g1 = {.gtest = 666666};
-   static Generic g2 = {.gtest = 666666};
-   static Generic g3 = {.gtest = 666666};
-   static Generic g4 = {.gtest = 666666};
-   static Generic g5 = {.gtest = 666666};
-
-   Vector_add(myVec, &g1);
-   Vector_add(myVec, &g2);
-   Vector_add(myVec, &g3);
-   Vector_add(myVec, &g4);
-   Vector_add(myVec, &g5);
-
-   const int processCount = Vector_size(myVec);
    for (int i = 0; i < processCount; i++) {
-      Generic* p = (Generic*) Vector_get(myVec, i);
-      Object_setClass(p, Class(Generic));
+      Process* p = (Process*) Vector_get(this->displayList, i);
 
       //if ( (!p->show)
       //   || (this->userId != (uid_t) -1 && (p->st_uid != this->userId))

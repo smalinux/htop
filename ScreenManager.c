@@ -108,7 +108,7 @@ void ScreenManager_resize(ScreenManager* this) {
 
 static void checkRecalculation(ScreenManager* this, double* oldTime, int* sortTimeout, bool* redraw, bool* rescan, bool* timedOut, bool *force_redraw) {
    ProcessList* pl = this->header->pl;
-   GenericList* gl = this->header->gl; // SMA REMOVEME, call all your lists instead.
+   GenericLists* gls = this->header->gls; // SMA REMOVEME, call all your lists instead.
 
    Platform_gettime_realtime(&pl->realtime, &pl->realtimeMs);
    double newTime = ((double)pl->realtime.tv_sec * 10) + ((double)pl->realtime.tv_usec / 100000);
@@ -129,6 +129,10 @@ static void checkRecalculation(ScreenManager* this, double* oldTime, int* sortTi
       }
       // scan processes first - some header values are calculated there
       ProcessList_scan(pl, this->state->pauseProcessUpdate);
+      // Scan ALL lists here, but for demo and simplicity I will scan just one
+      // for now
+      GenericList* gl = Hashtable_get(gls->table, 100);
+      fprintf(stderr, "ttttttttttttttttttttttttt %d \n", gl->totalRows);
       GenericList_scan(gl, this->state->pauseProcessUpdate); // SMA xxxg
       // always update header, especially to avoid gaps in graph meters
       Header_updateData(this->header);
@@ -141,7 +145,10 @@ static void checkRecalculation(ScreenManager* this, double* oldTime, int* sortTi
    if (*redraw) {
       if (String_eq(this->settings->ss->name, "cgroup"))
       {
-      /* SMA: start temp... */
+         /*
+            Move this logic to => GenericList_rebuildPanel(gls);
+            */
+         /* SMA: start temp... */
          //Vector_delete(pl->panel->items); // clear .......... obsolete.
          Panel_prune(pl->panel); // clear ......................
          Vector* myVec = Vector_new(Class(Generic), false, DEFAULT_SIZE);
@@ -160,11 +167,17 @@ static void checkRecalculation(ScreenManager* this, double* oldTime, int* sortTi
          for (int i = 0; i < processCount; i++) {
             Generic* p = (Generic*) Vector_get(myVec, i);
             Object_setClass(p, Class(Generic));
-            Panel_set(pl->panel, idx, (Object*)p);
+            Panel_set(gls->panel, idx, (Object*)p);
             idx++;
          }
+         for (int i = 0; i < processCount; i++) { // REMOVEME
+            Generic* p = (Generic*) Vector_get(gls->panel->items, i);
+            fprintf(stderr, "++++++ %d\n", p->gtest);
+         }
 
-      /* SMA: end temp... */
+         pl->panel->items = gls->panel->items;
+
+         /* SMA: end temp... */
       } else {
          ProcessList_rebuildPanel(pl);
       }
@@ -219,20 +232,20 @@ static void ScreenManager_drawScreenTabs(ScreenManager* this) {
 static void ScreenManager_drawPanels(ScreenManager* this, int focus, bool force_redraw) {
    // SMA Start SMA make your own items vector
    /*
-   Vector* myVec = Vector_new(Class(Process), false, DEFAULT_SIZE);
+      Vector* myVec = Vector_new(Class(Process), false, DEFAULT_SIZE);
 
-   Generic g1 = {.gtest = 666666};
-   Generic g2 = {.gtest = 666666};
-   Generic g3 = {.gtest = 666666};
-   Generic g4 = {.gtest = 666666};
-   Generic g5 = {.gtest = 666666};
+      Generic g1 = {.gtest = 666666};
+      Generic g2 = {.gtest = 666666};
+      Generic g3 = {.gtest = 666666};
+      Generic g4 = {.gtest = 666666};
+      Generic g5 = {.gtest = 666666};
 
-   Vector_add(myVec, &g1);
-   Vector_add(myVec, &g2);
-   Vector_add(myVec, &g3);
-   Vector_add(myVec, &g4);
-   Vector_add(myVec, &g5);
-   */
+      Vector_add(myVec, &g1);
+      Vector_add(myVec, &g2);
+      Vector_add(myVec, &g3);
+      Vector_add(myVec, &g4);
+      Vector_add(myVec, &g5);
+      */
 
    // SMA End SMA make your own items vector
 
@@ -245,19 +258,19 @@ static void ScreenManager_drawPanels(ScreenManager* this, int focus, bool force_
       Panel* panel = (Panel*) Vector_get(this->panels, i);
       /* switch between ProcessList & GenericList */
       /*
-      if (String_eq(this->settings->ss->name, "cgroup") &&
-            !this->settings->SetupScreenActive ) {
+         if (String_eq(this->settings->ss->name, "cgroup") &&
+         !this->settings->SetupScreenActive ) {
 
          fprintf(stderr, "--------------------------------------\n");
          panel->items = myVec; // Orchestration
-      }
-      */
+         }
+         */
       Panel_draw(panel,
             this->settings,
-                 force_redraw,
-                 i == focus,
-                 panel != (Panel*)this->state->mainPanel || !this->state->hideProcessSelection,
-                 State_hideFunctionBar(this->state));
+            force_redraw,
+            i == focus,
+            panel != (Panel*)this->state->mainPanel || !this->state->hideProcessSelection,
+            State_hideFunctionBar(this->state));
       mvvline(panel->y, panel->x + panel->w, ' ', panel->h + (State_hideFunctionBar(this->state) ? 1 : 0));
    }
 }
@@ -331,12 +344,12 @@ void ScreenManager_run(ScreenManager* this, Panel** lastFocus, int* lastKey, con
                      }
                   }
                }
-            #if NCURSES_MOUSE_VERSION > 1
+#if NCURSES_MOUSE_VERSION > 1
             } else if (mevent.bstate & BUTTON4_PRESSED) {
                ch = KEY_WHEELUP;
             } else if (mevent.bstate & BUTTON5_PRESSED) {
                ch = KEY_WHEELDOWN;
-            #endif
+#endif
             }
          }
       }
@@ -390,63 +403,63 @@ void ScreenManager_run(ScreenManager* this, Panel** lastFocus, int* lastKey, con
       }
 
       switch (ch) {
-      case KEY_RESIZE:
-      {
-         ScreenManager_resize(this);
-         continue;
-      }
-      case KEY_LEFT:
-      case KEY_CTRL('B'):
-         if (this->panelCount < 2) {
-            goto defaultHandler;
-         }
+         case KEY_RESIZE:
+            {
+               ScreenManager_resize(this);
+               continue;
+            }
+         case KEY_LEFT:
+         case KEY_CTRL('B'):
+            if (this->panelCount < 2) {
+               goto defaultHandler;
+            }
 
-         if (!this->allowFocusChange) {
-            break;
-         }
+            if (!this->allowFocusChange) {
+               break;
+            }
 
 tryLeft:
-         if (focus > 0) {
-            focus--;
-         }
+            if (focus > 0) {
+               focus--;
+            }
 
-         panelFocus = (Panel*) Vector_get(this->panels, focus);
-         if (Panel_size(panelFocus) == 0 && focus > 0) {
-            goto tryLeft;
-         }
+            panelFocus = (Panel*) Vector_get(this->panels, focus);
+            if (Panel_size(panelFocus) == 0 && focus > 0) {
+               goto tryLeft;
+            }
 
-         break;
-      case KEY_RIGHT:
-      case KEY_CTRL('F'):
-      case 9:
-         if (this->panelCount < 2) {
-            goto defaultHandler;
-         }
-         if (!this->allowFocusChange) {
             break;
-         }
+         case KEY_RIGHT:
+         case KEY_CTRL('F'):
+         case 9:
+            if (this->panelCount < 2) {
+               goto defaultHandler;
+            }
+            if (!this->allowFocusChange) {
+               break;
+            }
 
 tryRight:
-         if (focus < this->panelCount - 1) {
-            focus++;
-         }
+            if (focus < this->panelCount - 1) {
+               focus++;
+            }
 
-         panelFocus = (Panel*) Vector_get(this->panels, focus);
-         if (Panel_size(panelFocus) == 0 && focus < this->panelCount - 1) {
-            goto tryRight;
-         }
+            panelFocus = (Panel*) Vector_get(this->panels, focus);
+            if (Panel_size(panelFocus) == 0 && focus < this->panelCount - 1) {
+               goto tryRight;
+            }
 
-         break;
-      case 27:
-      case 'q':
-      case KEY_F(10):
-         quit = true;
-         continue;
-      default:
+            break;
+         case 27:
+         case 'q':
+         case KEY_F(10):
+            quit = true;
+            continue;
+         default:
 defaultHandler:
-         sortTimeout = resetSortTimeout;
-         Panel_onKey(panelFocus, ch);
-         break;
+            sortTimeout = resetSortTimeout;
+            Panel_onKey(panelFocus, ch);
+            break;
       }
    }
 

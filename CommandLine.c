@@ -339,7 +339,7 @@ int CommandLine_run(const char* name, int argc, char** argv) {
    Settings* settings = Settings_new(pl->activeCPUs, dc);
    pl->settings = settings;
 
-   Header* header = Header_new(pl, settings, 2);
+   Header* header = Header_new(pl, gls, settings, 2);
 
    Header_populateFromSettings(header);
 
@@ -369,7 +369,7 @@ int CommandLine_run(const char* name, int argc, char** argv) {
    CRT_init(settings, flags.allowUnicode);
 
    MainPanel* panel = MainPanel_new();
-   MainPanel* dummyPanel = MainPanel_new();
+   MainPanel* genericPanel = MainPanel_new();
 
    //MainPanel_updateLabels(panel, settings->ss->treeView, flags.commFilter);
 
@@ -384,8 +384,10 @@ int CommandLine_run(const char* name, int argc, char** argv) {
    };
 
    panel->state = &state;
+   genericPanel->state = &state;
    ////MainPanel_setState(panel, &state);
    pl->panel = (Panel*)panel;
+   gls->panel = (Panel*)genericPanel;
    //ProcessList_setPanel(pl, (Panel*) panel);
 
    if (flags.commFilter)

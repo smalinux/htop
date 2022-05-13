@@ -50,6 +50,7 @@ typedef struct GenericList_ {
 
 typedef struct GenericLists_ {
    Hashtable *table;
+   Panel* panel;
    size_t count; /* total count for all GenericList */
 } GenericLists;
 
