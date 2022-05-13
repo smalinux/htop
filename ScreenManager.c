@@ -177,7 +177,7 @@ static void checkRecalculation(ScreenManager* this, double* oldTime, int* sortTi
             fprintf(stderr, "++++++ %d\n", p->gtest);
          }
 
-         pl->panel->items = gls->panel->items;
+         pl->panel->items = gls->panel->items; // workaround
 
          /* SMA: end temp... */
       } else {
