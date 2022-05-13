@@ -110,6 +110,8 @@ static void checkRecalculation(ScreenManager* this, double* oldTime, int* sortTi
    ProcessList* pl = this->header->pl;
    GenericLists* gls = this->header->gls; // SMA REMOVEME, call all your lists instead.
 
+   fprintf(stderr, "yyyyyyyyyyyyyyyyyy %s\n", this->settings->ss->name);
+
    Platform_gettime_realtime(&pl->realtime, &pl->realtimeMs);
    double newTime = ((double)pl->realtime.tv_sec * 10) + ((double)pl->realtime.tv_usec / 100000);
 
