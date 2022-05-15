@@ -536,14 +536,14 @@ static int SolarisProcessList_walkproc(psinfo_t* _psinfo, lwpsinfo_t* _lwpsinfo,
    return 0;
 }
 
-void ProcessList_goThroughEntries(ProcessList* super, bool pauseProcessUpdate) {
+void ProcessList_goThroughEntries(ProcessList* super, bool pauseUpdate) {
    SolarisProcessList_updateCPUcount(super);
    SolarisProcessList_scanCPUTime(super);
    SolarisProcessList_scanMemoryInfo(super);
    SolarisProcessList_scanZfsArcstats(super);
 
    // in pause mode only gather global data for meters (CPU/memory/...)
-   if (pauseProcessUpdate) {
+   if (pauseUpdate) {
       return;
    }
 

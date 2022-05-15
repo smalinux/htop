@@ -44,6 +44,8 @@ typedef struct {
    bool treeView;
    bool treeViewAlwaysByPID;
    bool allBranchesCollapsed;
+   bool generic;
+   char* username;
 } ScreenSettings;
 
 typedef struct Settings_ {

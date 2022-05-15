@@ -1,0 +1,27 @@
+#
+# pcp-htop(1) configuration file - see pcp-htop(5)
+#
+
+[cgroup_stat]
+enabled = true
+caption = Cgroup1
+columns = cuser cusage csystem csystem csystem
+instances = 0 0 0 0 1
+
+[filesys]
+enabled = true
+caption = Filesystem
+columns = filesysavail filesysblocksize filesyscapacity filesysfree filesysfreefiles filesysfull filesysmaxfiles filesysreadonly filesysused filesysusedfiles filesysmountdir
+instances = 0 0 0 0 0 0 0 0 0 0 0
+
+[bpfbashreadline]
+enabled = true
+caption = bashreadline
+columns = bcomm bpid bcomm
+instances = 1 0 0
+
+[opensnoop]
+enabled = true
+caption = opensnoop
+columns = opensnoop_pid opensnoop_comm opensnoop_fd opensnoop_err opensnoop_fname
+instances = 0 0 0 0 0

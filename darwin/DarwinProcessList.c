@@ -120,7 +120,7 @@ void ProcessList_delete(ProcessList* this) {
    free(this);
 }
 
-void ProcessList_goThroughEntries(ProcessList* super, bool pauseProcessUpdate) {
+void ProcessList_goThroughEntries(ProcessList* super, bool pauseUpdate) {
    DarwinProcessList* dpl = (DarwinProcessList*)super;
    bool preExisting = true;
    struct kinfo_proc* ps;
@@ -135,7 +135,7 @@ void ProcessList_goThroughEntries(ProcessList* super, bool pauseProcessUpdate) {
    openzfs_sysctl_updateArcStats(&dpl->zfs);
 
    // in pause mode only gather global data for meters (CPU/memory/...)
-   if (pauseProcessUpdate) {
+   if (pauseUpdate) {
       return;
    }
 

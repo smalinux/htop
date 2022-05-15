@@ -92,7 +92,7 @@ typedef struct ProcessList_ {
 /* Implemented by platforms */
 ProcessList* ProcessList_new(UsersTable* usersTable, Hashtable* dynamicMeters, Hashtable* dynamicColumns, Hashtable* pidMatchList, uid_t userId);
 void ProcessList_delete(ProcessList* pl);
-void ProcessList_goThroughEntries(ProcessList* super, bool pauseProcessUpdate);
+void ProcessList_goThroughEntries(ProcessList* super, bool pauseUpdate);
 bool ProcessList_isCPUonline(const ProcessList* super, unsigned int id);
 
 
@@ -118,7 +118,7 @@ void ProcessList_rebuildPanel(ProcessList* this);
 
 Process* ProcessList_getProcess(ProcessList* this, pid_t pid, bool* preExisting, Process_New constructor);
 
-void ProcessList_scan(ProcessList* this, bool pauseProcessUpdate);
+void ProcessList_scan(ProcessList* this, bool pauseUpdate);
 
 static inline Process* ProcessList_findProcess(ProcessList* this, pid_t pid) {
    return (Process*) Hashtable_get(this->processTable, pid);

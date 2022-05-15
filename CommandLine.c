@@ -25,6 +25,8 @@ in the source distribution for its full text.
 #include "CRT.h"
 #include "DynamicColumn.h"
 #include "DynamicMeter.h"
+#include "DynamicTab.h"
+#include "GenericDataList.h"
 #include "Hashtable.h"
 #include "Header.h"
 #include "IncSet.h"
@@ -283,6 +285,7 @@ static void setCommFilter(State* state, char** commFilter) {
    *commFilter = NULL;
 }
 
+
 int CommandLine_run(const char* name, int argc, char** argv) {
 
    /* initialize locale */
@@ -313,11 +316,16 @@ int CommandLine_run(const char* name, int argc, char** argv) {
       dc = Hashtable_new(0, true);
 
    ProcessList* pl = ProcessList_new(ut, dm, dc, flags.pidMatchList, flags.userId);
-
    Settings* settings = Settings_new(pl->activeCPUs, dc);
-   pl->settings = settings;
 
-   Header* header = Header_new(pl, settings, 2);
+   Hashtable* dt = DynamicTabs_new(settings);
+   GenericDataList* gl = GenericDataList_new();
+
+   pl->settings = settings;
+   if (gl)
+      gl->settings = settings;
+
+   Header* header = Header_new(pl, gl, settings, 2);
 
    Header_populateFromSettings(header);
 
@@ -347,7 +355,7 @@ int CommandLine_run(const char* name, int argc, char** argv) {
    CRT_init(settings, flags.allowUnicode);
 
    MainPanel* panel = MainPanel_new();
-   ProcessList_setPanel(pl, (Panel*) panel);
+   MainPanel* genericDataPanel = MainPanel_new();
 
    MainPanel_updateLabels(panel, settings->ss->treeView, flags.commFilter);
 
@@ -355,13 +363,20 @@ int CommandLine_run(const char* name, int argc, char** argv) {
       .settings = settings,
       .ut = ut,
       .pl = pl,
-      .mainPanel = panel,
+      .mainPanel = panel, // comment this line to break signal panel ( press 'k' button )
       .header = header,
-      .pauseProcessUpdate = false,
+      .pauseUpdate = false,
       .hideProcessSelection = false,
    };
 
-   MainPanel_setState(panel, &state);
+   //MainPanel_setState(panel, &state);
+   panel->state = &state;
+   genericDataPanel->state = &state;
+
+   ProcessList_setPanel(pl, (Panel*) panel);
+   if (gl)
+      GenericDataList_setPanel(gl, (Panel*) genericDataPanel);
+
    if (flags.commFilter)
       setCommFilter(&state, &(flags.commFilter));
 
@@ -389,6 +404,7 @@ int CommandLine_run(const char* name, int argc, char** argv) {
 
    Header_delete(header);
    ProcessList_delete(pl);
+   GenericDataList_delete(gl);
 
    ScreenManager_delete(scr);
    MetersPanel_cleanup();
@@ -404,6 +420,7 @@ int CommandLine_run(const char* name, int argc, char** argv) {
    Settings_delete(settings);
    DynamicColumns_delete(dc);
    DynamicMeters_delete(dm);
+   DynamicTabs_delete(dt);
 
    return 0;
 }

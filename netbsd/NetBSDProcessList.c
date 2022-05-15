@@ -478,7 +478,7 @@ static void NetBSDProcessList_scanCPUFrequency(NetBSDProcessList* this) {
    }
 }
 
-void ProcessList_goThroughEntries(ProcessList* super, bool pauseProcessUpdate) {
+void ProcessList_goThroughEntries(ProcessList* super, bool pauseUpdate) {
    NetBSDProcessList* npl = (NetBSDProcessList*) super;
 
    NetBSDProcessList_scanMemoryInfo(super);
@@ -489,7 +489,7 @@ void ProcessList_goThroughEntries(ProcessList* super, bool pauseProcessUpdate) {
    }
 
    // in pause mode only gather global data for meters (CPU/memory/...)
-   if (pauseProcessUpdate) {
+   if (pauseUpdate) {
       return;
    }
 

@@ -285,6 +285,8 @@ ScreenSettings* Settings_newScreen(Settings* this, const ScreenDefaults* default
       .treeView = false,
       .treeViewAlwaysByPID = false,
       .allBranchesCollapsed = false,
+      .generic = false,
+      .username = xStrdup("-"),
    };
 
    ScreenSettings_readFields(ss, this->dynamicColumns, defaults->columns);
@@ -369,6 +371,14 @@ static bool Settings_read(Settings* this, const char* fileName, unsigned int ini
          // old (no screen) naming also supported for backwards compatibility
          screen = Settings_defaultScreens(this);
          screen->treeView = atoi(option[1]);
+      } else if (String_eq(option[0], "genericData_screen") && this->config_version <= 2) {
+         // old (no screen) naming also supported for backwards compatibility
+         screen = Settings_defaultScreens(this);
+         screen->generic = atoi(option[1]);
+      } else if (String_eq(option[0], "username") && this->config_version <= 2) {
+         // old (no screen) naming also supported for backwards compatibility
+         screen = Settings_defaultScreens(this);
+         screen->username = strdup(option[1]);
       } else if (String_eq(option[0], "tree_view_always_by_pid") && this->config_version <= 2) {
          // old (no screen) naming also supported for backwards compatibility
          screen = Settings_defaultScreens(this);
@@ -491,6 +501,12 @@ static bool Settings_read(Settings* this, const char* fileName, unsigned int ini
       } else if (String_eq(option[0], ".tree_view")) {
          if (screen)
             screen->treeView = atoi(option[1]);
+      } else if (String_eq(option[0], ".genericData_screen")) {
+         if (screen)
+            screen->generic = atoi(option[1]);
+      } else if (String_eq(option[0], ".username")) {
+         if (screen)
+            screen->username = strdup(option[1]);
       } else if (String_eq(option[0], ".tree_view_always_by_pid")) {
          if (screen)
             screen->treeViewAlwaysByPID = atoi(option[1]);
@@ -628,6 +644,8 @@ int Settings_write(const Settings* this, bool onCrash) {
    printSettingInteger("all_branches_collapsed", this->screens[0]->allBranchesCollapsed);
 
    for (unsigned int i = 0; i < this->nScreens; i++) {
+         if (this->screens[i]->generic)
+            continue;
       ScreenSettings* ss = this->screens[i];
       fprintf(fd, "screen:%s=", ss->name);
       writeFields(fd, ss->fields, this->dynamicColumns, true, separator);
@@ -638,6 +656,8 @@ int Settings_write(const Settings* this, bool onCrash) {
       printSettingInteger(".sort_direction", ss->direction);
       printSettingInteger(".tree_sort_direction", ss->treeDirection);
       printSettingInteger(".all_branches_collapsed", ss->allBranchesCollapsed);
+         printSettingInteger(".genericData_screen", ss->generic);
+         printSettingString(".username", ss->username);
    }
 
    #undef printSettingString

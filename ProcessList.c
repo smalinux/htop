@@ -444,9 +444,9 @@ Process* ProcessList_getProcess(ProcessList* this, pid_t pid, bool* preExisting,
    return proc;
 }
 
-void ProcessList_scan(ProcessList* this, bool pauseProcessUpdate) {
+void ProcessList_scan(ProcessList* this, bool pauseUpdate) {
    // in pause mode only gather global data for meters (CPU/memory/...)
-   if (pauseProcessUpdate) {
+   if (pauseUpdate) {
       ProcessList_goThroughEntries(this, true);
       return;
    }
