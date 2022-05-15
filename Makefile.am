@@ -34,6 +34,8 @@ myhtopsources = \
 	AvailableColumnsPanel.c \
 	AvailableMetersPanel.c \
 	BatteryMeter.c \
+	CPUMeter.c \
+	CRT.c \
 	CategoriesPanel.c \
 	ClockMeter.c \
 	ColorsPanel.c \
@@ -41,16 +43,17 @@ myhtopsources = \
 	CommandLine.c \
 	CommandScreen.c \
 	Compat.c \
-	CPUMeter.c \
-	CRT.c \
 	DateMeter.c \
 	DateTimeMeter.c \
 	DiskIOMeter.c \
 	DisplayOptionsPanel.c \
 	DynamicColumn.c \
 	DynamicMeter.c \
+	DynamicTab.c \
+	Generic.c \
 	EnvScreen.c \
 	FunctionBar.c \
+	GenericList.c \
 	Hashtable.c \
 	Header.c \
 	HeaderOptionsPanel.c \
@@ -108,8 +111,11 @@ myhtopheaders = \
 	DisplayOptionsPanel.h \
 	DynamicColumn.h \
 	DynamicMeter.h \
+	DynamicTab.h \
+	Generic.h \
 	EnvScreen.h \
 	FunctionBar.h \
+	GenericList.h \
 	Hashtable.h \
 	Header.h \
 	HeaderLayout.h \
@@ -378,6 +384,9 @@ pcp_platform_headers = \
 	linux/ZramStats.h \
 	pcp/PCPDynamicColumn.h \
 	pcp/PCPDynamicMeter.h \
+	pcp/PCPDynamicTab.h \
+	pcp/PCPGeneric.h \
+	pcp/PCPGenericList.h \
 	pcp/PCPMetric.h \
 	pcp/PCPProcess.h \
 	pcp/PCPProcessList.h \
@@ -392,6 +401,9 @@ pcp_platform_sources = \
 	linux/ZramMeter.c \
 	pcp/PCPDynamicColumn.c \
 	pcp/PCPDynamicMeter.c \
+	pcp/PCPDynamicTab.c \
+	pcp/PCPGeneric.c \
+	pcp/PCPGenericList.c \
 	pcp/PCPMetric.c \
 	pcp/PCPProcess.c \
 	pcp/PCPProcessList.c \

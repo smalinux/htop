@@ -25,6 +25,7 @@ in the source distribution for its full text.
 #include "CRT.h"
 #include "DynamicColumn.h"
 #include "DynamicMeter.h"
+#include "GenericList.h"
 #include "Hashtable.h"
 #include "Header.h"
 #include "IncSet.h"
@@ -283,6 +284,7 @@ static void setCommFilter(State* state, char** commFilter) {
    *commFilter = NULL;
 }
 
+
 int CommandLine_run(const char* name, int argc, char** argv) {
 
    /* initialize locale */
@@ -313,11 +315,15 @@ int CommandLine_run(const char* name, int argc, char** argv) {
       dc = Hashtable_new(0, true);
 
    ProcessList* pl = ProcessList_new(ut, dm, dc, flags.pidMatchList, flags.userId);
-
    Settings* settings = Settings_new(pl->activeCPUs, dc);
-   pl->settings = settings;
 
-   Header* header = Header_new(pl, settings, 2);
+   DynamicTabs_new(settings);
+   GenericList* gl = GenericList_new();
+
+   pl->settings = settings;
+   gl->settings = settings;
+
+   Header* header = Header_new(pl, gl, settings, 2);
 
    Header_populateFromSettings(header);
 
@@ -347,7 +353,7 @@ int CommandLine_run(const char* name, int argc, char** argv) {
    CRT_init(settings, flags.allowUnicode);
 
    MainPanel* panel = MainPanel_new();
-   ProcessList_setPanel(pl, (Panel*) panel);
+   MainPanel* genericPanel = MainPanel_new();
 
    MainPanel_updateLabels(panel, settings->ss->treeView, flags.commFilter);
 
@@ -355,13 +361,19 @@ int CommandLine_run(const char* name, int argc, char** argv) {
       .settings = settings,
       .ut = ut,
       .pl = pl,
-      .mainPanel = panel,
+      .mainPanel = panel, // comment this line to break signal panel ( press 'k' button )
       .header = header,
       .pauseProcessUpdate = false,
       .hideProcessSelection = false,
    };
 
-   MainPanel_setState(panel, &state);
+   //MainPanel_setState(panel, &state);
+   panel->state = &state;
+   genericPanel->state = &state;
+
+   ProcessList_setPanel(pl, (Panel*) panel);
+   GenericList_setPanel(gl, (Panel*) genericPanel);
+
    if (flags.commFilter)
       setCommFilter(&state, &(flags.commFilter));
 
@@ -404,6 +416,7 @@ int CommandLine_run(const char* name, int argc, char** argv) {
    Settings_delete(settings);
    DynamicColumns_delete(dc);
    DynamicMeters_delete(dm);
+   //GenericList_delete(gl);
 
    return 0;
 }

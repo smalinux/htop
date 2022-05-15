@@ -25,6 +25,8 @@ in the source distribution for its full text.
 #include "DiskIOMeter.h"
 #include "DynamicColumn.h"
 #include "DynamicMeter.h"
+#include "DynamicTab.h"
+#include "GenericList.h"
 #include "HostnameMeter.h"
 #include "LoadAverageMeter.h"
 #include "Macros.h"
@@ -45,6 +47,7 @@ in the source distribution for its full text.
 #include "linux/ZramStats.h"
 #include "pcp/PCPDynamicColumn.h"
 #include "pcp/PCPDynamicMeter.h"
+#include "pcp/PCPGenericList.h"
 #include "pcp/PCPMetric.h"
 #include "pcp/PCPProcessList.h"
 #include "zfs/ZfsArcMeter.h"
@@ -316,6 +319,9 @@ bool Platform_init(void) {
 
    pcp->columns.offset = PCP_METRIC_COUNT + pcp->meters.cursor;
    PCPDynamicColumns_init(&pcp->columns);
+
+   pcp->tabs.offset = pcp->columns.offset + pcp->columns.cursor; // fix meeeeeeeeeeeeeeeeeeeeeee
+   PCPDynamicTabs_init(&pcp->tabs);
 
    sts = pmLookupName(pcp->totalMetrics, pcp->names, pcp->pmids);
    if (sts < 0) {
@@ -815,4 +821,8 @@ bool Platform_dynamicColumnWriteField(const Process* proc, RichString* str, unsi
       return true;
    }
    return false;
+}
+
+void Platform_dynamicTabs(Settings *settings) {
+   PCPDynamicTab_appendScreens(&pcp->tabs, settings);
 }

@@ -1,0 +1,15 @@
+#
+# pcp-htop(1) configuration file - see pcp-htop(5)
+#
+
+[cgroup_stat]
+caption = Cgroup1
+columns = cuser cusage csystem csystem
+externalNameColumn = true
+#enabled = true
+
+[test]
+caption = Cgroup2
+columns = bpid
+externalNameColumn = true
+#enabled = true
