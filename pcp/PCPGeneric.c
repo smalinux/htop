@@ -70,7 +70,13 @@ void PCPGeneric_removeField(PCPGeneric* this)
 }
 
 static void PCPGeneric_writeField(const Generic* this, RichString* str, int field) {
-   fprintf(stderr, ".......PCPGeneric_writeField\n");
+   const PCPGeneric* gg = (const PCPGeneric*) this;
+   bool coloring = this->settings->highlightMegabytes;
+   char buffer[256]; buffer[255] = '\0';
+   int attr = CRT_colors[DEFAULT_COLOR];
+
+   int n = sizeof(buffer) - 1;
+   fprintf(stderr, ".......PCPGeneric_writeField %d\n", gg->fieldsCount);
    Generic_writeField(this, str, field);
 }
 
