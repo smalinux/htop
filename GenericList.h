@@ -28,12 +28,13 @@ typedef struct FieldUI_ {
 typedef struct GenericList_ {
    const Settings* settings;
 
+   Vector* displayList;
    Vector* genericRow; /* every row == One Sturct Generic */
    Hashtable* genericTable;
 
-   ScreenSettings ss; /* each GenericList has its own screenSettings */
-
    bool needsSort;
+
+   ScreenSettings ss; /* each GenericList has its own screenSettings */
 
    Panel* panel;
 
@@ -85,7 +86,8 @@ void GenericList_setPanel(GenericList* this, Panel* panel);
 
 void GenericList_printHeader(const GenericList* this, RichString* header); // TODO
 
-void GenericList_updateDisplayList(GenericList* this); // TODO
+//void GenericList_updateDisplayList(GenericList* this); // TODO REMOVEME I thik
+//this should be static function
 
 //GenericField GenericList_keyAt(const GenericList* this, int at); // TODO
 
@@ -93,7 +95,7 @@ void GenericList_expandTree(GenericList* this); // TODO
 
 void GenericList_collapseAllBranches(GenericList* this); // TODO
 
-void GenericList_rebuildPanel(GenericList* this); // TODO
+void GenericList_rebuildPanel(GenericLists* gls, GenericList* this);
 
 void GenericList_scan(GenericList* this, bool pauseGenericUpdate);
 

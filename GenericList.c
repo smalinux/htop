@@ -41,6 +41,7 @@ void GenericList_addList(GenericList* l)
    GenericList* gl = GenericList_addPlatformList(l);
 
    gl->genericRow = Vector_new(Class(Generic), false, DEFAULT_SIZE);
+   gl->displayList = Vector_new(Class(Generic), false, DEFAULT_SIZE);
    gl->genericTable = Hashtable_new(200, false);
 
    gl->ss = l->ss; // SMA
@@ -104,3 +105,27 @@ void GenericList_setPanel(GenericList* this, Panel* panel) {
    this->panel = panel;
 }
 
+static void GenericList_updateDisplayList(GenericList* this) {
+   if (this->needsSort)
+      Vector_insertionSort(this->genericRow);
+   Vector_prune(this->displayList);
+   int size = Vector_size(this->genericRow);
+   for (int i = 0; i < size; i++)
+      Vector_add(this->displayList, Vector_get(this->genericRow, i));
+   this->needsSort = false;
+}
+
+void GenericList_rebuildPanel(GenericLists* gls, GenericList* this)
+{
+   GenericList_updateDisplayList(this);
+   const int genericCount = Vector_size(this->displayList);
+   int idx = 0;
+
+   for (int i = 0; i < genericCount; i++) {
+      Generic* g = (Generic*) Vector_get(this->displayList, i);
+
+      Panel_set(gls->panel, idx, (Object*)g);
+
+      idx++;
+   }
+}
