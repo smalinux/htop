@@ -25,6 +25,7 @@ in the source distribution for its full text.
 #include "DiskIOMeter.h"
 #include "DynamicColumn.h"
 #include "DynamicMeter.h"
+#include "GenericList.h"
 #include "HostnameMeter.h"
 #include "LoadAverageMeter.h"
 #include "Macros.h"
@@ -45,6 +46,7 @@ in the source distribution for its full text.
 #include "linux/ZramStats.h"
 #include "pcp/PCPDynamicColumn.h"
 #include "pcp/PCPDynamicMeter.h"
+#include "pcp/PCPGenericList.h"
 #include "pcp/PCPMetric.h"
 #include "pcp/PCPProcessList.h"
 #include "zfs/ZfsArcMeter.h"
@@ -244,6 +246,11 @@ static const char* Platform_metricNames[] = {
    [PCP_PROC_SMAPS_SWAP] = "proc.smaps.swap",
    [PCP_PROC_SMAPS_SWAPPSS] = "proc.smaps.swappss",
 
+   [CGROUP_CPU_STAT_SYSTEM] = "cgroup.cpu.stat.system", // cgroup
+   [CGROUP_CPU_STAT_USAGE] = "cgroup.cpu.stat.usage", // cgroup
+   [CGROUP_CPU_STAT_USER] = "cgroup.cpu.stat.user", // cgroup
+
+
    [PCP_METRIC_COUNT] = NULL
 };
 
@@ -312,10 +319,66 @@ bool Platform_init(void) {
       Platform_addMetric(i, Platform_metricNames[i]);
    pcp->meters.offset = PCP_METRIC_COUNT;
 
+   fprintf(stderr, "*************** %ld \n", pcp->meters.offset);
    PCPDynamicMeters_init(&pcp->meters);
 
    pcp->columns.offset = PCP_METRIC_COUNT + pcp->meters.cursor;
+   fprintf(stderr, "*************** %ld \n", pcp->columns.offset);
    PCPDynamicColumns_init(&pcp->columns);
+
+   /* ===================== start print DynamicColumn ====================== */
+
+
+   fprintf(stderr, "----------------------------\n");
+   PCPDynamicColumn* fff;
+   for(unsigned int i = 0; i < pcp->columns.count; i++) {
+      fff = Hashtable_get(pcp->columns.table, i+LAST_PROCESSFIELD);
+      if(fff)
+         fprintf(stderr, "%d - dc ->> %s\n", i, fff->super.caption);
+   }
+   fprintf(stderr, "----------------------------\n");
+   for(unsigned int i = 0; i < pcp->totalMetrics; i++)
+   {
+      fprintf(stderr, "%d - %s\n", i, pcp->names[i]);
+   }
+
+   unsigned int x;
+   const DynamicColumn* dd  = DynamicColumn_search(pcp->columns.table, "vmstack", &x);
+   fprintf(stderr, "----------------------------\n");
+   fprintf(stderr, "DynamicColumn:\n");
+   fprintf(stderr, "- key -> %d\n", x);
+   fprintf(stderr, "- name -> %s\n", dd->name);
+   fprintf(stderr, "- caption -> %s\n", dd->caption);
+   fprintf(stderr, "- description -> %s\n", dd->description);
+   fprintf(stderr, "- heading -> %s\n", dd->heading);
+   fprintf(stderr, "- width -> %d\n", dd->width);
+
+
+   fprintf(stderr, "----------------------------\n");
+   const PCPDynamicColumn* pcp_dd  = (const PCPDynamicColumn*)DynamicColumn_search(pcp->columns.table, "vmstack", &x);
+   fprintf(stderr, "PCPDynamicColumn:\n");
+   fprintf(stderr, "- metricName -> %s\n", pcp_dd->metricName);
+   fprintf(stderr, "- id -> %ld\n", pcp_dd->id);
+   fprintf(stderr, "- super.caption -> %s\n", pcp_dd->super.caption);
+
+
+   fprintf(stderr, "----------------------------\n");
+   fprintf(stderr, "PCPDynamicColumns:\n");
+   fprintf(stderr, "- pcp->columns.count -> %ld\n", pcp->columns.count);
+   fprintf(stderr, "- pcp->columns.offset -> %ld\n", pcp->columns.offset);
+   fprintf(stderr, "- pcp->columns.cursor -> %ld\n", pcp->columns.cursor);
+
+
+   fprintf(stderr, "----------------------------\n");
+   PCPDynamicColumn* dc;
+   for(unsigned int i = 0; i < pcp->columns.count; i++) {
+      dc = Hashtable_get(pcp->columns.table, i+LAST_PROCESSFIELD);
+      if(dc)
+         fprintf(stderr, "%d - dc ->> %s\n", i, dc->metricName);
+   }
+
+
+   /* ====================== end print DynamicColumn ======================= */
 
    sts = pmLookupName(pcp->totalMetrics, pcp->names, pcp->pmids);
    if (sts < 0) {
@@ -353,6 +416,11 @@ bool Platform_init(void) {
    PCPMetric_enable(PCP_UNAME_RELEASE, true);
    PCPMetric_enable(PCP_UNAME_MACHINE, true);
    PCPMetric_enable(PCP_UNAME_DISTRO, true);
+
+
+   PCPMetric_enable(CGROUP_CPU_STAT_USER, true);
+   PCPMetric_enable(CGROUP_CPU_STAT_USAGE, true);
+   PCPMetric_enable(CGROUP_CPU_STAT_SYSTEM, true);
 
    for (size_t i = pcp->columns.offset; i < pcp->columns.offset + pcp->columns.count; i++)
       PCPMetric_enable(i, true);

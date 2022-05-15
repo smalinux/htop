@@ -27,6 +27,7 @@ in the source distribution for its full text.
 
 #include "pcp/PCPMetric.h"
 #include "pcp/PCPProcess.h"
+#include "GenericList.h"
 
 
 static void PCPProcessList_updateCPUcount(PCPProcessList* this) {
@@ -163,6 +164,39 @@ static void PCPProcessList_updateID(Process* process, int pid, int offset) {
    process->tgid = Metric_instance_u32(PCP_PROC_TGID, pid, offset, 1);
    process->ppid = Metric_instance_u32(PCP_PROC_PPID, pid, offset, 1);
    process->state = PCPProcessList_getProcessState(Metric_instance_char(PCP_PROC_STATE, pid, offset, '?'));
+}
+
+// SMALINUX: connect PCP-back end <-----> Process Htop-frontend :D
+static int printedOnce = 1;
+static void PCPProcessList_cgroups(Process* process, int pid, int offset) {
+    pmAtomValue value;
+    PCPMetric_instance(CGROUP_CPU_STAT_SYSTEM, pid, offset, &value, PM_TYPE_U64);
+    PCPMetric_instance(CGROUP_CPU_STAT_USER, pid, offset, &value, PM_TYPE_U64);
+    PCPMetric_instance(CGROUP_CPU_STAT_USAGE, pid, offset, &value, PM_TYPE_U64);
+
+    /* Start REMOVEME */
+    /* --------------------------------------------------------- */
+   fflush( stderr );
+   if (printedOnce == 1) {
+       fflush( stderr );
+       int i, count = PCPMetric_instanceCount(CGROUP_CPU_STAT_USER);
+       pmAtomValue* values = xCalloc(count, sizeof(pmAtomValue));
+       if (PCPMetric_values(CGROUP_CPU_STAT_USER, values, count, PM_TYPE_U64)) {
+           char *externalName;
+          for (i = 0; i < count; i++) {
+              PCPMetric_externalName(CGROUP_CPU_STAT_USER, i, &externalName);
+              fprintf(stderr, "%lu => %s", values[i].ull, externalName);
+              //fprintf(stderr, "=>> UI: %lu\n", process->mycgroup );
+              fprintf(stderr, "\n");
+          }
+
+       }
+
+
+    printedOnce = 0;
+   }
+    /* --------------------------------------------------------- */
+    /* End REMOVEME */
 }
 
 static void PCPProcessList_updateInfo(Process* process, int pid, int offset, char* command, size_t commLen) {
@@ -359,6 +393,9 @@ static bool PCPProcessList_updateProcesses(PCPProcessList* this, double period, 
       proc->isUserlandThread = proc->pid != proc->tgid;
       pp->offset = offset >= 0 ? offset : 0;
 
+   /* Start REMOVEME */
+      //PCPProcessList_cgroups(proc, pid, offset);
+   /* End REMOVEME */
       /*
        * These conditions will not trigger on first occurrence, cause we need to
        * add the process to the ProcessList and do all one time scans

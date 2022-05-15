@@ -16,7 +16,9 @@ in the source distribution for its full text.
 #include "Object.h"
 #include "Panel.h"
 #include "Process.h"
+#include "Generic.h"
 #include "ProcessList.h"
+#include "GenericList.h"
 #include "Settings.h"
 #include "UsersTable.h"
 
@@ -39,6 +41,7 @@ typedef struct State_ {
    Settings* settings;
    UsersTable* ut;
    ProcessList* pl;
+   GenericList* gl;
    struct MainPanel_* mainPanel;
    Header* header;
    bool pauseProcessUpdate;

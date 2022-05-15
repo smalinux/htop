@@ -25,6 +25,7 @@ in the source distribution for its full text.
 #include "CRT.h"
 #include "DynamicColumn.h"
 #include "DynamicMeter.h"
+#include "GenericList.h"
 #include "Hashtable.h"
 #include "Header.h"
 #include "IncSet.h"
@@ -309,15 +310,37 @@ int CommandLine_run(const char* name, int argc, char** argv) {
    UsersTable* ut = UsersTable_new();
    Hashtable* dc = DynamicColumns_new();
    Hashtable* dm = DynamicMeters_new();
+   GenericLists* gls = GenericList_new();
    if (!dc)
       dc = Hashtable_new(0, true);
 
    ProcessList* pl = ProcessList_new(ut, dm, dc, flags.pidMatchList, flags.userId);
-
    Settings* settings = Settings_new(pl->activeCPUs, dc);
+
+   /* SMA: Start tmp test -------------------------------------------------- */
+
+   gls->settings = settings;
+
+   // SMA REMOVEME
+   GenericList gl1;
+
+   GenericList_addList(&gl1);
+   // SMA REMOVEME
+
+
+   /* Unbuffered output */
+   setvbuf(stdout, NULL, _IONBF, 0);
+
+
+
+
+   // SMA: REMOVEME
+   /* SMA: End tmp test ---------------------------------------------------- */
+
+
    pl->settings = settings;
 
-   Header* header = Header_new(pl, settings, 2);
+   Header* header = Header_new(pl, gls, settings, 2);
 
    Header_populateFromSettings(header);
 
@@ -347,7 +370,7 @@ int CommandLine_run(const char* name, int argc, char** argv) {
    CRT_init(settings, flags.allowUnicode);
 
    MainPanel* panel = MainPanel_new();
-   ProcessList_setPanel(pl, (Panel*) panel);
+   MainPanel* genericPanel = MainPanel_new();
 
    MainPanel_updateLabels(panel, settings->ss->treeView, flags.commFilter);
 
@@ -355,20 +378,27 @@ int CommandLine_run(const char* name, int argc, char** argv) {
       .settings = settings,
       .ut = ut,
       .pl = pl,
-      .mainPanel = panel,
+      .mainPanel = panel, // comment this line to break signal panel ( press 'k' button )
       .header = header,
       .pauseProcessUpdate = false,
       .hideProcessSelection = false,
    };
 
-   MainPanel_setState(panel, &state);
+   //MainPanel_setState(panel, &state);
+   panel->state = &state;
+   genericPanel->state = &state;
+
+   ProcessList_setPanel(pl, (Panel*) panel);
+   GenericList_setPanel(gls, (Panel*) genericPanel);
+
    if (flags.commFilter)
       setCommFilter(&state, &(flags.commFilter));
 
    ScreenManager* scr = ScreenManager_new(header, settings, &state, true);
    ScreenManager_add(scr, (Panel*) panel, -1);
 
-   ProcessList_scan(pl, false);
+   ProcessList_scan(pl, false); // SMA startup scan. I stoped it because I
+   //want to study ScreenManager
    CommandLine_delay(pl, 75);
    ProcessList_scan(pl, false);
 
@@ -404,6 +434,9 @@ int CommandLine_run(const char* name, int argc, char** argv) {
    Settings_delete(settings);
    DynamicColumns_delete(dc);
    DynamicMeters_delete(dm);
+   //GenericList_removeList(&gl1); // SMA FIXME Broken function
+
+   GenericList_delete(gls);
 
    return 0;
 }

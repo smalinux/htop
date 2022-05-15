@@ -35,7 +35,7 @@ typedef struct {
 
 typedef struct {
    char* name;
-   ProcessField* fields;
+   ProcessField* fields; // change "Process" word
    uint32_t flags;
    int direction;
    int treeDirection;
@@ -44,6 +44,9 @@ typedef struct {
    bool treeView;
    bool treeViewAlwaysByPID;
    bool allBranchesCollapsed;
+   int type; // == inDom for PCP .. zero otherwise
+   int columnsCount;
+   bool generic;
 } ScreenSettings;
 
 typedef struct Settings_ {
