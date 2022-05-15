@@ -318,6 +318,7 @@ static void ProcessList_buildTree(ProcessList* this) {
    assert(Vector_size(this->displayList) == vsize); (void)vsize;
 }
 
+/* smalinux: vector: fill all rows & cells */
 void ProcessList_updateDisplayList(ProcessList* this) {
    if (this->settings->ss->treeView) {
       if (this->needsSort)
@@ -325,6 +326,7 @@ void ProcessList_updateDisplayList(ProcessList* this) {
    } else {
       if (this->needsSort)
          Vector_insertionSort(this->processes);
+      //fprintf(stderr, "needsSort = %d\n", this->needsSort);
       Vector_prune(this->displayList);
       int size = Vector_size(this->processes);
       for (int i = 0; i < size; i++)
@@ -470,9 +472,11 @@ void ProcessList_scan(ProcessList* this, bool pauseProcessUpdate) {
       firstScanDone = true;
    }
 
+   /* smalinux: platform ... the actual fill */
    ProcessList_goThroughEntries(this, false);
 
    uid_t maxUid = 0;
+   /* smalinux: useless... */
    for (int i = Vector_size(this->processes) - 1; i >= 0; i--) {
       Process* p = (Process*) Vector_get(this->processes, i);
       Process_makeCommandStr(p);
