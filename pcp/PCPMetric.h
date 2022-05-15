@@ -152,6 +152,11 @@ typedef enum PCPMetric_ {
    PCP_PROC_SMAPS_SWAP,         /* proc.smaps.swap */
    PCP_PROC_SMAPS_SWAPPSS,      /* proc.smaps.swappss */
 
+
+   CGROUP_CPU_STAT_SYSTEM,           /* cgroup.cpu.stat.system */
+   CGROUP_CPU_STAT_USER,           /* cgroup.cpu.stat.user */
+   CGROUP_CPU_STAT_USAGE,           /* cgroup.cpu.stat.usage */
+
    PCP_METRIC_COUNT             /* total metric count */
 } PCPMetric;
 
@@ -177,4 +182,6 @@ int PCPMetric_instanceOffset(PCPMetric metric, int inst);
 
 pmAtomValue* PCPMetric_instance(PCPMetric metric, int inst, int offset, pmAtomValue* atom, int type);
 
+pmInDom PCPMetric_InDom(PCPMetric metric);
+void PCPMetric_externalName(PCPMetric metric, int inst, char **externalName);
 #endif
