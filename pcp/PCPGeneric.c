@@ -49,11 +49,10 @@ PCPGenericField* PCPGeneric_addField(PCPGeneric* this, const Settings* settings)
    PCPGenericField* field = xCalloc(1, sizeof(PCPGenericField));
    pmAtomValue *atom = xCalloc(1, sizeof(pmAtomValue));
 
+   field->value = atom;
    Hashtable_put(this->fields, this->fieldsCount, field);
 
-   field->value = atom;
    this->fieldsCount += 1;
-
     //settings here if you want to read from it.. to assing...
     //Reference: Process_init()
    return field;
@@ -76,8 +75,19 @@ static void PCPGeneric_writeField(const Generic* this, RichString* str, int fiel
    int attr = CRT_colors[DEFAULT_COLOR];
 
    int n = sizeof(buffer) - 1;
-   fprintf(stderr, ".......PCPGeneric_writeField %d\n", gg->fieldsCount);
-   Generic_writeField(this, str, field);
+   //Generic_writeField(this, str, field);
+
+   PCPGenericField* gf = (PCPGenericField*)Hashtable_get(gg->fields, field);
+   if (field == 3) {
+      xSnprintf(buffer, n, "%*s", -12, gf->value->cp);
+   }
+   else {
+      xSnprintf(buffer, n, "%*ld", -12, gf->value->ull);
+   }
+   //xSnprintf(buffer, n, "%*d", 10, this->gtest);
+   //fprintf(stderr, ".......PCPGeneric_writeField %ld\n", gf->value->ull);
+
+   RichString_appendWide(str, attr, buffer);
 }
 
 static int PCPGeneric_compareByKey(const Generic* v1, const Generic* v2, int key) {

@@ -54,25 +54,26 @@ void Generic_writeField(const Generic* this, RichString* str, int field) {
    char buffer[256];
    size_t n = sizeof(buffer);
    int attr = CRT_colors[DEFAULT_COLOR];
-   fprintf(stderr, "- Generic_writeField\n");
+   //fprintf(stderr, "- Generic_writeField\n");
 
    switch (field) {
       case 0: {
    //xSnprintf(buffer, n, "%*d ", Process_pidDigits, this->pid);
-   xSnprintf(buffer, n, "%*d", 10, this->gtest);
+   //xSnprintf(buffer, n, "%*d", 10, this->gtest);
    break;
               }
       case 1: fprintf(stderr, "1- Generic_writeField\n"); return;
       case 2: fprintf(stderr, "2- Generic_writeField\n"); return;
    }
-   RichString_appendAscii(str, attr, buffer);
+   //RichString_appendAscii(str, attr, buffer);
 }
 
 void Generic_display(const Object* cast, RichString* out) {
    const Generic* this = (const Generic*) cast;
-   //const ProcessField* fields = this->settings->ss->fields;
-   //for (int i = 0; fields[i]; i++) // SMA use generic fields
-      As_Generic(this)->writeField(this, out, 0); // 0 == loop over fields
+   const ProcessField* fields = this->settings->ss->fields;
+   for (int i = 0; fields[i]; i++) // SMA use generic fields
+      //As_Generic(this)->writeField(this, out, fields[i]); // 0 == loop over fields
+      As_Generic(this)->writeField(this, out, i); // 0 == loop over fields
 
    assert(RichString_size(out) > 0);
 }

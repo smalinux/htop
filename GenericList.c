@@ -49,6 +49,7 @@ void GenericList_addList(GenericList* l)
    Hashtable_put(genericlists->table, 100, gl); // SMA FIXME 100 hard code
 
    /* init */
+   gl->settings = genericlists->settings;
    gl->totalRows = 0;
 }
 
@@ -68,10 +69,9 @@ const GenericLists* GenericList_getGenericLists()
 
 void GenericList_addGeneric(GenericList* this, Generic* g)
 {
-   g->gtest = 5;
-
    Vector_add(this->genericRow, g);
    Hashtable_put(this->genericTable, this->totalRows, g);
+
    this->totalRows++;
 }
 

@@ -110,7 +110,7 @@ static void checkRecalculation(ScreenManager* this, double* oldTime, int* sortTi
    ProcessList* pl = this->header->pl;
    GenericLists* gls = this->header->gls; // SMA REMOVEME, call all your lists instead.
 
-   fprintf(stderr, "yyyyyyyyyyyyyyyyyy %s\n", this->settings->ss->name);
+   //fprintf(stderr, "yyyyyyyyyyyyyyyyyy %s\n", this->settings->ss->name);
 
    Platform_gettime_realtime(&pl->realtime, &pl->realtimeMs);
    double newTime = ((double)pl->realtime.tv_sec * 10) + ((double)pl->realtime.tv_usec / 100000);
@@ -134,8 +134,9 @@ static void checkRecalculation(ScreenManager* this, double* oldTime, int* sortTi
       // Scan ALL lists here, but for demo and simplicity I will scan just one
       // for now
       GenericList* gl = Hashtable_get(gls->table, 100);
-      fprintf(stderr, "ttttttttttttttttttttttttt %d \n", gl->totalRows);
+      //fprintf(stderr, "ttttttttttttttttttttttttt %d \n", gl->totalRows);
       GenericList_scan(gl, this->state->pauseProcessUpdate); // SMA xxxg
+      //fprintf(stderr, "fff 77777777777777777777777 %s\n", gl->settings->ss->name);
       // always update header, especially to avoid gaps in graph meters
       Header_updateData(this->header);
       // force redraw if the number of UID digits was changed
@@ -148,6 +149,9 @@ static void checkRecalculation(ScreenManager* this, double* oldTime, int* sortTi
       if (String_eq(this->settings->ss->name, "cgroup")) // SMA: catch current active gl
       {
          // SMA: catch current active gl here :)
+         //pl->panel->items = NULL;
+         *force_redraw = 1;
+         Vector_prune(pl->panel->items);  // SMA: this line is super important! remove it & scroll to break...
          GenericList *gl = Hashtable_get(gls->table, 100);
 
          GenericList_rebuildPanel(gls, gl);
@@ -156,6 +160,7 @@ static void checkRecalculation(ScreenManager* this, double* oldTime, int* sortTi
 
          /* SMA: end temp... */
       } else {
+         //fprintf(stderr, "->>> %s\n", this->settings->ss->fields[0])
          ProcessList_rebuildPanel(pl);
       }
       Header_draw(this->header);

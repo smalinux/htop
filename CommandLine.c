@@ -315,9 +315,11 @@ int CommandLine_run(const char* name, int argc, char** argv) {
       dc = Hashtable_new(0, true);
 
    ProcessList* pl = ProcessList_new(ut, dm, dc, flags.pidMatchList, flags.userId);
+   Settings* settings = Settings_new(pl->activeCPUs, dc);
 
    /* SMA: Start tmp test -------------------------------------------------- */
 
+   gls->settings = settings;
 
    // SMA REMOVEME
    GenericList gl1;
@@ -336,7 +338,6 @@ int CommandLine_run(const char* name, int argc, char** argv) {
    /* SMA: End tmp test ---------------------------------------------------- */
 
 
-   Settings* settings = Settings_new(pl->activeCPUs, dc);
    pl->settings = settings;
 
    Header* header = Header_new(pl, gls, settings, 2);
