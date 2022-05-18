@@ -45,7 +45,7 @@ typedef struct {
    bool treeViewAlwaysByPID;
    bool allBranchesCollapsed;
    int type; // == inDom for PCP .. zero otherwise
-   int ColumnsCount;
+   int columnsCount;
    bool generic;
 } ScreenSettings;
 

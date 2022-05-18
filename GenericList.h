@@ -50,6 +50,8 @@ typedef struct GenericList_ {
 } GenericList;
 
 typedef struct GenericLists_ {
+   const Settings* settings;
+
    Hashtable *table;
    Panel* panel;
    size_t count; /* total count for all GenericList */
