@@ -317,6 +317,51 @@ bool Platform_init(void) {
    pcp->columns.offset = PCP_METRIC_COUNT + pcp->meters.cursor;
    PCPDynamicColumns_init(&pcp->columns);
 
+   /* ===================== start print DynamicColumn ====================== */
+
+
+   fprintf(stderr, "----------------------------\n");
+   for(unsigned int i = 0; i < pcp->totalMetrics; i++)
+   {
+       fprintf(stderr, "%d - %s\n", i, pcp->names[i]);
+   }
+
+   unsigned int x;
+   const DynamicColumn* dd  = DynamicColumn_search(pcp->columns.table, "guest", &x);
+   fprintf(stderr, "----------------------------\n");
+   fprintf(stderr, "DynamicColumn:\n");
+   fprintf(stderr, "- key -> %d\n", x);
+   fprintf(stderr, "- name -> %s\n", dd->name);
+   fprintf(stderr, "- caption -> %s\n", dd->caption);
+   fprintf(stderr, "- description -> %s\n", dd->description);
+   fprintf(stderr, "- heading -> %s\n", dd->heading);
+   fprintf(stderr, "- width -> %d\n", dd->width);
+
+
+   fprintf(stderr, "----------------------------\n");
+   const PCPDynamicColumn* pcp_dd  = (const PCPDynamicColumn*)DynamicColumn_search(pcp->columns.table, "guest", &x);
+   fprintf(stderr, "PCPDynamicColumn:\n");
+   fprintf(stderr, "- metricName -> %s\n", pcp_dd->metricName);
+   fprintf(stderr, "- id -> %ld\n", pcp_dd->id);
+   fprintf(stderr, "- super.caption -> %s\n", pcp_dd->super.caption);
+
+
+   fprintf(stderr, "----------------------------\n");
+   fprintf(stderr, "PCPDynamicColumns:\n");
+   fprintf(stderr, "- pcp->columns.count -> %ld\n", pcp->columns.count);
+   fprintf(stderr, "- pcp->columns.offset -> %ld\n", pcp->columns.offset);
+   fprintf(stderr, "- pcp->columns.cursor -> %ld\n", pcp->columns.cursor);
+
+   PCPDynamicColumn* dc;
+   for(unsigned int i = 0; i < pcp->columns.count; i++) {
+      dc = Hashtable_get(pcp->columns.table, i+LAST_PROCESSFIELD);
+      if(dc)
+         fprintf(stderr, "- dc ->> %s\n", dc->metricName);
+   }
+
+
+   /* ====================== end print DynamicColumn ======================= */
+
    sts = pmLookupName(pcp->totalMetrics, pcp->names, pcp->pmids);
    if (sts < 0) {
       fprintf(stderr, "Error: cannot lookup metric names: %s\n", pmErrStr(sts));
@@ -810,6 +855,7 @@ const char* Platform_dynamicColumnInit(unsigned int key) {
 
 bool Platform_dynamicColumnWriteField(const Process* proc, RichString* str, unsigned int key) {
    PCPDynamicColumn* this = Hashtable_get(pcp->columns.table, key);
+   //fprintf(stderr, ">>>>>>>> %d\n", key);
    if (this) {
       PCPDynamicColumn_writeField(this, proc, str);
       return true;

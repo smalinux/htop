@@ -54,6 +54,7 @@ const DynamicColumn* DynamicColumn_search(Hashtable* dynamics, const char* name,
       Hashtable_foreach(dynamics, DynamicColumn_compare, &iter);
    if (key)
       *key = iter.key;
+   //fprintf(stderr, "> %s\n", iter.name);
    return iter.data;
 }
 

@@ -109,6 +109,8 @@ static PCPDynamicColumn* PCPDynamicColumn_new(PCPDynamicColumns* columns, const 
    String_safeStrncpy(column->super.name, name, sizeof(column->super.name));
 
    size_t id = columns->count + LAST_PROCESSFIELD;
+   fprintf(stderr, "##### %ld + %d = %ld\n",
+         columns->count, LAST_PROCESSFIELD, columns->count+LAST_PROCESSFIELD);
    Hashtable_put(columns->table, id, column);
    columns->count++;
 
