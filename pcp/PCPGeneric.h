@@ -27,6 +27,8 @@ typedef struct PCPGenericField_ {
 
    int offset;
 
+   int type;
+
    int index; // SMA should not use pmid as column index because the user can dublicate the same column;
 } PCPGenericField;
 
