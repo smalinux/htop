@@ -35,7 +35,7 @@ typedef struct {
 
 typedef struct {
    char* name;
-   ProcessField* fields;
+   ProcessField* fields; // change "Process" word
    uint32_t flags;
    int direction;
    int treeDirection;
