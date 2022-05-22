@@ -1,0 +1,25 @@
+#
+# pcp-htop(1) configuration file - see pcp-htop(5)
+#
+
+[cuser]
+heading = CUSER
+caption = CUSER
+width = -12
+metric = cgroup.cpu.stat.user
+description = user bla ..............................................
+
+
+[cusage]
+heading = CUSAGE
+caption = CUSAGE
+width = -12
+metric = cgroup.cpu.stat.usage
+description = usage bla ..............................................
+
+[csystem]
+heading = CSYSTEM
+caption = CSYSTEM
+width = -12
+metric = cgroup.cpu.stat.system
+description = system bla ..............................................

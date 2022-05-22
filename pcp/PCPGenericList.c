@@ -43,6 +43,7 @@ static bool PCPGenericList_updateGenericList(PCPGenericList* this) // SMA xxg th
    pmAtomValue value;
    int interInst = -1, offset = -1;
    int rowsCount;
+   int metricType;
 
    /*
     * > What is the info you need here?
@@ -63,7 +64,7 @@ static bool PCPGenericList_updateGenericList(PCPGenericList* this) // SMA xxg th
     * Here, I will set some hardCoded setup settings...
     * this setup settings should be came from step 1 dynamically
     */
-   int columnsCount = 10; // total fields[max] number
+   int columnsCount = 20; // total fields[max] number // SMA: hardCoded FIXME
 
    // {{ fetch keyMatric ... keyMatric == fields[0] , move this to static func
    if (String_eq(settings->ss->name, "cgroup")) // FIXME if settings->ss->generic;
@@ -115,21 +116,25 @@ static bool PCPGenericList_updateGenericList(PCPGenericList* this) // SMA xxg th
       //fprintf(stderr, "#> %s, ", column->name);
 
       /* column */
+      PCPDynamicColumn* pcp_column = (PCPDynamicColumn*) column;
+
       //dc = DynamicColumn_search(settings->dynamicColumns, column->name, NULL);
       dc = DynamicColumn_search(settings->dynamicColumns, column->name, &dc_key);
       pcp_dc = (const PCPDynamicColumn*) dc;
-      if (PCPMetric_instance(pcp_dc->id, interInst, offset, &value, PM_TYPE_U64))
+
+      metricType = PCPMetric_type(pcp_column->id);
+
+      if (PCPMetric_instance(pcp_dc->id, interInst, offset, &value, metricType))
       {
           //process->mycgroup = value.ull; // SMA: This func not good at all with cgroup
          //fprintf(stderr, "........................ %d\n", offset);
          g = Hashtable_get(gl->genericTable, offset); // 0 != offset
          PCPGeneric* gg = (PCPGeneric*) g;
 
-
-
          // SMA: get field count
          PCPGenericField* gf = (PCPGenericField*)Hashtable_get(gg->fields, i);
-         gf->value->ull = value.ull;
+         *gf->value = value;
+         gf->type = metricType;
       }
 
       lastField = i;
@@ -145,12 +150,20 @@ static bool PCPGenericList_updateGenericList(PCPGenericList* this) // SMA xxg th
 
 
 
+   // -------------------------------------------------------------------------
+   // -------------------------------------------------------------------------
+   // -------------------------------------------------------------------------
+   // -------------------------------------------------------------------------
    /* External name column */
-   g = Hashtable_get(gl->genericTable, offset);
-   PCPGeneric* gg = (PCPGeneric*) g;
-   PCPGenericField* gf = (PCPGenericField*)Hashtable_get(gg->fields, lastField);
-   // SMA: param 1 == key matric (aka PCPMetric_iterate):
-   PCPMetric_externalName(keyMatric, interInst, &gf->value->cp);
+   //g = Hashtable_get(gl->genericTable, offset);
+   //PCPGeneric* gg = (PCPGeneric*) g;
+   //PCPGenericField* gf = (PCPGenericField*)Hashtable_get(gg->fields, lastField);
+   //// SMA: param 1 == key matric (aka PCPMetric_iterate):
+   //PCPMetric_externalName(keyMatric, interInst, &gf->value->cp);
+   // -------------------------------------------------------------------------
+   // -------------------------------------------------------------------------
+   // -------------------------------------------------------------------------
+   // -------------------------------------------------------------------------
 
 
 

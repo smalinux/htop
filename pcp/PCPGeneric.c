@@ -70,24 +70,65 @@ void PCPGeneric_removeField(PCPGeneric* this)
 
 static void PCPGeneric_writeField(const Generic* this, RichString* str, int field) {
    const PCPGeneric* gg = (const PCPGeneric*) this;
+   PCPGenericField* gf = (PCPGenericField*)Hashtable_get(gg->fields, field);
    bool coloring = this->settings->highlightMegabytes;
    char buffer[256]; buffer[255] = '\0';
    int attr = CRT_colors[DEFAULT_COLOR];
+   // SMA: Reference: https://github.com/smalinux/htop/blob/3f727d4720c8df38789dea246a5217a5412ebbcf/pcp/PCPDynamicColumn.c#L239-L246
+   int width = -12; // temp
+   int abswidth = width; // temp
+
 
    int n = sizeof(buffer) - 1;
+
+   //if (field == 3) {
+   //   xSnprintf(buffer, n, "%*s", -12, gf->value->cp);
+   //}
+   //else {
+   //   xSnprintf(buffer, n, "%*ld", -12, gf->value->ull);
+   //}
+
+   switch (gf->type) {
+      case PM_TYPE_STRING:
+         attr = CRT_colors[PROCESS_SHADOW];
+         Process_printLeftAlignedField(str, attr, gf->value->cp, abswidth);
+         //free(gf->value->cp);
+         break;
+      case PM_TYPE_32:
+         xSnprintf(buffer, sizeof(buffer), "%*d ", width, gf->value->l);
+         RichString_appendAscii(str, attr, buffer);
+         break;
+      case PM_TYPE_U32:
+         xSnprintf(buffer, sizeof(buffer), "%*u ", width, gf->value->ul);
+         RichString_appendAscii(str, attr, buffer);
+         break;
+      case PM_TYPE_64:
+         xSnprintf(buffer, sizeof(buffer), "%*lld ", width, (long long) gf->value->ll);
+         RichString_appendAscii(str, attr, buffer);
+         break;
+      case PM_TYPE_U64:
+         xSnprintf(buffer, sizeof(buffer), "%*llu ", width, (unsigned long long) gf->value->ull);
+         RichString_appendAscii(str, attr, buffer);
+         break;
+      case PM_TYPE_FLOAT:
+         xSnprintf(buffer, sizeof(buffer), "%*.2f ", width, (double) gf->value->f);
+         RichString_appendAscii(str, attr, buffer);
+         break;
+      case PM_TYPE_DOUBLE:
+         xSnprintf(buffer, sizeof(buffer), "%*.2f ", width, gf->value->d);
+         RichString_appendAscii(str, attr, buffer);
+         break;
+      default:
+         attr = CRT_colors[METER_VALUE_ERROR];
+         RichString_appendAscii(str, attr, "no type");
+         break;
+   }
+
+
+
+   // SMA: default:
    //Generic_writeField(this, str, field);
-
-   PCPGenericField* gf = (PCPGenericField*)Hashtable_get(gg->fields, field);
-   if (field == 3) {
-      xSnprintf(buffer, n, "%*s", -12, gf->value->cp);
-   }
-   else {
-      xSnprintf(buffer, n, "%*ld", -12, gf->value->ull);
-   }
-   //xSnprintf(buffer, n, "%*d", 10, this->gtest);
-   //fprintf(stderr, ".......PCPGeneric_writeField %ld\n", gf->value->ull);
-
-   RichString_appendWide(str, attr, buffer);
+   //RichString_appendWide(str, attr, buffer);
 }
 
 static int PCPGeneric_compareByKey(const Generic* v1, const Generic* v2, int key) {
