@@ -124,6 +124,14 @@ static void PCPGeneric_writeField(const Generic* this, RichString* str, int fiel
          break;
    }
 
+   /* External instance column */
+   //fprintf(stderr, ">>>>>>>>>>> %d & %d\n", field, gg->fieldsCount);
+   if (field == gg->fieldsCount-2)
+   {
+      PCPGenericField* gff = (PCPGenericField*)Hashtable_get(gg->fields, field+1);
+      xSnprintf(buffer, n, "%*s", -12, gff->value->cp);
+      RichString_appendWide(str, attr, buffer);
+   }
 
 
    // SMA: default:
