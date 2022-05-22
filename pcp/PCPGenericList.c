@@ -64,7 +64,7 @@ static bool PCPGenericList_updateGenericList(PCPGenericList* this) // SMA xxg th
     * Here, I will set some hardCoded setup settings...
     * this setup settings should be came from step 1 dynamically
     */
-   int columnsCount = 20; // total fields[max] number // SMA: hardCoded FIXME
+   int columnsCount = 5; // total fields[max] number (+1 for ExternalName Column) // SMA: hardCoded FIXME
 
    // {{ fetch keyMatric ... keyMatric == fields[0] , move this to static func
    if (String_eq(settings->ss->name, "cgroup")) // FIXME if settings->ss->generic;
@@ -155,11 +155,12 @@ static bool PCPGenericList_updateGenericList(PCPGenericList* this) // SMA xxg th
    // -------------------------------------------------------------------------
    // -------------------------------------------------------------------------
    /* External name column */
-   //g = Hashtable_get(gl->genericTable, offset);
-   //PCPGeneric* gg = (PCPGeneric*) g;
-   //PCPGenericField* gf = (PCPGenericField*)Hashtable_get(gg->fields, lastField);
-   //// SMA: param 1 == key matric (aka PCPMetric_iterate):
-   //PCPMetric_externalName(keyMatric, interInst, &gf->value->cp);
+   g = Hashtable_get(gl->genericTable, offset);
+   PCPGeneric* gg = (PCPGeneric*) g;
+   PCPGenericField* gf = (PCPGenericField*)Hashtable_get(gg->fields, columnsCount-1);
+   //fprintf(stderr, ">>>>>>>>>>>>>>> %d\n", lastField);
+   // SMA: param 1 == key matric (aka PCPMetric_iterate):
+   PCPMetric_externalName(keyMatric, interInst, &gf->value->cp);
    // -------------------------------------------------------------------------
    // -------------------------------------------------------------------------
    // -------------------------------------------------------------------------
