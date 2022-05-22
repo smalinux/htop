@@ -19,9 +19,12 @@ in the source distribution for its full text.
 #include "Process.h"
 #include "Settings.h"
 #include "XUtils.h"
+#include "DynamicColumn.h"
+#include "Vector.h"
 
 #include "pcp/PCPGeneric.h"
 #include "pcp/PCPMetric.h"
+#include "pcp/PCPDynamicColumn.h"
 
 /*
  * https://github.com/smalinux/htop/commit/2afaf57d0ee18696f47f8df51801610148677157
@@ -30,7 +33,16 @@ static bool PCPGenericList_updateGenericList(PCPGenericList* this) // SMA xxg th
 {
    GenericList* gl = (GenericList*) this;
    const Settings* settings = gl->settings;
+   const ProcessField* fields = settings->ss->fields; // SMA: change "ProcessField" to just "Field"
    Generic* g;
+   const DynamicColumn* dc;
+   const PCPDynamicColumn* pcp_dc;
+   const unsigned int dc_key;
+   int lastField = 0;
+   int keyMatric;
+   pmAtomValue value;
+   int interInst = -1, offset = -1;
+   int rowsCount;
 
    /*
     * > What is the info you need here?
@@ -43,15 +55,6 @@ static bool PCPGenericList_updateGenericList(PCPGenericList* this) // SMA xxg th
    // SMALINUX Step 1.
    // here catch all the current screen setup...
 
-   // SMA: Start test: list all Caption under current tab
-   /*
-   for(unsigned int i = 0; settings->ss->fields[i]; i++)
-   {
-      fprintf(stderr, "#> %s, ", Process_fields[settings->ss->fields[i]].name);
-   }
-   fprintf(stderr, "\n");
-   */
-   // SMA: End test: list all Caption under current tab
 
 
    // SMALINUX Step 1. follow
@@ -60,13 +63,25 @@ static bool PCPGenericList_updateGenericList(PCPGenericList* this) // SMA xxg th
     * Here, I will set some hardCoded setup settings...
     * this setup settings should be came from step 1 dynamically
     */
-   int columnsCount = 10;
-   int rowsCount = 300; // instance count
-   int keyMatric;
+   int columnsCount = 10; // total fields[max] number
 
+   // {{ fetch keyMatric ... keyMatric == fields[0] , move this to static func
+   if (String_eq(settings->ss->name, "cgroup")) // FIXME if settings->ss->generic;
+   {
+      DynamicColumn* column = Hashtable_get(settings->dynamicColumns, fields[0]);
+      dc = DynamicColumn_search(settings->dynamicColumns, column->name, &dc_key);
+      pcp_dc = (const PCPDynamicColumn*) dc;
+      keyMatric = pcp_dc->id;
+
+   } else {
+      return 0;
+   }
+   // }}
+
+   rowsCount = PCPMetric_instanceCount(keyMatric); // instance count
 
    // -------------------------- Start: Alloc -------------------------------
-   if (Vector_size(gl->genericRow)< 300)
+   if (Vector_size(gl->genericRow)< rowsCount)
    {
       for (int r = 0; r < rowsCount; r++)
       {
@@ -84,78 +99,58 @@ static bool PCPGenericList_updateGenericList(PCPGenericList* this) // SMA xxg th
 
    // -------------------------- End: Alloc ---------------------------------
 
-   int interInst = -1, offset = -1;
-   pmAtomValue value;
+
    /* for every generic row ... */
-   while (PCPMetric_iterate(CGROUP_CPU_STAT_USER, &interInst, &offset)) {
+   while (PCPMetric_iterate(keyMatric, &interInst, &offset)) {
 
 
    // -------------------------- Fill -------------------------------
-   //fprintf(stderr, "........................ %d - %d\n", interInst, offset);
 
-
-   /* CGROUP_CPU_STAT_USER column */
-   if (PCPMetric_instance(CGROUP_CPU_STAT_USER, interInst, offset, &value, PM_TYPE_U64))
+   // SMA: {{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{
+   for(unsigned int i = 0; fields[i]; i++)
    {
-       //process->mycgroup = value.ull; // SMA: This func not good at all with cgroup
-      //fprintf(stderr, "........................ %d\n", offset);
-      g = Hashtable_get(gl->genericTable, offset); // 0 != offset
-      PCPGeneric* gg = (PCPGeneric*) g;
+      DynamicColumn* column = Hashtable_get(settings->dynamicColumns, fields[i]);
+      if (!column)
+         continue;
+      //fprintf(stderr, "#> %s, ", column->name);
+
+      /* column */
+      //dc = DynamicColumn_search(settings->dynamicColumns, column->name, NULL);
+      dc = DynamicColumn_search(settings->dynamicColumns, column->name, &dc_key);
+      pcp_dc = (const PCPDynamicColumn*) dc;
+      if (PCPMetric_instance(pcp_dc->id, interInst, offset, &value, PM_TYPE_U64))
+      {
+          //process->mycgroup = value.ull; // SMA: This func not good at all with cgroup
+         //fprintf(stderr, "........................ %d\n", offset);
+         g = Hashtable_get(gl->genericTable, offset); // 0 != offset
+         PCPGeneric* gg = (PCPGeneric*) g;
 
 
 
-      // SMA: get field count
-      PCPGenericField* gf = (PCPGenericField*)Hashtable_get(gg->fields, 0);
-      gf->value->ull = value.ull;
+         // SMA: get field count
+         PCPGenericField* gf = (PCPGenericField*)Hashtable_get(gg->fields, i);
+         gf->value->ull = value.ull;
+      }
+
+      lastField = i;
+      //DynamicColumn* ddd = (DynamicColumn*)Hashtable_get(settings->dynamicColumns, dc_key);
+      //fprintf(stderr, "+++++++++++++++++++ %d - %ld - %s\n", dc_key, pcp_dc->id, ddd->caption);
    }
+   // SMA: }}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}
 
 
 
 
 
-
-
-   /* CGROUP_CPU_STAT_USAGE column */
-   if (PCPMetric_instance(CGROUP_CPU_STAT_USAGE, interInst, offset, &value, PM_TYPE_U64))
-   {
-      g = Hashtable_get(gl->genericTable, offset);
-      PCPGeneric* gg = (PCPGeneric*) g;
-      PCPGenericField* gf = (PCPGenericField*)Hashtable_get(gg->fields, 1);
-      gf->value->ull = value.ull;
-   }
-
-
-
-
-
-
-
-   /* CGROUP_CPU_STAT_SYSTEM column */
-   if (PCPMetric_instance(CGROUP_CPU_STAT_SYSTEM, interInst, offset, &value, PM_TYPE_U64))
-   {
-      g = Hashtable_get(gl->genericTable, offset);
-      PCPGeneric* gg = (PCPGeneric*) g;
-      PCPGenericField* gf = (PCPGenericField*)Hashtable_get(gg->fields, 2);
-      gf->value->ull = value.ull;
-   }
 
 
 
    /* External name column */
    g = Hashtable_get(gl->genericTable, offset);
    PCPGeneric* gg = (PCPGeneric*) g;
-   PCPGenericField* gf = (PCPGenericField*)Hashtable_get(gg->fields, 3);
+   PCPGenericField* gf = (PCPGenericField*)Hashtable_get(gg->fields, lastField);
    // SMA: param 1 == key matric (aka PCPMetric_iterate):
-   PCPMetric_externalName(CGROUP_CPU_STAT_USER, interInst, &gf->value->cp);
-
-
-
-
-
-
-
-
-
+   PCPMetric_externalName(keyMatric, interInst, &gf->value->cp);
 
 
 
