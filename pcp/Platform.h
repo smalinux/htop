@@ -38,6 +38,7 @@ in the source distribution for its full text.
 
 #include "pcp/PCPDynamicColumn.h"
 #include "pcp/PCPDynamicMeter.h"
+#include "pcp/PCPDynamicTab.h"
 #include "pcp/PCPGenericList.h"
 #include "pcp/PCPMetric.h"
 
@@ -52,6 +53,7 @@ typedef struct Platform_ {
    pmResult* result;          /* sample values result indexed by Metric */
    PCPDynamicMeters meters;   /* dynamic meters via configuration files */
    PCPDynamicColumns columns; /* dynamic columns via configuration files */
+   PCPDynamicTabs tabs;       /* dynamic tabs via configuration files */
    struct timeval offset;     /* time offset used in archive mode only */
    long long btime;           /* boottime in seconds since the epoch */
    char* release;             /* uname and distro from this context */

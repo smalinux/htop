@@ -49,6 +49,7 @@ myhtopsources = \
 	DisplayOptionsPanel.c \
 	DynamicColumn.c \
 	DynamicMeter.c \
+	DynamicTab.c \
 	Generic.c \
 	EnvScreen.c \
 	FunctionBar.c \
@@ -110,6 +111,7 @@ myhtopheaders = \
 	DisplayOptionsPanel.h \
 	DynamicColumn.h \
 	DynamicMeter.h \
+	DynamicTab.h \
 	Generic.h \
 	EnvScreen.h \
 	FunctionBar.h \
@@ -382,6 +384,7 @@ pcp_platform_headers = \
 	linux/ZramStats.h \
 	pcp/PCPDynamicColumn.h \
 	pcp/PCPDynamicMeter.h \
+	pcp/PCPDynamicTab.h \
 	pcp/PCPGeneric.h \
 	pcp/PCPGenericList.h \
 	pcp/PCPMetric.h \
@@ -398,6 +401,7 @@ pcp_platform_sources = \
 	linux/ZramMeter.c \
 	pcp/PCPDynamicColumn.c \
 	pcp/PCPDynamicMeter.c \
+	pcp/PCPDynamicTab.c \
 	pcp/PCPGeneric.c \
 	pcp/PCPGenericList.c \
 	pcp/PCPMetric.c \

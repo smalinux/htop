@@ -25,6 +25,7 @@ in the source distribution for its full text.
 #include "DiskIOMeter.h"
 #include "DynamicColumn.h"
 #include "DynamicMeter.h"
+#include "DynamicTab.h"
 #include "GenericList.h"
 #include "HostnameMeter.h"
 #include "LoadAverageMeter.h"
@@ -319,68 +320,121 @@ bool Platform_init(void) {
       Platform_addMetric(i, Platform_metricNames[i]);
    pcp->meters.offset = PCP_METRIC_COUNT;
 
-   fprintf(stderr, "*************** %ld \n", pcp->meters.offset);
+   //fprintf(stderr, "Meters: *************** %ld \n", pcp->meters.offset);
    PCPDynamicMeters_init(&pcp->meters);
+   /* ===================== start print DynamicMeter ====================== */
+   /*
+   PCPDynamicMeter * dd = (PCPDynamicMeter*)Hashtable_get(pcp->meters.table, 1);
+   for(size_t i = 0; i < pcp->meters.offset; i++) {
+      dd = (PCPDynamicMeter*)Hashtable_get(pcp->meters.table, i);
+      if(dd)
+         fprintf(stderr, "Meter::: %s\n", dd->super.caption);
+
+      // Meter by Meter
+      if(dd) {
+         // fprintf(stderr, "%ld meter: %ld\n", pcp->meters.cursor, dd->totalMetrics);
+         for(size_t y = 0; y < dd->totalMetrics; y++) {
+            fprintf(stderr, " - %s\n", dd->metrics[y].name);
+         }
+
+      }
+   }
+   */
+   /* ====================== end print DynamicMeter ======================= */
 
    pcp->columns.offset = PCP_METRIC_COUNT + pcp->meters.cursor;
-   fprintf(stderr, "*************** %ld \n", pcp->columns.offset);
+   //fprintf(stderr, "Columns: *************** %ld \n", pcp->columns.offset);
    PCPDynamicColumns_init(&pcp->columns);
 
+   pcp->tabs.offset = pcp->columns.offset + pcp->columns.cursor;
+   //fprintf(stderr, "tabs: *************** %ld \n", pcp->tabs.offset);
+   PCPDynamicTabs_init(&pcp->tabs);
+   /* ===================== start print DynamicTab ====================== */
+   PCPDynamicTab * dd = (PCPDynamicTab*)Hashtable_get(pcp->tabs.table, 0);
+   DynamicTab * d = (DynamicTab*)Hashtable_get(pcp->tabs.table, 0);
+   for(size_t i = 0; i < pcp->tabs.offset; i++) {
+      dd = (PCPDynamicTab*)Hashtable_get(pcp->tabs.table, i);
+      d = (DynamicTab*)Hashtable_get(pcp->tabs.table, i);
+      if(dd)
+         fprintf(stderr, "Tab::: %s\n", dd->super.caption);
+      //if(d)
+      //   fprintf(stderr, "Tab:::> %s\n", d->caption);
+
+      // Meter by Meter
+      if(dd) {
+         // fprintf(stderr, "%ld meter: %ld\n", pcp->meters.cursor, dd->totalMetrics);
+         for(size_t y = 0; y < dd->totalMetrics; y++) {
+            fprintf(stderr, " - %s\n", dd->metrics[y].name);
+         }
+
+      }
+
+      //// Meter by Meter
+      //if(d) {
+      //   // fprintf(stderr, "%ld meter: %ld\n", pcp->meters.cursor, dd->totalMetrics);
+      //   for(size_t y = 0; y < dd->totalMetrics; y++) {
+      //      fprintf(stderr, " -- %s\n", d->name);
+      //   }
+
+      //}
+   }
+   /* ====================== end print DynamicTab ======================= */
+
    /* ===================== start print DynamicColumn ====================== */
-
-
-   fprintf(stderr, "----------------------------\n");
-   PCPDynamicColumn* fff;
-   for(unsigned int i = 0; i < pcp->columns.count; i++) {
-      fff = Hashtable_get(pcp->columns.table, i+LAST_PROCESSFIELD);
-      if(fff)
-         fprintf(stderr, "%d - dc ->> %s\n", i, fff->super.caption);
-   }
-   fprintf(stderr, "----------------------------\n");
-   for(unsigned int i = 0; i < pcp->totalMetrics; i++)
-   {
-      fprintf(stderr, "%d - %s\n", i, pcp->names[i]);
-   }
-
-   unsigned int x;
-   const DynamicColumn* dd  = DynamicColumn_search(pcp->columns.table, "vmstack", &x);
-   fprintf(stderr, "----------------------------\n");
-   fprintf(stderr, "DynamicColumn:\n");
-   fprintf(stderr, "- key -> %d\n", x);
-   fprintf(stderr, "- name -> %s\n", dd->name);
-   fprintf(stderr, "- caption -> %s\n", dd->caption);
-   fprintf(stderr, "- description -> %s\n", dd->description);
-   fprintf(stderr, "- heading -> %s\n", dd->heading);
-   fprintf(stderr, "- width -> %d\n", dd->width);
-
-
-   fprintf(stderr, "----------------------------\n");
-   const PCPDynamicColumn* pcp_dd  = (const PCPDynamicColumn*)DynamicColumn_search(pcp->columns.table, "vmstack", &x);
-   fprintf(stderr, "PCPDynamicColumn:\n");
-   fprintf(stderr, "- metricName -> %s\n", pcp_dd->metricName);
-   fprintf(stderr, "- id -> %ld\n", pcp_dd->id);
-   fprintf(stderr, "- super.caption -> %s\n", pcp_dd->super.caption);
-
-
-   fprintf(stderr, "----------------------------\n");
-   fprintf(stderr, "PCPDynamicColumns:\n");
-   fprintf(stderr, "- pcp->columns.count -> %ld\n", pcp->columns.count);
-   fprintf(stderr, "- pcp->columns.offset -> %ld\n", pcp->columns.offset);
-   fprintf(stderr, "- pcp->columns.cursor -> %ld\n", pcp->columns.cursor);
-
-
-   fprintf(stderr, "----------------------------\n");
-   PCPDynamicColumn* dc;
-   for(unsigned int i = 0; i < pcp->columns.count; i++) {
-      dc = Hashtable_get(pcp->columns.table, i+LAST_PROCESSFIELD);
-      if(dc)
-         fprintf(stderr, "%d - dc ->> %s\n", i, dc->metricName);
-   }
-
-
+//
+//
+//    fprintf(stderr, "----------------------------\n");
+//    PCPDynamicColumn* fff;
+//    for(unsigned int i = 0; i < pcp->columns.count; i++) {
+//       fff = Hashtable_get(pcp->columns.table, i+LAST_PROCESSFIELD);
+//       if(fff)
+//          fprintf(stderr, "%d - dc ->> %s\n", i, fff->super.caption);
+//    }
+//    fprintf(stderr, "----------------------------\n");
+//    for(unsigned int i = 0; i < pcp->totalMetrics; i++)
+//    {
+//       fprintf(stderr, "%d - %s\n", i, pcp->names[i]);
+//    }
+//
+//    unsigned int x;
+//    const DynamicColumn* dd  = DynamicColumn_search(pcp->columns.table, "vmstack", &x);
+//    fprintf(stderr, "----------------------------\n");
+//    fprintf(stderr, "DynamicColumn:\n");
+//    fprintf(stderr, "- key -> %d\n", x);
+//    fprintf(stderr, "- name -> %s\n", dd->name);
+//    fprintf(stderr, "- caption -> %s\n", dd->caption);
+//    fprintf(stderr, "- description -> %s\n", dd->description);
+//    fprintf(stderr, "- heading -> %s\n", dd->heading);
+//    fprintf(stderr, "- width -> %d\n", dd->width);
+//
+//
+//    fprintf(stderr, "----------------------------\n");
+//    const PCPDynamicColumn* pcp_dd  = (const PCPDynamicColumn*)DynamicColumn_search(pcp->columns.table, "vmstack", &x);
+//    fprintf(stderr, "PCPDynamicColumn:\n");
+//    fprintf(stderr, "- metricName -> %s\n", pcp_dd->metricName);
+//    fprintf(stderr, "- id -> %ld\n", pcp_dd->id);
+//    fprintf(stderr, "- super.caption -> %s\n", pcp_dd->super.caption);
+//
+//
+//    fprintf(stderr, "----------------------------\n");
+//    fprintf(stderr, "PCPDynamicColumns:\n");
+//    fprintf(stderr, "- pcp->columns.count -> %ld\n", pcp->columns.count);
+//    fprintf(stderr, "- pcp->columns.offset -> %ld\n", pcp->columns.offset);
+//    fprintf(stderr, "- pcp->columns.cursor -> %ld\n", pcp->columns.cursor);
+//
+//
+//    fprintf(stderr, "----------------------------\n");
+//    PCPDynamicColumn* dc;
+//    for(unsigned int i = 0; i < pcp->columns.count; i++) {
+//       dc = Hashtable_get(pcp->columns.table, i+LAST_PROCESSFIELD);
+//       if(dc)
+//          fprintf(stderr, "%d - dc ->> %s\n", i, dc->metricName);
+//    }
+//
+//
    /* ====================== end print DynamicColumn ======================= */
 
-   sts = pmLookupName(pcp->totalMetrics, pcp->names, pcp->pmids);
+   sts = pmLookupName(pcp->totalMetrics, pcp->names, pcp->pmids); // SMA FIXME
    if (sts < 0) {
       fprintf(stderr, "Error: cannot lookup metric names: %s\n", pmErrStr(sts));
       Platform_done();

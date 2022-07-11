@@ -1,0 +1,25 @@
+#
+# pcp-htop(1) configuration file - see pcp-htop(5)
+#
+
+[cgroup_stat]
+caption = cgroupx
+enabled = true
+tabName = Cgroup stat
+#Columns=PID USER PRIORITY NICE M_VIRT M_RESIDENT M_SHARE STATE PERCENT_CPU
+externalNameColumn = true
+cuser.heading = CUSER
+cuser.caption = CUSER
+cuser.width = -12
+cuser.metric = cgroup.cpu.stat.user
+cuser.description = user bla ..............................................
+cusage.heading = CUSAGE
+cusage.caption = CUSAGE
+cusage.width = -12
+cusage.metric = cgroup.cpu.stat.usage
+cusage.description = usage bla ..............................................
+csystem.heading = CSYSTEM
+csystem.caption = CSYSTEM
+csystem.width = -12
+csystem.metric = cgroup.cpu.stat.system
+csystem.description = system bla ..............................................
