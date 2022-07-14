@@ -67,7 +67,7 @@ static bool PCPGenericList_updateGenericList(PCPGenericList* this) // SMA xxg th
    int columnsCount = 5; // total fields[max] number (+1 for ExternalName Column) // SMA: hardCoded FIXME
 
    // {{ fetch keyMatric ... keyMatric == fields[0] , move this to static func
-   if (String_eq(settings->ss->name, "cgroup")) // FIXME if settings->ss->generic;
+   if (settings->ss->generic)
    {
       DynamicColumn* column = Hashtable_get(settings->dynamicColumns, fields[0]);
       dc = DynamicColumn_search(settings->dynamicColumns, column->name, &dc_key);

@@ -44,7 +44,7 @@ typedef struct {
    bool treeView;
    bool treeViewAlwaysByPID;
    bool allBranchesCollapsed;
-   int type; // == inDom for PCP .. zero otherwise
+   int type; // == inDom for PCP .. zero otherwise // SMA REMOVEME
    int columnsCount;
    bool generic;
 } ScreenSettings;

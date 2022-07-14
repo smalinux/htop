@@ -146,7 +146,7 @@ static void checkRecalculation(ScreenManager* this, double* oldTime, int* sortTi
       *redraw = true;
    }
    if (*redraw) {
-      if (String_eq(this->settings->ss->name, "cgroup")) // SMA: catch current active gl
+      if (this->settings->ss->generic) // SMA: catch current active gl
       {
          // SMA: catch current active gl here :)
          //pl->panel->items = NULL;

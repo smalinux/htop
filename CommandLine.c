@@ -284,6 +284,7 @@ static void setCommFilter(State* state, char** commFilter) {
    *commFilter = NULL;
 }
 
+
 int CommandLine_run(const char* name, int argc, char** argv) {
 
    /* initialize locale */
@@ -316,6 +317,31 @@ int CommandLine_run(const char* name, int argc, char** argv) {
 
    ProcessList* pl = ProcessList_new(ut, dm, dc, flags.pidMatchList, flags.userId);
    Settings* settings = Settings_new(pl->activeCPUs, dc);
+
+   /* ====================================================================== */
+   /* ====================================================================== */
+   /* =============== Start: Extend Settings->screens ======================= */
+   ScreenDefaults xxxxxx[] = {
+      {
+         .name = "generic",
+         .columns = "Dynamic(cuser) Dynamic(cusage) Dynamic(csystem) Dynamic(csystem)",
+      },
+      {
+         .name = "generic2",
+         .columns = "Dynamic(cuser)",
+      },
+   };
+
+   ScreenSettings* ss;
+   for(int i = 0; i < 2; i++) {
+      ss = Settings_newScreen(settings, &xxxxxx[i]);
+      ss->generic = true;
+
+      fprintf(stderr, "HiMrSohaib!! ->>%s\n", ss->name);
+   }
+   /* ================= End: Extend Settings->screens ====================== */
+   /* ====================================================================== */
+   /* ====================================================================== */
 
    /* SMA: Start tmp test -------------------------------------------------- */
 
