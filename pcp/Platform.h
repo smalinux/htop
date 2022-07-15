@@ -35,6 +35,7 @@ in the source distribution for its full text.
 #include "RichString.h"
 #include "SignalsPanel.h"
 #include "CommandLine.h"
+#include "Settings.h"
 
 #include "pcp/PCPDynamicColumn.h"
 #include "pcp/PCPDynamicMeter.h"
@@ -157,5 +158,7 @@ void Platform_dynamicColumnsDone(Hashtable* columns);
 const char* Platform_dynamicColumnInit(unsigned int key);
 
 bool Platform_dynamicColumnWriteField(const Process* proc, RichString* str, unsigned int key);
+
+Hashtable* Platform_dynamicTabs(Settings *settings);
 
 #endif

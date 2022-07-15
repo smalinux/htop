@@ -349,36 +349,74 @@ bool Platform_init(void) {
    pcp->tabs.offset = pcp->columns.offset + pcp->columns.cursor;
    //fprintf(stderr, "tabs: *************** %ld \n", pcp->tabs.offset);
    PCPDynamicTabs_init(&pcp->tabs);
-   /* ===================== start print DynamicTab ====================== */
-   PCPDynamicTab * dd = (PCPDynamicTab*)Hashtable_get(pcp->tabs.table, 0);
-   DynamicTab * d = (DynamicTab*)Hashtable_get(pcp->tabs.table, 0);
-   for(size_t i = 0; i < pcp->tabs.offset; i++) {
-      dd = (PCPDynamicTab*)Hashtable_get(pcp->tabs.table, i);
-      d = (DynamicTab*)Hashtable_get(pcp->tabs.table, i);
-      if(dd)
-         fprintf(stderr, "Tab::: %s\n", dd->super.caption);
-      //if(d)
-      //   fprintf(stderr, "Tab:::> %s\n", d->caption);
+   /* ===================== start print DynamicTab (from meters ) ====================== */
+   //PCPDynamicTab * dd = (PCPDynamicTab*)Hashtable_get(pcp->tabs.table, 0);
+   //DynamicTab * d = (DynamicTab*)Hashtable_get(pcp->tabs.table, 0);
+   //for(size_t i = 0; i < pcp->tabs.offset; i++) {
+   //   dd = (PCPDynamicTab*)Hashtable_get(pcp->tabs.table, i);
+   //   d = (DynamicTab*)Hashtable_get(pcp->tabs.table, i);
+   //   if(dd)
+   //      fprintf(stderr, "Tab::: %s\n", dd->super.caption);
+   //   //if(d)
+   //   //   fprintf(stderr, "Tab:::> %s\n", d->caption);
 
-      // Meter by Meter
-      if(dd) {
-         // fprintf(stderr, "%ld meter: %ld\n", pcp->meters.cursor, dd->totalMetrics);
-         for(size_t y = 0; y < dd->totalMetrics; y++) {
-            fprintf(stderr, " - %s\n", dd->metrics[y].name);
-         }
+   //   // Meter by Meter
+   //   if(dd) {
+   //      // fprintf(stderr, "%ld meter: %ld\n", pcp->meters.cursor, dd->totalMetrics);
+   //      for(size_t y = 0; y < dd->totalMetrics; y++) {
+   //         fprintf(stderr, " - %s\n", dd->metrics[y].name);
+   //      }
 
-      }
+   //   }
 
-      //// Meter by Meter
-      //if(d) {
-      //   // fprintf(stderr, "%ld meter: %ld\n", pcp->meters.cursor, dd->totalMetrics);
-      //   for(size_t y = 0; y < dd->totalMetrics; y++) {
-      //      fprintf(stderr, " -- %s\n", d->name);
-      //   }
+   //   //// Meter by Meter
+   //   //if(d) {
+   //   //   // fprintf(stderr, "%ld meter: %ld\n", pcp->meters.cursor, dd->totalMetrics);
+   //   //   for(size_t y = 0; y < dd->totalMetrics; y++) {
+   //   //      fprintf(stderr, " -- %s\n", d->name);
+   //   //   }
 
-      //}
-   }
-   /* ====================== end print DynamicTab ======================= */
+   //   //}
+   //}
+   /* ====================== end print DynamicTab (from meters) ======================= */
+
+
+   /* ===================== start print DynamicTab (from columns ) ====================== */
+   //PCPDynamicTab * dd = (PCPDynamicTab*)Hashtable_get(pcp->tabs.table, 0);
+   //DynamicTab * d = (DynamicTab*)Hashtable_get(pcp->tabs.table, 0);
+   //for(size_t i = 0; i < pcp->tabs.offset; i++) {
+   //   dd = (PCPDynamicTab*)Hashtable_get(pcp->tabs.table, i);
+   //   d = (DynamicTab*)Hashtable_get(pcp->tabs.table, i);
+   //   if(dd) {
+   //      fprintf(stderr, "::: Tab::: %s\n", dd->super.caption);
+   //      fprintf(stderr, "-- %s\n", dd->super.fields);
+   //      fprintf(stderr, "\n");
+   //   }
+   //   //if(d)
+   //   //   fprintf(stderr, "Tab:::> %s\n", d->caption);
+
+   //   //// Meter by Meter
+   //   //if(dd) {
+   //   //   // fprintf(stderr, "%ld meter: %ld\n", pcp->meters.cursor, dd->totalMetrics);
+   //   //   for(size_t y = 0; y < dd->totalMetrics; y++) {
+   //   //      fprintf(stderr, " - %s\n", dd->metrics[y].name);
+   //   //   }
+
+   //   //}
+
+   //   //// Meter by Meter
+   //   //if(d) {
+   //   //   // fprintf(stderr, "%ld meter: %ld\n", pcp->meters.cursor, dd->totalMetrics);
+   //   //   for(size_t y = 0; y < dd->totalMetrics; y++) {
+   //   //      fprintf(stderr, " -- %s\n", d->name);
+   //   //   }
+
+   //   //}
+   //}
+   /* ====================== end print DynamicTab (from columns) ======================= */
+
+
+
 
    /* ===================== start print DynamicColumn ====================== */
 //
@@ -937,4 +975,9 @@ bool Platform_dynamicColumnWriteField(const Process* proc, RichString* str, unsi
       return true;
    }
    return false;
+}
+
+Hashtable* Platform_dynamicTabs(Settings *settings) {
+   PCPDynamicTab_appendScreens(&pcp->tabs, settings);
+   return pcp->tabs.table; // SMA FIXME do you need return ??
 }

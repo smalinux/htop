@@ -321,27 +321,29 @@ int CommandLine_run(const char* name, int argc, char** argv) {
    /* ====================================================================== */
    /* ====================================================================== */
    /* =============== Start: Extend Settings->screens ======================= */
-   ScreenDefaults xxxxxx[] = {
-      {
-         .name = "generic",
-         .columns = "Dynamic(cuser) Dynamic(cusage) Dynamic(csystem) Dynamic(csystem)",
-      },
-      {
-         .name = "generic2",
-         .columns = "Dynamic(cuser)",
-      },
-   };
+   //ScreenDefaults xxxxxx[] = {
+   //   {
+   //      .name = "generic",
+   //      .columns = "Dynamic(cuser) Dynamic(cusage) Dynamic(csystem) Dynamic(csystem)",
+   //   },
+   //   {
+   //      .name = "generic2",
+   //      .columns = "Dynamic(cuser)",
+   //   },
+   //};
 
-   ScreenSettings* ss;
-   for(int i = 0; i < 2; i++) {
-      ss = Settings_newScreen(settings, &xxxxxx[i]);
-      ss->generic = true;
+   //ScreenSettings* ss;
+   //for(int i = 0; i < 2; i++) {
+   //   ss = Settings_newScreen(settings, &xxxxxx[i]);
+   //   ss->generic = true;
 
-      fprintf(stderr, "HiMrSohaib!! ->>%s\n", ss->name);
-   }
+   //   fprintf(stderr, "HiMrSohaib!! ->>%s\n", ss->name);
+   //}
    /* ================= End: Extend Settings->screens ====================== */
    /* ====================================================================== */
    /* ====================================================================== */
+
+   DynamicTabs_new(settings);
 
    /* SMA: Start tmp test -------------------------------------------------- */
 

@@ -4,17 +4,19 @@
 #include <stdbool.h>
 
 #include "Hashtable.h"
+#include "Settings.h"
 
 
 typedef struct DynamicTab_ {
    char name[32];  /* unique name, cannot contain spaces */
    char* caption;
-   char* description;
-   unsigned int type;
-   double maximum;
+   char* fields;
+   //char* description;
+   //unsigned int type;
+   //double maximum;
 } DynamicTab;
 
-Hashtable* DynamicTabs_new(void);
+void DynamicTabs_new(Settings* settings); // SMA FIXME void ?
 
 void DynamicTabs_delete(Hashtable* dynamics);
 

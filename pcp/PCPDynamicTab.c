@@ -23,95 +23,43 @@ in the source distribution for its full text.
 #include "Platform.h"
 #include "RichString.h"
 #include "XUtils.h"
+#include "Settings.h"
 
 #include "pcp/PCPMetric.h"
 
 
-static PCPDynamicTabMetric* PCPDynamicTab_lookupMetric(PCPDynamicTabs* tabs, PCPDynamicTab* tab, const char* name) {
-   size_t bytes = 16 + strlen(tab->super.name) + strlen(name);
+static bool PCPDynamicTab_addMetric(PCPDynamicTabs* tabs, PCPDynamicTab* tab) {
+   if (!tab->super.name[0])
+      return false;
+
+   size_t bytes = 16 + strlen(tab->super.name);
    char* metricName = xMalloc(bytes);
-   xSnprintf(metricName, bytes, "htop.tab.%s.%s", tab->super.name, name); // SMA FIXME Remove derived metric
+   xSnprintf(metricName, bytes, "htop.tab.%s", tab->super.name);
 
-   PCPDynamicTabMetric* metric;
-   for (size_t i = 0; i < tab->totalMetrics; i++) {
-      metric = &tab->metrics[i];
-      if (String_eq(metric->name, metricName)) {
-         free(metricName);
-         return metric;
-      }
-   }
-
-   /* not an existing metric in this tab - add it */
-   size_t n = tab->totalMetrics + 1;
-   tab->metrics = xReallocArray(tab->metrics, n, sizeof(PCPDynamicTabMetric));
-   tab->totalMetrics = n;
-   metric = &tab->metrics[n - 1];
-   memset(metric, 0, sizeof(PCPDynamicTabMetric));
-   metric->name = metricName;
-   metric->label = String_cat(name, ": ");
-   metric->id = tabs->offset + tabs->cursor;
+   tab->metricName = metricName;
+   tab->id = tabs->offset + tabs->cursor;
    tabs->cursor++;
 
-   Platform_addMetric(metric->id, metricName);
-
-   return metric;
+   Platform_addMetric(tab->id, metricName);
+   return true;
 }
 
-// // SMA FIXME remove derived metric
-static void PCPDynamicTab_parseMetric(PCPDynamicTabs* tabs, PCPDynamicTab* tab, const char* path, unsigned int line, char* key, char* value) {
-   PCPDynamicTabMetric* metric;
-   char* p;
-
-   if ((p = strchr(key, '.')) == NULL)
+static void PCPDynamicTab_parseMetric(PCPDynamicTabs* tabs, PCPDynamicTab* tab, const char* path, unsigned int line, char* value) {
+   /* lookup a dynamic metric with this name, else create */
+   if (PCPDynamicTab_addMetric(tabs, tab) == false)
       return;
-   *p++ = '\0'; /* end the name, p is now the attribute, e.g. 'label' */
 
-   if (String_eq(p, "metric")) {
-      /* lookup a dynamic metric with this name, else create */
-      metric = PCPDynamicTab_lookupMetric(tabs, tab, key);
-
-      /* use derived metrics in dynamic tabs for simplicity */
-      char* error;
-      if (pmRegisterDerivedMetric(metric->name, value, &error) < 0) {
-         char* note;
-         xAsprintf(&note,
-                   "%s: failed to parse expression in %s at line %u\n%s\n%s",
-                   pmGetProgname(), path, line, error, pmGetProgname());
-         free(error);
-         errno = EINVAL;
-         CRT_fatalError(note);
-         free(note);
-      }
-   } else {
-      /* this is a property of a dynamic metric - the metric expression */
-      /* may not have been observed yet - i.e. we allow for any ordering */
-      metric = PCPDynamicTab_lookupMetric(tabs, tab, key);
-      if (String_eq(p, "color")) {
-         if (String_eq(value, "gray"))
-            metric->color = DYNAMIC_GRAY;
-         else if (String_eq(value, "darkgray"))
-            metric->color = DYNAMIC_DARKGRAY;
-         else if (String_eq(value, "red"))
-            metric->color = DYNAMIC_RED;
-         else if (String_eq(value, "green"))
-            metric->color = DYNAMIC_GREEN;
-         else if (String_eq(value, "blue"))
-            metric->color = DYNAMIC_BLUE;
-         else if (String_eq(value, "cyan"))
-            metric->color = DYNAMIC_CYAN;
-         else if (String_eq(value, "magenta"))
-            metric->color = DYNAMIC_MAGENTA;
-         else if (String_eq(value, "yellow"))
-            metric->color = DYNAMIC_YELLOW;
-         else if (String_eq(value, "white"))
-            metric->color = DYNAMIC_WHITE;
-      } else if (String_eq(p, "label")) {
-         char* label = String_cat(value, ": ");
-         free_and_xStrdup(&metric->label, label);
-         free(label);
-      } else if (String_eq(p, "suffix")) {
-         free_and_xStrdup(&metric->suffix, value);
-      }
+   /* derived metrics in all dynamic tabs for simplicity */
+   char* error;
+   if (pmRegisterDerivedMetric(tab->metricName, value, &error) < 0) {
+      char* note;
+      xAsprintf(&note,
+                "%s: failed to parse expression in %s at line %u\n%s\n",
+                pmGetProgname(), path, line, error);
+      free(error);
+      errno = EINVAL;
+      CRT_fatalError(note);
+      free(note);
    }
 }
 
@@ -124,8 +72,8 @@ static bool PCPDynamicTab_validateTabName(char* key, const char* path, unsigned 
       *end = '\0';
    } else {
       fprintf(stderr,
-              "%s: no closing brace on tab name at %s line %u\n\"%s\"\n",
-              pmGetProgname(), path, line, key);
+                "%s: no closing brace on tab name at %s line %u\n\"%s\"",
+                pmGetProgname(), path, line, key);
       return false;
    }
 
@@ -141,8 +89,8 @@ static bool PCPDynamicTab_validateTabName(char* key, const char* path, unsigned 
    }
    if (*p != '\0') { /* badness */
       fprintf(stderr,
-              "%s: invalid tab name at %s line %u\n\"%s\"\n",
-              pmGetProgname(), path, line, key);
+                "%s: invalid tab name at %s line %u\n\"%s\"",
+                pmGetProgname(), path, line, key);
       return false;
    }
    return true;
@@ -150,13 +98,17 @@ static bool PCPDynamicTab_validateTabName(char* key, const char* path, unsigned 
 
 // Ensure a tab name has not been defined previously
 static bool PCPDynamicTab_uniqueName(char* key, PCPDynamicTabs* tabs) {
-   return !DynamicTab_search(tabs->table, key, NULL); // SMA FIXME
+   return !DynamicTab_search(tabs->table, key, NULL);
 }
 
 static PCPDynamicTab* PCPDynamicTab_new(PCPDynamicTabs* tabs, const char* name) {
    PCPDynamicTab* tab = xCalloc(1, sizeof(*tab));
    String_safeStrncpy(tab->super.name, name, sizeof(tab->super.name));
-   Hashtable_put(tabs->table, ++tabs->count, tab);
+
+   size_t id = tabs->count + LAST_PROCESSFIELD;
+   Hashtable_put(tabs->table, id, tab);
+   tabs->count++;
+
    return tab;
 }
 
@@ -177,7 +129,7 @@ static void PCPDynamicTab_parseFile(PCPDynamicTabs* tabs, const char* path) {
       /* cleanup whitespace, skip comment lines */
       char* trimmed = String_trim(line);
       free(line);
-      if (trimmed[0] == '#' || trimmed[0] == '\0') {
+      if (!trimmed || !trimmed[0] || trimmed[0] == '#') {
          free(trimmed);
          continue;
       }
@@ -191,36 +143,25 @@ static void PCPDynamicTab_parseFile(PCPDynamicTabs* tabs, const char* path) {
       char* key = String_trim(config[0]);
       char* value = n > 1 ? String_trim(config[1]) : NULL;
       if (key[0] == '[') {  /* new section heading - i.e. new tab */
-         ok = PCPDynamicTab_validateTabName(key + 1, path, lineno); // SMA FIXME
+         ok = PCPDynamicTab_validateTabName(key + 1, path, lineno);
          if (ok)
-            ok = PCPDynamicTab_uniqueName(key + 1, tabs); // SMA FIXME
+            ok = PCPDynamicTab_uniqueName(key + 1, tabs);
          if (ok)
-            tab = PCPDynamicTab_new(tabs, key + 1); // SMA FIXME
-      } else if (!ok) {
-         ;  /* skip this one, we're looking for a new header */
+            tab = PCPDynamicTab_new(tabs, key + 1);
       } else if (value && tab && String_eq(key, "caption")) {
-         char* caption = String_cat(value, ": ");
-         if (caption) {
-            free_and_xStrdup(&tab->super.caption, caption);
-            free(caption);
-            caption = NULL;
-         }
-      } else if (value && tab && String_eq(key, "description")) {
-         free_and_xStrdup(&tab->super.description, value);
-      } else if (value && tab && String_eq(key, "type")) {
-         if (String_eq(config[1], "bar"))
-            tab->super.type = BAR_METERMODE;
-         else if (String_eq(config[1], "text"))
-            tab->super.type = TEXT_METERMODE;
-         else if (String_eq(config[1], "graph"))
-            tab->super.type = GRAPH_METERMODE;
-         else if (String_eq(config[1], "led"))
-            tab->super.type = LED_METERMODE;
-      } else if (value && tab && String_eq(key, "maximum")) {
-         tab->super.maximum = strtod(value, NULL);
-      } else if (value && tab) {
-         PCPDynamicTab_parseMetric(tabs, tab, path, lineno, key, value); // SMA FIXME
+         free_and_xStrdup(&tab->super.caption, value);
+      } else if (value && tab && String_eq(key, "columns")) {
+         free_and_xStrdup(&tab->super.fields, value);
       }
+      //else if (value && tab && String_eq(key, "heading")) {
+      //   free_and_xStrdup(&tab->super.heading, value);
+      //} else if (value && tab && String_eq(key, "description")) {
+      //   free_and_xStrdup(&tab->super.description, value);
+      //} else if (value && tab && String_eq(key, "width")) {
+      //   tab->super.width = strtoul(value, NULL, 10);
+      //} else if (value && tab && String_eq(key, "metric")) {
+      //   PCPDynamicTab_parseMetric(tabs, tab, path, lineno, value);
+      //}
       String_freeArray(config);
       free(value);
       free(key);
@@ -285,23 +226,59 @@ void PCPDynamicTabs_init(PCPDynamicTabs* tabs) {
    free(path);
 }
 
-static void PCPDynamicTab_free(ATTR_UNUSED ht_key_t key, void* value, ATTR_UNUSED void* data) {
+static void PCPDynamicTabs_free(ATTR_UNUSED ht_key_t key, void* value, ATTR_UNUSED void* data) {
    PCPDynamicTab* tab = (PCPDynamicTab*) value;
-   for (size_t i = 0; i < tab->totalMetrics; i++) {
-      free(tab->metrics[i].name);
-      free(tab->metrics[i].label);
-      free(tab->metrics[i].suffix);
-   }
-   free(tab->metrics);
+   free(tab->metricName);
+   //free(tab->super.heading);
    free(tab->super.caption);
-   free(tab->super.description);
+   free(tab->super.fields);
+   //free(tab->super.description);
 }
 
-void PCPDynamicTabs_done(Hashtable* table) {
-   Hashtable_foreach(table, PCPDynamicTab_free, NULL);
-}
+void PCPDynamicTab_appendScreens(PCPDynamicTabs* tabs, Settings* settings) {
+   PCPDynamicTab * dt;
 
-void PCPDynamicTab_enable(PCPDynamicTab* this) {
-   for (size_t i = 0; i < this->totalMetrics; i++)
-      PCPMetric_enable(this->metrics[i].id, true);
+   /* loop over all tabs */
+   for(size_t i = 0; i < tabs->offset; i++) {
+      dt = (PCPDynamicTab*)Hashtable_get(tabs->table, i);
+      if(!dt)
+         continue;
+
+      //fprintf(stderr, "::: Tab::: %s\n", dt->super.caption);
+      //fprintf(stderr, "*---- %s\n", dt->super.fields);
+      //fprintf(stderr, "\n");
+
+      char* trim = String_trim(dt->super.fields);
+      char** ids = String_split(trim, ' ', NULL);
+      free(trim);
+
+      int len = 0;
+      for (int j = 0; ids[j]; j++) {
+         len++;
+      }
+
+      /* FIXME dito
+       * check if all ids[] from the same inDom?
+       * yes: continue,
+       * no: kill htop
+       **/
+
+      char* columns = strdup("");
+      for (int j = 0; j < len; j++)
+         xAsprintf(&columns, "%s Dynamic(%s)", columns, ids[j]);
+
+      fprintf(stderr, "%s\n", columns); // SMA REMOVEME
+
+      ScreenDefaults sd[] = {
+         {
+            .name = dt->super.caption,
+            .columns = columns,
+         }
+      };
+
+      ScreenSettings* ss;
+      ss = Settings_newScreen(settings, &sd[0]);
+      ss->generic = true;
+      free(columns);
+   }
 }

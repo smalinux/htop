@@ -21,13 +21,12 @@ in the source distribution for its full text.
 #include "ProcessList.h"
 #include "RichString.h"
 #include "XUtils.h"
+#include "Hashtable.h"
 
 
-/* // ~~SMA~~
-Hashtable* DynamicTabs_new(void) {
-   return Platform_dynamicTabs();
+void DynamicTabs_new(Settings* settings) {
+   Hashtable* dt = Platform_dynamicTabs(settings);
 }
-*/
 
 void DynamicTabs_delete(Hashtable* dynamics) {
    if (dynamics) {
