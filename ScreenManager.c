@@ -134,7 +134,6 @@ static void checkRecalculation(ScreenManager* this, double* oldTime, int* sortTi
       // Scan ALL lists here, but for demo and simplicity I will scan just one
       // for now
       GenericList* gl = Hashtable_get(gls->table, 100);
-      //fprintf(stderr, "ttttttttttttttttttttttttt %d \n", gl->totalRows);
       GenericList_scan(gl, this->state->pauseProcessUpdate); // SMA xxxg
       //fprintf(stderr, "fff 77777777777777777777777 %s\n", gl->settings->ss->name);
       // always update header, especially to avoid gaps in graph meters
@@ -153,6 +152,7 @@ static void checkRecalculation(ScreenManager* this, double* oldTime, int* sortTi
          *force_redraw = 1;
          Vector_prune(pl->panel->items);  // SMA: this line is super important! remove it & scroll to break...
          GenericList *gl = Hashtable_get(gls->table, 100);
+      fprintf(stderr, "ttttttttttttttttttttttttt %d \n", gl->totalRows);
 
          GenericList_rebuildPanel(gls, gl);
 

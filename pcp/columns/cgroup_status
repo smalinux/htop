@@ -23,3 +23,10 @@ caption = CSYSTEM
 width = -12
 metric = cgroup.cpu.stat.system
 description = system bla ..............................................
+
+[bpid]
+heading = pidd
+caption = pidd
+width = -12
+metric = bpf.bashreadline.pid
+description = system bla ..............................................

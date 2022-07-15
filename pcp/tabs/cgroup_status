@@ -10,6 +10,6 @@ externalNameColumn = true
 
 [test]
 caption = Cgroup2
-columns = cuser cuser cuser cuser
+columns = bpid
 externalNameColumn = true
 #enabled = true
