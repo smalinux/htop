@@ -28,41 +28,6 @@ in the source distribution for its full text.
 #include "pcp/PCPMetric.h"
 
 
-static bool PCPDynamicTab_addMetric(PCPDynamicTabs* tabs, PCPDynamicTab* tab) {
-   if (!tab->super.name[0])
-      return false;
-
-   size_t bytes = 16 + strlen(tab->super.name);
-   char* metricName = xMalloc(bytes);
-   xSnprintf(metricName, bytes, "htop.tab.%s", tab->super.name);
-
-   tab->metricName = metricName;
-   tab->id = tabs->offset + tabs->cursor;
-   tabs->cursor++;
-
-   Platform_addMetric(tab->id, metricName);
-   return true;
-}
-
-static void PCPDynamicTab_parseMetric(PCPDynamicTabs* tabs, PCPDynamicTab* tab, const char* path, unsigned int line, char* value) {
-   /* lookup a dynamic metric with this name, else create */
-   if (PCPDynamicTab_addMetric(tabs, tab) == false)
-      return;
-
-   /* derived metrics in all dynamic tabs for simplicity */
-   char* error;
-   if (pmRegisterDerivedMetric(tab->metricName, value, &error) < 0) {
-      char* note;
-      xAsprintf(&note,
-                "%s: failed to parse expression in %s at line %u\n%s\n",
-                pmGetProgname(), path, line, error);
-      free(error);
-      errno = EINVAL;
-      CRT_fatalError(note);
-      free(note);
-   }
-}
-
 // Ensure a valid name for use in a PCP metric name and in htoprc
 static bool PCPDynamicTab_validateTabName(char* key, const char* path, unsigned int line) {
    char* p = key;
@@ -105,7 +70,7 @@ static PCPDynamicTab* PCPDynamicTab_new(PCPDynamicTabs* tabs, const char* name) 
    PCPDynamicTab* tab = xCalloc(1, sizeof(*tab));
    String_safeStrncpy(tab->super.name, name, sizeof(tab->super.name));
 
-   size_t id = tabs->count + LAST_PROCESSFIELD;
+   size_t id = tabs->count;
    Hashtable_put(tabs->table, id, tab);
    tabs->count++;
 
@@ -153,15 +118,6 @@ static void PCPDynamicTab_parseFile(PCPDynamicTabs* tabs, const char* path) {
       } else if (value && tab && String_eq(key, "columns")) {
          free_and_xStrdup(&tab->super.fields, value);
       }
-      //else if (value && tab && String_eq(key, "heading")) {
-      //   free_and_xStrdup(&tab->super.heading, value);
-      //} else if (value && tab && String_eq(key, "description")) {
-      //   free_and_xStrdup(&tab->super.description, value);
-      //} else if (value && tab && String_eq(key, "width")) {
-      //   tab->super.width = strtoul(value, NULL, 10);
-      //} else if (value && tab && String_eq(key, "metric")) {
-      //   PCPDynamicTab_parseMetric(tabs, tab, path, lineno, value);
-      //}
       String_freeArray(config);
       free(value);
       free(key);

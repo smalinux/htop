@@ -635,6 +635,8 @@ int Settings_write(const Settings* this, bool onCrash) {
 
    if (this->screens && this->screens[0]) {
       for (unsigned int i = 0; i < this->nScreens; i++) {
+         if (this->screens[i]->generic)
+            continue;
          ScreenSettings* ss = this->screens[i];
          fprintf(fd, "screen:%s=", ss->name);
          writeFields(fd, ss->fields, this->dynamicColumns, true, separator);
