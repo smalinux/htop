@@ -11,12 +11,9 @@ typedef struct DynamicTab_ {
    char name[32];  /* unique name, cannot contain spaces */
    char* caption;
    char* fields;
-   //char* description;
-   //unsigned int type;
-   //double maximum;
 } DynamicTab;
 
-void DynamicTabs_new(Settings* settings); // SMA FIXME void ?
+Hashtable* DynamicTabs_new(Settings* settings);
 
 void DynamicTabs_delete(Hashtable* dynamics);
 

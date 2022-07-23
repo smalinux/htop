@@ -3,13 +3,13 @@
 #
 
 [cgroup_stat]
+enabled = true
 caption = Cgroup1
-columns = cuser cusage csystem csystem
-externalNameColumn = true
-#enabled = true
+columns = cuser cusage csystem csystem csystem
+instances = 0 0 0 0 1
 
 [test]
+enabled = true
 caption = Cgroup2
-columns = bpid
-externalNameColumn = true
-#enabled = true
+columns = bpid bcomm
+instances = 0 1

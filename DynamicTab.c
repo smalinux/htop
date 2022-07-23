@@ -24,8 +24,8 @@ in the source distribution for its full text.
 #include "Hashtable.h"
 
 
-void DynamicTabs_new(Settings* settings) {
-   Platform_dynamicTabs(settings);
+Hashtable* DynamicTabs_new(Settings* settings) {
+   return Platform_dynamicTabs(settings);
 }
 
 void DynamicTabs_delete(Hashtable* dynamics) {

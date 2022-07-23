@@ -320,7 +320,6 @@ bool Platform_init(void) {
    pcp->columns.offset = PCP_METRIC_COUNT + pcp->meters.cursor;
    PCPDynamicColumns_init(&pcp->columns);
 
-   pcp->tabs.offset = pcp->columns.offset + pcp->columns.cursor; // fix meeeeeeeeeeeeeeeeeeeeeee
    PCPDynamicTabs_init(&pcp->tabs);
 
    sts = pmLookupName(pcp->totalMetrics, pcp->names, pcp->pmids);
@@ -823,6 +822,7 @@ bool Platform_dynamicColumnWriteField(const Process* proc, RichString* str, unsi
    return false;
 }
 
-void Platform_dynamicTabs(Settings *settings) {
+Hashtable* Platform_dynamicTabs(Settings *settings) {
    PCPDynamicTab_appendScreens(&pcp->tabs, settings);
+   return pcp->tabs.table;
 }

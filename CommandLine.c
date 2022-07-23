@@ -317,8 +317,17 @@ int CommandLine_run(const char* name, int argc, char** argv) {
    ProcessList* pl = ProcessList_new(ut, dm, dc, flags.pidMatchList, flags.userId);
    Settings* settings = Settings_new(pl->activeCPUs, dc);
 
-   DynamicTabs_new(settings);
+   Hashtable* dt = DynamicTabs_new(settings); // FIXME free dt
    GenericList* gl = GenericList_new();
+
+   // REMOVEME this block prints dt* hashtable
+   //for (int i = 0; i < 2; i++) {
+
+   //   DynamicTab* dd = (DynamicTab*)Hashtable_get(dt, i);
+   //   fprintf(stderr, "::: Tab::: %s\n", dd->caption);
+   //   fprintf(stderr, "::: fields::: %s\n", dd->fields);
+   //   fprintf(stderr, "\n");
+   //}
 
    pl->settings = settings;
    gl->settings = settings;

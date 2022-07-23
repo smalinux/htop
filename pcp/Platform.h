@@ -159,6 +159,6 @@ const char* Platform_dynamicColumnInit(unsigned int key);
 
 bool Platform_dynamicColumnWriteField(const Process* proc, RichString* str, unsigned int key);
 
-void Platform_dynamicTabs(Settings *settings);
+Hashtable* Platform_dynamicTabs(Settings *settings);
 
 #endif

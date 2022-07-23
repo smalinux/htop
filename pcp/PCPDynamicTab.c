@@ -28,7 +28,6 @@ in the source distribution for its full text.
 #include "pcp/PCPMetric.h"
 
 
-// Ensure a valid name for use in a PCP metric name and in htoprc
 static bool PCPDynamicTab_validateTabName(char* key, const char* path, unsigned int line) {
    char* p = key;
    char* end = strrchr(key, ']');
@@ -117,6 +116,11 @@ static void PCPDynamicTab_parseFile(PCPDynamicTabs* tabs, const char* path) {
          free_and_xStrdup(&tab->super.caption, value);
       } else if (value && tab && String_eq(key, "columns")) {
          free_and_xStrdup(&tab->super.fields, value);
+      } else if (value && tab && String_eq(key, "instances")) {
+         free_and_xStrdup(&tab->instances, value);
+      } else if (value && tab && String_eq(key, "enabled")) {
+         if(strcmp(value, "true") || strcmp(value, "True"))
+            tab->enabled = 1;
       }
       String_freeArray(config);
       free(value);
@@ -184,56 +188,46 @@ void PCPDynamicTabs_init(PCPDynamicTabs* tabs) {
 
 static void PCPDynamicTabs_free(ATTR_UNUSED ht_key_t key, void* value, ATTR_UNUSED void* data) {
    PCPDynamicTab* tab = (PCPDynamicTab*) value;
-   free(tab->metricName);
-   //free(tab->super.heading);
+   free(tab->instances);
    free(tab->super.caption);
    free(tab->super.fields);
-   //free(tab->super.description);
+}
+
+static char* formatFields(char* fields) {
+   char* trim = String_trim(fields);
+   char** ids = String_split(trim, ' ', NULL);
+   char* columns = strdup("");
+   free(trim);
+
+   int len = 0;
+   for (int j = 0; ids[j]; j++) {
+      len++;
+   }
+
+   for (int j = 0; j < len; j++)
+      xAsprintf(&columns, "%s Dynamic(%s)", columns, ids[j]);
+
+   return columns;
 }
 
 void PCPDynamicTab_appendScreens(PCPDynamicTabs* tabs, Settings* settings) {
    PCPDynamicTab * dt;
+   ScreenSettings* ss;
 
-   /* loop over all tabs */
-   for(size_t i = 0; i < tabs->offset; i++) {
+   for(size_t i = 0; i < tabs->count; i++) {
       dt = (PCPDynamicTab*)Hashtable_get(tabs->table, i);
-      if(!dt)
+      if (!dt)
+         continue;
+      if (!dt->enabled)
          continue;
 
-      //fprintf(stderr, "::: Tab::: %s\n", dt->super.caption);
-      //fprintf(stderr, "*---- %s\n", dt->super.fields);
-      //fprintf(stderr, "\n");
-
-      char* trim = String_trim(dt->super.fields);
-      char** ids = String_split(trim, ' ', NULL);
-      free(trim);
-
-      int len = 0;
-      for (int j = 0; ids[j]; j++) {
-         len++;
-      }
-
-      /* FIXME dito
-       * check if all ids[] from the same inDom?
-       * yes: continue,
-       * no: kill htop
-       **/
-
-      char* columns = strdup("");
-      for (int j = 0; j < len; j++)
-         xAsprintf(&columns, "%s Dynamic(%s)", columns, ids[j]);
-
-      fprintf(stderr, "%s\n", columns); // SMA REMOVEME
-
-      ScreenDefaults sd[] = {
-         {
-            .name = dt->super.caption,
-            .columns = columns,
-         }
+      char* columns = formatFields(dt->super.fields);
+      ScreenDefaults sd = {
+         .name = dt->super.caption,
+         .columns = columns,
       };
 
-      ScreenSettings* ss;
-      ss = Settings_newScreen(settings, &sd[0]);
+      ss = Settings_newScreen(settings, &sd);
       ss->generic = true;
       free(columns);
    }
