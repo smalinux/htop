@@ -9,7 +9,6 @@ width = -12
 metric = cgroup.cpu.stat.user
 description = user bla ..............................................
 
-
 [cusage]
 heading = CUSAGE
 caption = CUSAGE
