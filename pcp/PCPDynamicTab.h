@@ -13,6 +13,7 @@
 typedef struct PCPDynamicTab_ {
    DynamicTab super;
    char* instances;
+   bool* enableInstance;
    bool enabled;
 } PCPDynamicTab;
 

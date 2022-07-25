@@ -76,6 +76,24 @@ static PCPDynamicTab* PCPDynamicTab_new(PCPDynamicTabs* tabs, const char* name) 
    return tab;
 }
 
+static void readInstances(PCPDynamicTab* dt) {
+   char* trim = String_trim(dt->instances);
+   char** ids = String_split(trim, ' ', NULL);
+   free(trim);
+
+   for (size_t j = 0, i = 0; ids[i]; i++) {
+      dt->enableInstance = xRealloc(dt->enableInstance, (j + 1) * sizeof(bool));
+
+      if (String_eq(ids[i], "1"))
+         dt->enableInstance[j] = 1;
+      else
+         dt->enableInstance[j] = 0;
+
+      j++;
+   }
+   String_freeArray(ids);
+}
+
 static void PCPDynamicTab_parseFile(PCPDynamicTabs* tabs, const char* path) {
    FILE* file = fopen(path, "r");
    if (!file)
@@ -118,6 +136,7 @@ static void PCPDynamicTab_parseFile(PCPDynamicTabs* tabs, const char* path) {
          free_and_xStrdup(&tab->super.fields, value);
       } else if (value && tab && String_eq(key, "instances")) {
          free_and_xStrdup(&tab->instances, value);
+         readInstances(tab);
       } else if (value && tab && String_eq(key, "enabled")) {
          if(strcmp(value, "true") || strcmp(value, "True"))
             tab->enabled = 1;
@@ -189,6 +208,7 @@ void PCPDynamicTabs_init(PCPDynamicTabs* tabs) {
 static void PCPDynamicTabs_free(ATTR_UNUSED ht_key_t key, void* value, ATTR_UNUSED void* data) {
    PCPDynamicTab* tab = (PCPDynamicTab*) value;
    free(tab->instances);
+   free(tab->enableInstance);
    free(tab->super.caption);
    free(tab->super.fields);
 }
@@ -222,6 +242,7 @@ void PCPDynamicTab_appendScreens(PCPDynamicTabs* tabs, Settings* settings) {
          continue;
 
       char* columns = formatFields(dt->super.fields);
+
       ScreenDefaults sd = {
          .name = dt->super.caption,
          .columns = columns,
