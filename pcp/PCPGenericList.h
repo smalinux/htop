@@ -16,7 +16,6 @@ in the source distribution for its full text.
 
 typedef struct PCPGenericList_ {
    GenericList super;
-   int test; // SMA REMOVEME
    // SMA; keymetric;   PCPMetric_iterate
 } PCPGenericList;
 

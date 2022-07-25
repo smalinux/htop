@@ -11,5 +11,5 @@ instances = 0 0 0 0 1
 [test]
 enabled = true
 caption = Cgroup2
-columns = bpid bcomm
+columns = bpid
 instances = 0 1

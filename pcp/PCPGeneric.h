@@ -28,8 +28,6 @@ typedef struct PCPGenericField_ {
    int offset;
 
    int type;
-
-   int index; // SMA should not use pmid as column index because the user can dublicate the same column;
 } PCPGenericField;
 
 typedef struct PCPGeneric_ {
@@ -40,8 +38,6 @@ typedef struct PCPGeneric_ {
    int fieldsCount;
 
    int sortKey;
-
-   int love; // SMA REMOVEME
 } PCPGeneric;
 
 
@@ -58,5 +54,7 @@ void Generic_delete(Object* cast);
 PCPGenericField* PCPGeneric_addField(PCPGeneric* this, const Settings* settings);
 
 void PCPGeneric_removeField(PCPGeneric* this);
+
+void PCPGeneric_removeAllFields(PCPGeneric* this);
 
 #endif

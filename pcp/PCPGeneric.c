@@ -68,6 +68,13 @@ void PCPGeneric_removeField(PCPGeneric* this)
    this->fieldsCount--;
 }
 
+void PCPGeneric_removeAllFields(PCPGeneric* this)
+{
+   for (int i = this->fieldsCount; i >= 0; i--) {
+      PCPGeneric_removeField(this);
+   }
+}
+
 static void PCPGeneric_writeField(const Generic* this, RichString* str, int field) {
    const PCPGeneric* gg = (const PCPGeneric*) this;
    PCPGenericField* gf = (PCPGenericField*)Hashtable_get(gg->fields, field);
@@ -126,12 +133,12 @@ static void PCPGeneric_writeField(const Generic* this, RichString* str, int fiel
 
    /* External instance column */
    //fprintf(stderr, ">>>>>>>>>>> %d & %d\n", field, gg->fieldsCount);
-   if (field == gg->fieldsCount-2)
-   {
-      PCPGenericField* gff = (PCPGenericField*)Hashtable_get(gg->fields, field+1);
-      xSnprintf(buffer, n, "%*s", -12, gff->value->cp);
-      RichString_appendWide(str, attr, buffer);
-   }
+   //if (field == gg->fieldsCount-2)
+   //{
+   //   PCPGenericField* gff = (PCPGenericField*)Hashtable_get(gg->fields, field+1);
+   //   xSnprintf(buffer, n, "%*s", -12, gff->value->cp);
+   //   RichString_appendWide(str, attr, buffer);
+   //}
 
 
    // SMA: default:
