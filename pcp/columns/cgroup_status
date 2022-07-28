@@ -25,7 +25,14 @@ description = system bla ..............................................
 
 [bpid]
 heading = pidd
-caption = pidd
+caption = PID
 width = -12
 metric = bpf.bashreadline.pid
+description = system bla ..............................................
+
+[bcomm]
+heading = bcomm
+caption = COMM
+width = -12
+metric = bpf.bashreadline.comm
 description = system bla ..............................................

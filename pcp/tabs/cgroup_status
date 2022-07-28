@@ -17,5 +17,11 @@ instances = 0 0 0 0 1
 [filesys]
 enabled = true
 caption = Filesystem
-columns = filesysavail filesysblocksize filesyscapacity filesysfree filesysfreefiles filesysfull filesysmaxfiles filesysmountdir filesysreadonly filesysused filesysusedfiles
+columns = filesysavail filesysblocksize filesyscapacity filesysfree filesysfreefiles filesysfull filesysmaxfiles filesysreadonly filesysused filesysusedfiles filesysmountdir
 instances = 0 0 0 0 0 0 0 0 0 0 0
+
+[bpfbashreadline]
+enabled = true
+caption = bashreadline
+columns = bpid bcomm
+instances = 0

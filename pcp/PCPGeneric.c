@@ -98,8 +98,8 @@ static void PCPGeneric_writeField(const Generic* this, RichString* str, int fiel
    switch (gf->type) {
       case PM_TYPE_STRING:
          attr = CRT_colors[PROCESS_SHADOW];
-         Process_printLeftAlignedField(str, attr, gf->value->cp, abswidth);
-         //free(gf->value->cp);
+         xSnprintf(buffer, sizeof(buffer), "%*s ", width, gf->value->cp);
+         RichString_appendAscii(str, attr, buffer);
          break;
       case PM_TYPE_32:
          xSnprintf(buffer, sizeof(buffer), "%*d ", width, gf->value->l);

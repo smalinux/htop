@@ -93,6 +93,7 @@ static bool PCPGenericList_updateGenericList(PCPGenericList* this) {
 
    // inDom Validation
    // TODO
+   //
 
    keyMetric = defineKeyMetric(settings);
    size_t columnsCount = getColumnCount(fields);
@@ -140,7 +141,6 @@ void GenericList_goThroughEntries(GenericList * super, bool pauseProcessUpdate)
    PCPGenericList* this = (PCPGenericList*) super;
    const Settings* settings = super->settings;
 
-   //fprintf(stderr, "-$$$$$$$$$$$$$ >>> %s\n", super->settings->ss->name);
    PCPGenericList_updateGenericList(this);
 }
 
