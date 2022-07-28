@@ -78,10 +78,23 @@ void PCPGeneric_removeAllFields(PCPGeneric* this)
 static void PCPGeneric_writeField(const Generic* this, RichString* str, int field) {
    const PCPGeneric* gg = (const PCPGeneric*) this;
    PCPGenericField* gf = (PCPGenericField*)Hashtable_get(gg->fields, field);
+   const ProcessField* fields = this->settings->ss->fields; // SMA: change name from "ProcessField" to just "Field"
    char buffer[256]; buffer[255] = '\0';
    int attr = CRT_colors[DEFAULT_COLOR];
-   // SMA: Reference: https://github.com/smalinux/htop/blob/3f727d4720c8df38789dea246a5217a5412ebbcf/pcp/PCPDynamicColumn.c#L239-L246
-   int width = -12; // temp
+
+   DynamicColumn* dc = Hashtable_get(this->settings->dynamicColumns, fields[field]);
+   if (!dc)
+      return;
+   PCPDynamicColumn* column = (PCPDynamicColumn*) dc;
+
+   int width = column->super.width;
+   if (!width || abs(width) > DYNAMIC_MAX_COLUMN_WIDTH)
+      width = DYNAMIC_DEFAULT_COLUMN_WIDTH;
+   int abswidth = abs(width);
+   if (abswidth > DYNAMIC_MAX_COLUMN_WIDTH) {
+      abswidth = DYNAMIC_MAX_COLUMN_WIDTH;
+      width = -abswidth;
+   }
 
    switch (gf->type) {
       case PM_TYPE_STRING:
