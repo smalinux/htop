@@ -75,12 +75,38 @@ void PCPGeneric_removeAllFields(PCPGeneric* this)
    }
 }
 
+typedef struct {
+   char* name;
+   DynamicTab* data;
+   unsigned int key;
+} DynamicIterator;
+
+static void DynamicTab_compare(ht_key_t key, void* value, void* data) {
+   DynamicTab* tab = (DynamicTab*)value;
+   DynamicIterator* iter = (DynamicIterator*)data;
+   if (String_eq(iter->name, tab->name)) {
+      iter->data = tab;
+      iter->key = key;
+   }
+}
+
+static DynamicTab* getCurrentTab(Hashtable* tabs, char* name) {
+   DynamicIterator iter = { .key = 0, .name = name };
+   if (tabs)
+      Hashtable_foreach(tabs, DynamicTab_compare, &iter);
+   if (name)
+      name = iter.name;
+   return iter.data;
+}
+
 static void PCPGeneric_writeField(const Generic* this, RichString* str, int field) {
    const PCPGeneric* gg = (const PCPGeneric*) this;
    PCPGenericField* gf = (PCPGenericField*)Hashtable_get(gg->fields, field);
    const ProcessField* fields = this->settings->ss->fields;
    char buffer[256]; buffer[255] = '\0';
    int attr = CRT_colors[DEFAULT_COLOR];
+   char* tab_username = this->settings->ss->username;
+   Hashtable* pTabs = Platform_getDynamicTabs();
 
    DynamicColumn* dc = Hashtable_get(this->settings->dynamicColumns, fields[field]);
    if (!dc)
@@ -96,40 +122,56 @@ static void PCPGeneric_writeField(const Generic* this, RichString* str, int fiel
       width = -abswidth;
    }
 
-   switch (gf->type) {
-      case PM_TYPE_STRING:
-         attr = CRT_colors[PROCESS_SHADOW];
-         xSnprintf(buffer, sizeof(buffer), "%*s ", width, gf->value->cp);
-         RichString_appendAscii(str, attr, buffer);
-         break;
-      case PM_TYPE_32:
-         xSnprintf(buffer, sizeof(buffer), "%*d ", width, gf->value->l);
-         RichString_appendAscii(str, attr, buffer);
-         break;
-      case PM_TYPE_U32:
-         xSnprintf(buffer, sizeof(buffer), "%*u ", width, gf->value->ul);
-         RichString_appendAscii(str, attr, buffer);
-         break;
-      case PM_TYPE_64:
-         xSnprintf(buffer, sizeof(buffer), "%*lld ", width, (long long) gf->value->ll);
-         RichString_appendAscii(str, attr, buffer);
-         break;
-      case PM_TYPE_U64:
-         xSnprintf(buffer, sizeof(buffer), "%*llu ", width, (unsigned long long) gf->value->ull);
-         RichString_appendAscii(str, attr, buffer);
-         break;
-      case PM_TYPE_FLOAT:
-         xSnprintf(buffer, sizeof(buffer), "%*.2f ", width, (double) gf->value->f);
-         RichString_appendAscii(str, attr, buffer);
-         break;
-      case PM_TYPE_DOUBLE:
-         xSnprintf(buffer, sizeof(buffer), "%*.2f ", width, gf->value->d);
-         RichString_appendAscii(str, attr, buffer);
-         break;
-      default:
-         attr = CRT_colors[METER_VALUE_ERROR];
-         RichString_appendAscii(str, attr, "no type");
-         break;
+   DynamicTab* tab = getCurrentTab(pTabs, tab_username);
+   PCPDynamicTab* p_tab = (PCPDynamicTab*) tab;
+   bool printInstance = p_tab->enableInstance[field];
+
+
+   if (printInstance) {
+      char* instName;
+      attr = CRT_colors[PROCESS_SHADOW];
+
+      PCPMetric_externalName(gf->pmid, gf->offset, &instName);
+
+      xSnprintf(buffer, sizeof(buffer), "%*s ", width, instName);
+      RichString_appendAscii(str, attr, buffer);
+      free(instName);
+   } else {
+      switch (gf->type) {
+         case PM_TYPE_STRING:
+            attr = CRT_colors[PROCESS_SHADOW];
+            xSnprintf(buffer, sizeof(buffer), "%*s ", width, gf->value->cp);
+            RichString_appendAscii(str, attr, buffer);
+            break;
+         case PM_TYPE_32:
+            xSnprintf(buffer, sizeof(buffer), "%*d ", width, gf->value->l);
+            RichString_appendAscii(str, attr, buffer);
+            break;
+         case PM_TYPE_U32:
+            xSnprintf(buffer, sizeof(buffer), "%*u ", width, gf->value->ul);
+            RichString_appendAscii(str, attr, buffer);
+            break;
+         case PM_TYPE_64:
+            xSnprintf(buffer, sizeof(buffer), "%*lld ", width, (long long) gf->value->ll);
+            RichString_appendAscii(str, attr, buffer);
+            break;
+         case PM_TYPE_U64:
+            xSnprintf(buffer, sizeof(buffer), "%*llu ", width, (unsigned long long) gf->value->ull);
+            RichString_appendAscii(str, attr, buffer);
+            break;
+         case PM_TYPE_FLOAT:
+            xSnprintf(buffer, sizeof(buffer), "%*.2f ", width, (double) gf->value->f);
+            RichString_appendAscii(str, attr, buffer);
+            break;
+         case PM_TYPE_DOUBLE:
+            xSnprintf(buffer, sizeof(buffer), "%*.2f ", width, gf->value->d);
+            RichString_appendAscii(str, attr, buffer);
+            break;
+         default:
+            attr = CRT_colors[METER_VALUE_ERROR];
+            RichString_appendAscii(str, attr, "no type");
+            break;
+      }
    }
 }
 

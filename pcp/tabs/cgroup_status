@@ -23,8 +23,8 @@ instances = 0 0 0 0 0 0 0 0 0 0 0
 [bpfbashreadline]
 enabled = true
 caption = bashreadline
-columns = bpid bcomm
-instances = 0 0
+columns = bcomm bpid bcomm
+instances = 1 0 0
 
 [opensnoop]
 enabled = true

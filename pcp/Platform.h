@@ -161,4 +161,6 @@ bool Platform_dynamicColumnWriteField(const Process* proc, RichString* str, unsi
 
 Hashtable* Platform_dynamicTabs(Settings *settings);
 
+Hashtable* Platform_getDynamicTabs(void);
+
 #endif

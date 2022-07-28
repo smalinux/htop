@@ -250,6 +250,7 @@ void PCPDynamicTab_appendScreens(PCPDynamicTabs* tabs, Settings* settings) {
 
       ss = Settings_newScreen(settings, &sd);
       ss->generic = true;
+      ss->username = dt->super.name;
       free(columns);
    }
 }

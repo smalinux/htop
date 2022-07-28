@@ -127,8 +127,10 @@ static bool PCPGenericList_updateGenericList(PCPGenericList* this) {
             PCPGeneric* gg = (PCPGeneric*) g;
 
             PCPGenericField* field = (PCPGenericField*)Hashtable_get(gg->fields, i);
-            *field->value = value;
-            field->type = metricType;
+            *field->value  =  value;
+            field->type    =  metricType;
+            field->pmid    =  column->id;
+            field->offset  =  offset;
          }
       }
    }

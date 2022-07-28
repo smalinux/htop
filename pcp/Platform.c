@@ -826,3 +826,7 @@ Hashtable* Platform_dynamicTabs(Settings *settings) {
    PCPDynamicTab_appendScreens(&pcp->tabs, settings);
    return pcp->tabs.table;
 }
+
+Hashtable* Platform_getDynamicTabs(void) {
+   return pcp->tabs.table;
+}
