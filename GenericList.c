@@ -73,9 +73,9 @@ Generic* GenericList_getGeneric(GenericList* this, Generic_New constructor)
    return g;
 }
 
-void GenericList_scan(GenericList* this, bool pauseGenericUpdate) // SMA TODO
+void GenericList_scan(GenericList* this, bool pauseUpdate)
 {
-   GenericList_goThroughEntries(this, 0); // SMA xxg this
+   GenericList_goThroughEntries(this, pauseUpdate);
 }
 
 void GenericList_setPanel(GenericList* this, Panel* panel) {

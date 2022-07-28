@@ -665,10 +665,10 @@ static void PCPProcessList_updateHeader(ProcessList* super, const Settings* sett
    PCPProcessList_scanZfsArcstats(this);
 }
 
-void ProcessList_goThroughEntries(ProcessList* super, bool pauseProcessUpdate) {
+void ProcessList_goThroughEntries(ProcessList* super, bool pauseUpdate) {
    PCPProcessList* this = (PCPProcessList*) super;
    const Settings* settings = super->settings;
-   bool enabled = !pauseProcessUpdate;
+   bool enabled = !pauseUpdate;
 
    bool flagged = settings->showCPUFrequency;
    PCPMetric_enable(PCP_HINV_CPUCLOCK, flagged);
@@ -707,7 +707,7 @@ void ProcessList_goThroughEntries(ProcessList* super, bool pauseProcessUpdate) {
    PCPProcessList_updateHeader(super, settings);
 
    /* In pause mode only update global data for meters (CPU, memory, etc) */
-   if (pauseProcessUpdate)
+   if (pauseUpdate)
       return;
 
    double period = (this->timestamp - sample) * 100;

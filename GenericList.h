@@ -49,7 +49,7 @@ typedef struct GenericList_ {
 /* Implemented by platforms */
 GenericList* GenericList_addPlatformList(GenericList *super);
 void GenericList_removePlatformList(GenericList *super);
-void GenericList_goThroughEntries(GenericList* super, bool pauseProcessUpdate);
+void GenericList_goThroughEntries(GenericList* super, bool pauseUpdate);
 
 
 /* Generic Lists */
@@ -84,7 +84,7 @@ void GenericList_collapseAllBranches(GenericList* this); // TODO
 
 void GenericList_rebuildPanel(GenericList* this);
 
-void GenericList_scan(GenericList* this, bool pauseGenericUpdate);
+void GenericList_scan(GenericList* this, bool pauseUpdate);
 
 /*
 static inline Process* GenericList_findProcess(GenericList* this, pid_t pid) { // TODO

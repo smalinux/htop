@@ -19,7 +19,7 @@ typedef struct PCPGenericList_ {
    // SMA; keymetric;   PCPMetric_iterate
 } PCPGenericList;
 
-void GenericList_goThroughEntries(GenericList * super,bool pauseProcessUpdate);
+void GenericList_goThroughEntries(GenericList * super,bool pauseUpdate);
 
 GenericList* GenericList_addPlatformList(GenericList *super);
 

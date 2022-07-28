@@ -78,22 +78,10 @@ void PCPGeneric_removeAllFields(PCPGeneric* this)
 static void PCPGeneric_writeField(const Generic* this, RichString* str, int field) {
    const PCPGeneric* gg = (const PCPGeneric*) this;
    PCPGenericField* gf = (PCPGenericField*)Hashtable_get(gg->fields, field);
-   bool coloring = this->settings->highlightMegabytes;
    char buffer[256]; buffer[255] = '\0';
    int attr = CRT_colors[DEFAULT_COLOR];
    // SMA: Reference: https://github.com/smalinux/htop/blob/3f727d4720c8df38789dea246a5217a5412ebbcf/pcp/PCPDynamicColumn.c#L239-L246
    int width = -12; // temp
-   int abswidth = width; // temp
-
-
-   int n = sizeof(buffer) - 1;
-
-   //if (field == 3) {
-   //   xSnprintf(buffer, n, "%*s", -12, gf->value->cp);
-   //}
-   //else {
-   //   xSnprintf(buffer, n, "%*ld", -12, gf->value->ull);
-   //}
 
    switch (gf->type) {
       case PM_TYPE_STRING:
@@ -130,20 +118,6 @@ static void PCPGeneric_writeField(const Generic* this, RichString* str, int fiel
          RichString_appendAscii(str, attr, "no type");
          break;
    }
-
-   /* External instance column */
-   //fprintf(stderr, ">>>>>>>>>>> %d & %d\n", field, gg->fieldsCount);
-   //if (field == gg->fieldsCount-2)
-   //{
-   //   PCPGenericField* gff = (PCPGenericField*)Hashtable_get(gg->fields, field+1);
-   //   xSnprintf(buffer, n, "%*s", -12, gff->value->cp);
-   //   RichString_appendWide(str, attr, buffer);
-   //}
-
-
-   // SMA: default:
-   //Generic_writeField(this, str, field);
-   //RichString_appendWide(str, attr, buffer);
 }
 
 static int PCPGeneric_compareByKey(const Generic* v1, const Generic* v2, int key) {

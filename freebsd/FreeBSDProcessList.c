@@ -473,7 +473,7 @@ IGNORE_WCASTQUAL_END
    return NULL;
 }
 
-void ProcessList_goThroughEntries(ProcessList* super, bool pauseProcessUpdate) {
+void ProcessList_goThroughEntries(ProcessList* super, bool pauseUpdate) {
    FreeBSDProcessList* fpl = (FreeBSDProcessList*) super;
    const Settings* settings = super->settings;
    bool hideKernelThreads = settings->hideKernelThreads;
@@ -484,7 +484,7 @@ void ProcessList_goThroughEntries(ProcessList* super, bool pauseProcessUpdate) {
    FreeBSDProcessList_scanCPU(super);
 
    // in pause mode only gather global data for meters (CPU/memory/...)
-   if (pauseProcessUpdate) {
+   if (pauseUpdate) {
       return;
    }
 

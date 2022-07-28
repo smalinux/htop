@@ -53,6 +53,6 @@ ProcessList* ProcessList_new(UsersTable* usersTable, Hashtable* dynamicMeters, H
 
 void ProcessList_delete(ProcessList* this);
 
-void ProcessList_goThroughEntries(ProcessList* super, bool pauseProcessUpdate);
+void ProcessList_goThroughEntries(ProcessList* super, bool pauseUpdate);
 
 #endif

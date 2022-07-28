@@ -136,12 +136,14 @@ static bool PCPGenericList_updateGenericList(PCPGenericList* this) {
    return 0;
 }
 
-void GenericList_goThroughEntries(GenericList * super, bool pauseProcessUpdate)
+void GenericList_goThroughEntries(GenericList * super, bool pauseUpdate)
 {
+   bool enabled = !pauseUpdate;
    PCPGenericList* this = (PCPGenericList*) super;
    const Settings* settings = super->settings;
 
-   PCPGenericList_updateGenericList(this);
+   if (enabled)
+      PCPGenericList_updateGenericList(this);
 }
 
 GenericList* GenericList_addPlatformList(GenericList *super)

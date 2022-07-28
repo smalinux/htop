@@ -463,7 +463,7 @@ static void OpenBSDProcessList_scanCPUTime(OpenBSDProcessList* this) {
    }
 }
 
-void ProcessList_goThroughEntries(ProcessList* super, bool pauseProcessUpdate) {
+void ProcessList_goThroughEntries(ProcessList* super, bool pauseUpdate) {
    OpenBSDProcessList* opl = (OpenBSDProcessList*) super;
 
    OpenBSDProcessList_updateCPUcount(super);
@@ -471,7 +471,7 @@ void ProcessList_goThroughEntries(ProcessList* super, bool pauseProcessUpdate) {
    OpenBSDProcessList_scanCPUTime(opl);
 
    // in pause mode only gather global data for meters (CPU/memory/...)
-   if (pauseProcessUpdate) {
+   if (pauseUpdate) {
       return;
    }
 

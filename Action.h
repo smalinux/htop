@@ -43,7 +43,7 @@ typedef struct State_ {
    GenericList* gl;
    struct MainPanel_* mainPanel;
    Header* header;
-   bool pauseProcessUpdate;
+   bool pauseUpdate;
    bool hideProcessSelection;
 } State;
 

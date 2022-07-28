@@ -2148,7 +2148,7 @@ static void LinuxProcessList_scanCPUFrequency(LinuxProcessList* this) {
    scanCPUFreqencyFromCPUinfo(this);
 }
 
-void ProcessList_goThroughEntries(ProcessList* super, bool pauseProcessUpdate) {
+void ProcessList_goThroughEntries(ProcessList* super, bool pauseUpdate) {
    LinuxProcessList* this = (LinuxProcessList*) super;
    const Settings* settings = super->settings;
 
@@ -2169,7 +2169,7 @@ void ProcessList_goThroughEntries(ProcessList* super, bool pauseProcessUpdate) {
    #endif
 
    // in pause mode only gather global data for meters (CPU/memory/...)
-   if (pauseProcessUpdate) {
+   if (pauseUpdate) {
       return;
    }
 

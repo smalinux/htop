@@ -190,7 +190,7 @@ static void MainPanel_drawFunctionBar(Panel* super, bool hideFunctionBar) {
       return;
 
    IncSet_drawBar(this->inc, CRT_colors[FUNCTION_BAR]);
-   if (this->state->pauseProcessUpdate) {
+   if (this->state->pauseUpdate) {
       FunctionBar_append("PAUSED", CRT_colors[PAUSED]);
    }
 }
