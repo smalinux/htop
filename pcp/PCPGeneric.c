@@ -78,7 +78,7 @@ void PCPGeneric_removeAllFields(PCPGeneric* this)
 static void PCPGeneric_writeField(const Generic* this, RichString* str, int field) {
    const PCPGeneric* gg = (const PCPGeneric*) this;
    PCPGenericField* gf = (PCPGenericField*)Hashtable_get(gg->fields, field);
-   const ProcessField* fields = this->settings->ss->fields; // SMA: change name from "ProcessField" to just "Field"
+   const ProcessField* fields = this->settings->ss->fields;
    char buffer[256]; buffer[255] = '\0';
    int attr = CRT_colors[DEFAULT_COLOR];
 

@@ -85,7 +85,7 @@ static void allocColumns(GenericList* gl, size_t columnsCount, int rowsCount) {
 static bool PCPGenericList_updateGenericList(PCPGenericList* this) {
    GenericList* gl = (GenericList*) this;
    const Settings* settings = gl->settings;
-   const ProcessField* fields = settings->ss->fields; // SMA: change name from "ProcessField" to just "Field"
+   const ProcessField* fields = settings->ss->fields;
    size_t keyMetric;
 
    if (!settings->ss->generic)

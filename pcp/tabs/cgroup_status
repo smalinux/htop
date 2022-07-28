@@ -25,3 +25,9 @@ enabled = true
 caption = bashreadline
 columns = bpid bcomm
 instances = 0 0
+
+[opensnoop]
+enabled = true
+caption = opensnoop
+columns = opensnoop_pid opensnoop_comm opensnoop_fd opensnoop_err opensnoop_fname
+instances = 0 0 0 0 0
