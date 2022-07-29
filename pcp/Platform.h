@@ -40,7 +40,7 @@ in the source distribution for its full text.
 #include "pcp/PCPDynamicColumn.h"
 #include "pcp/PCPDynamicMeter.h"
 #include "pcp/PCPDynamicTab.h"
-#include "pcp/PCPGenericList.h"
+#include "pcp/PCPGenericDataList.h"
 #include "pcp/PCPMetric.h"
 
 

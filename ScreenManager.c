@@ -22,7 +22,7 @@ in the source distribution for its full text.
 #include "ProcessList.h"
 #include "ProvideCurses.h"
 #include "XUtils.h"
-#include "GenericList.h"
+#include "GenericDataList.h"
 
 
 ScreenManager* ScreenManager_new(Header* header, const Settings* settings, const State* state, bool owner) {
@@ -108,7 +108,7 @@ void ScreenManager_resize(ScreenManager* this) {
 
 static void checkRecalculation(ScreenManager* this, double* oldTime, int* sortTimeout, bool* redraw, bool* rescan, bool* timedOut, bool *force_redraw) {
    ProcessList* pl = this->header->pl;
-   GenericList* gl = this->header->gl;
+   GenericDataList* gl = this->header->gl;
 
    Platform_gettime_realtime(&pl->realtime, &pl->realtimeMs);
    double newTime = ((double)pl->realtime.tv_sec * 10) + ((double)pl->realtime.tv_usec / 100000);
@@ -129,7 +129,7 @@ static void checkRecalculation(ScreenManager* this, double* oldTime, int* sortTi
       }
       // scan processes first - some header values are calculated there
       ProcessList_scan(pl, this->state->pauseUpdate);
-      GenericList_scan(gl, this->state->pauseUpdate);
+      GenericDataList_scan(gl, this->state->pauseUpdate);
       // always update header, especially to avoid gaps in graph meters
       Header_updateData(this->header);
       // force redraw if the number of UID digits was changed
@@ -143,7 +143,7 @@ static void checkRecalculation(ScreenManager* this, double* oldTime, int* sortTi
          *force_redraw = 1;
          Vector_prune(pl->panel->items);
 
-         GenericList_rebuildPanel(gl);
+         GenericDataList_rebuildPanel(gl);
 
          pl->panel->items = gl->panel->items; // workaround
       } else {

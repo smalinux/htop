@@ -25,7 +25,7 @@ in the source distribution for its full text.
 #include "CRT.h"
 #include "DynamicColumn.h"
 #include "DynamicMeter.h"
-#include "GenericList.h"
+#include "GenericDataList.h"
 #include "Hashtable.h"
 #include "Header.h"
 #include "IncSet.h"
@@ -318,7 +318,7 @@ int CommandLine_run(const char* name, int argc, char** argv) {
    Settings* settings = Settings_new(pl->activeCPUs, dc);
 
    Hashtable* dt = DynamicTabs_new(settings); // FIXME free dt
-   GenericList* gl = GenericList_new();
+   GenericDataList* gl = GenericDataList_new();
 
    // REMOVEME this block prints dt* hashtable
    //for (int i = 0; i < 2; i++) {
@@ -362,7 +362,7 @@ int CommandLine_run(const char* name, int argc, char** argv) {
    CRT_init(settings, flags.allowUnicode);
 
    MainPanel* panel = MainPanel_new();
-   MainPanel* genericPanel = MainPanel_new();
+   MainPanel* genericDataPanel = MainPanel_new();
 
    MainPanel_updateLabels(panel, settings->ss->treeView, flags.commFilter);
 
@@ -378,10 +378,10 @@ int CommandLine_run(const char* name, int argc, char** argv) {
 
    //MainPanel_setState(panel, &state);
    panel->state = &state;
-   genericPanel->state = &state;
+   genericDataPanel->state = &state;
 
    ProcessList_setPanel(pl, (Panel*) panel);
-   GenericList_setPanel(gl, (Panel*) genericPanel);
+   GenericDataList_setPanel(gl, (Panel*) genericDataPanel);
 
    if (flags.commFilter)
       setCommFilter(&state, &(flags.commFilter));
@@ -425,7 +425,7 @@ int CommandLine_run(const char* name, int argc, char** argv) {
    Settings_delete(settings);
    DynamicColumns_delete(dc);
    DynamicMeters_delete(dm);
-   //GenericList_delete(gl);
+   //GenericDataList_delete(gl);
 
    return 0;
 }

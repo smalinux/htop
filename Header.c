@@ -25,7 +25,7 @@ in the source distribution for its full text.
 #include "XUtils.h"
 
 
-Header* Header_new(ProcessList* pl, GenericList* gl, Settings* settings, HeaderLayout hLayout) {
+Header* Header_new(ProcessList* pl, GenericDataList* gl, Settings* settings, HeaderLayout hLayout) {
    Header* this = xCalloc(1, sizeof(Header));
    this->columns = xMallocArray(HeaderLayout_getColumns(hLayout), sizeof(Vector*));
    this->settings = settings;

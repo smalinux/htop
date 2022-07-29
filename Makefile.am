@@ -50,10 +50,10 @@ myhtopsources = \
 	DynamicColumn.c \
 	DynamicMeter.c \
 	DynamicTab.c \
-	Generic.c \
+	GenericData.c \
 	EnvScreen.c \
 	FunctionBar.c \
-	GenericList.c \
+	GenericDataList.c \
 	Hashtable.c \
 	Header.c \
 	HeaderOptionsPanel.c \
@@ -112,10 +112,10 @@ myhtopheaders = \
 	DynamicColumn.h \
 	DynamicMeter.h \
 	DynamicTab.h \
-	Generic.h \
+	GenericData.h \
 	EnvScreen.h \
 	FunctionBar.h \
-	GenericList.h \
+	GenericDataList.h \
 	Hashtable.h \
 	Header.h \
 	HeaderLayout.h \
@@ -385,8 +385,8 @@ pcp_platform_headers = \
 	pcp/PCPDynamicColumn.h \
 	pcp/PCPDynamicMeter.h \
 	pcp/PCPDynamicTab.h \
-	pcp/PCPGeneric.h \
-	pcp/PCPGenericList.h \
+	pcp/PCPGenericData.h \
+	pcp/PCPGenericDataList.h \
 	pcp/PCPMetric.h \
 	pcp/PCPProcess.h \
 	pcp/PCPProcessList.h \
@@ -402,8 +402,8 @@ pcp_platform_sources = \
 	pcp/PCPDynamicColumn.c \
 	pcp/PCPDynamicMeter.c \
 	pcp/PCPDynamicTab.c \
-	pcp/PCPGeneric.c \
-	pcp/PCPGenericList.c \
+	pcp/PCPGenericData.c \
+	pcp/PCPGenericDataList.c \
 	pcp/PCPMetric.c \
 	pcp/PCPProcess.c \
 	pcp/PCPProcessList.c \

@@ -369,7 +369,7 @@ static bool Settings_read(Settings* this, const char* fileName, unsigned int ini
          // old (no screen) naming also supported for backwards compatibility
          screen = Settings_defaultScreens(this);
          screen->treeView = atoi(option[1]);
-      } else if (String_eq(option[0], "generic_screen") && this->config_version <= 2) {
+      } else if (String_eq(option[0], "genericData_screen") && this->config_version <= 2) {
          // old (no screen) naming also supported for backwards compatibility
          screen = Settings_defaultScreens(this);
          screen->generic = atoi(option[1]);
@@ -499,7 +499,7 @@ static bool Settings_read(Settings* this, const char* fileName, unsigned int ini
       } else if (String_eq(option[0], ".tree_view")) {
          if (screen)
             screen->treeView = atoi(option[1]);
-      } else if (String_eq(option[0], ".generic_screen")) {
+      } else if (String_eq(option[0], ".genericData_screen")) {
          if (screen)
             screen->generic = atoi(option[1]);
       } else if (String_eq(option[0], ".username")) {
@@ -655,7 +655,7 @@ int Settings_write(const Settings* this, bool onCrash) {
          printSettingInteger(".sort_direction", ss->direction);
          printSettingInteger(".tree_sort_direction", ss->treeDirection);
          printSettingInteger(".all_branches_collapsed", ss->allBranchesCollapsed);
-         printSettingInteger(".generic_screen", ss->generic);
+         printSettingInteger(".genericData_screen", ss->generic);
          printSettingString(".username", ss->username);
       }
    }

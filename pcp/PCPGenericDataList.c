@@ -1,5 +1,5 @@
 /*
-htop - PCPGenericList.c
+htop - PCPGenericDataList.c
 (C) 2022 Sohaib Mohammed
 (C) 2022 htop dev team
 (C) 2022 Red Hat, Inc.
@@ -9,10 +9,10 @@ in the source distribution for its full text.
 
 #include "config.h" // IWYU pragma: keep
 
-#include "pcp/PCPGenericList.h"
+#include "pcp/PCPGenericDataList.h"
 
 #include "Hashtable.h"
-#include "GenericList.h"
+#include "GenericDataList.h"
 #include "Macros.h"
 #include "Object.h"
 #include "Platform.h"
@@ -22,7 +22,7 @@ in the source distribution for its full text.
 #include "DynamicColumn.h"
 #include "Vector.h"
 
-#include "pcp/PCPGeneric.h"
+#include "pcp/PCPGenericData.h"
 #include "pcp/PCPMetric.h"
 #include "pcp/PCPDynamicColumn.h"
 
@@ -45,45 +45,45 @@ static int getRowCount(int keyMetric) {
    return PCPMetric_instanceCount(keyMetric);
 }
 
-static void allocRows(GenericList* gl, int rowsCount) {
-   Generic* g;
+static void allocRows(GenericDataList* gl, int rowsCount) {
+   GenericData* g;
 
-   if (Vector_size(gl->genericRow) != rowsCount) {
-      int diff = Vector_size(gl->genericRow) - rowsCount;
+   if (Vector_size(gl->GenericDataRow) != rowsCount) {
+      int diff = Vector_size(gl->GenericDataRow) - rowsCount;
 
-      if (Vector_size(gl->genericRow) > rowsCount) {
+      if (Vector_size(gl->GenericDataRow) > rowsCount) {
 
          for (int c = 0; c < diff; c++) {
-            //PCPGeneric_removeAllFields(gg); // SMA FIXME
-            GenericList_removeGeneric(gl);
+            //PCPGenericData_removeAllFields(gg); // SMA FIXME
+            GenericDataList_removeGenericData(gl);
          }
       }
 
-      if (Vector_size(gl->genericRow) < rowsCount) {
-         for (int r = Vector_size(gl->genericRow); r < rowsCount; r++) {
-            g = GenericList_getGeneric(gl, PCPGeneric_new);
-            GenericList_addGeneric(gl, g);
+      if (Vector_size(gl->GenericDataRow) < rowsCount) {
+         for (int r = Vector_size(gl->GenericDataRow); r < rowsCount; r++) {
+            g = GenericDataList_getGenericData(gl, PCPGenericData_new);
+            GenericDataList_addGenericData(gl, g);
          }
       }
 
    }
 }
 
-static void allocColumns(GenericList* gl, size_t columnsCount, int rowsCount) {
-   PCPGeneric* firstrow = (PCPGeneric*)Vector_get(gl->genericRow, 0);
+static void allocColumns(GenericDataList* gl, size_t columnsCount, int rowsCount) {
+   PCPGenericData* firstrow = (PCPGenericData*)Vector_get(gl->GenericDataRow, 0);
 
    if (firstrow->fieldsCount < rowsCount) { // SMA FIXME  != instead of <
-      for (int r = 0; r < Vector_size(gl->genericRow); r++) {
-         PCPGeneric* gg = (PCPGeneric*)Vector_get(gl->genericRow, r);
+      for (int r = 0; r < Vector_size(gl->GenericDataRow); r++) {
+         PCPGenericData* gg = (PCPGenericData*)Vector_get(gl->GenericDataRow, r);
          for (size_t c = 0; c < columnsCount; c++) {
-            PCPGeneric_addField(gg, NULL);
+            PCPGenericData_addField(gg, NULL);
          }
       }
    }
 }
 
-static bool PCPGenericList_updateGenericList(PCPGenericList* this) {
-   GenericList* gl = (GenericList*) this;
+static bool PCPGenericDataList_updateGenericDataList(PCPGenericDataList* this) {
+   GenericDataList* gl = (GenericDataList*) this;
    const Settings* settings = gl->settings;
    const ProcessField* fields = settings->ss->fields;
    size_t keyMetric;
@@ -118,15 +118,15 @@ static bool PCPGenericList_updateGenericList(PCPGenericList* this) {
 
          pmAtomValue value;
          if (PCPMetric_instance(column->id, interInst, offset, &value, metricType)) {
-            Generic* g;
+            GenericData* g;
 
-            g = Hashtable_get(gl->genericTable, offset);
+            g = Hashtable_get(gl->GenericDataTable, offset);
             if (!g)
                continue;
 
-            PCPGeneric* gg = (PCPGeneric*) g;
+            PCPGenericData* gg = (PCPGenericData*) g;
 
-            PCPGenericField* field = (PCPGenericField*)Hashtable_get(gg->fields, i);
+            PCPGenericDataField* field = (PCPGenericDataField*)Hashtable_get(gg->fields, i);
             *field->value  =  value;
             field->type    =  metricType;
             field->pmid    =  column->id;
@@ -138,26 +138,26 @@ static bool PCPGenericList_updateGenericList(PCPGenericList* this) {
    return 0;
 }
 
-void GenericList_goThroughEntries(GenericList * super, bool pauseUpdate)
+void GenericDataList_goThroughEntries(GenericDataList * super, bool pauseUpdate)
 {
    bool enabled = !pauseUpdate;
-   PCPGenericList* this = (PCPGenericList*) super;
+   PCPGenericDataList* this = (PCPGenericDataList*) super;
    const Settings* settings = super->settings;
 
    if (enabled)
-      PCPGenericList_updateGenericList(this);
+      PCPGenericDataList_updateGenericDataList(this);
 }
 
-GenericList* GenericList_addPlatformList(GenericList *super)
+GenericDataList* GenericDataList_addPlatformList(GenericDataList *super)
 {
-   PCPGenericList* this = xCalloc(1, sizeof(PCPGenericList));
+   PCPGenericDataList* this = xCalloc(1, sizeof(PCPGenericDataList));
    super = &(this->super);
 
    return super;
 }
 
-void GenericList_removePlatformList(GenericList *gl)
+void GenericDataList_removePlatformList(GenericDataList *gl)
 {
-   PCPGenericList* this = (PCPGenericList*) gl;
+   PCPGenericDataList* this = (PCPGenericDataList*) gl;
    free(this);
 }

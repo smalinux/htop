@@ -1,5 +1,5 @@
 /*
-htop - Generic.c
+htop - GenericData.c
 (C) 2022 Sohaib Mohammed
 (C) 2022 htop dev team
 (C) 2022 Red Hat, Inc.
@@ -9,12 +9,12 @@ in the source distribution for its full text.
 
 #include "config.h" // IWYU pragma: keep
 
-#include "pcp/PCPGeneric.h"
+#include "pcp/PCPGenericData.h"
 
 #include "RichString.h"
 #include "CRT.h"
 #include "Macros.h"
-#include "Generic.h"
+#include "GenericData.h"
 #include "ProvideCurses.h"
 #include "RichString.h"
 #include "Platform.h"
@@ -22,31 +22,31 @@ in the source distribution for its full text.
 #include "XUtils.h"
 
 
-Generic* PCPGeneric_new(const Settings* settings) {
-   PCPGeneric* this = xCalloc(1, sizeof(PCPGeneric));
-   Object_setClass(this, Class(PCPGeneric));
+GenericData* PCPGenericData_new(const Settings* settings) {
+   PCPGenericData* this = xCalloc(1, sizeof(PCPGenericData));
+   Object_setClass(this, Class(PCPGenericData));
 
    this->fields = Hashtable_new(0, false);
 
    this->fieldsCount = 0;
 
-   Generic_init(&this->super, settings);
+   GenericData_init(&this->super, settings);
    return &this->super;
 }
 
-void Generic_delete(Object* cast) {
-   PCPGeneric* this = (PCPGeneric*) cast;
+void GenericData_delete(Object* cast) {
+   PCPGenericData* this = (PCPGenericData*) cast;
 
    for(int i = 0; i <= this->fieldsCount; i++)
-      PCPGeneric_removeField(this);
+      PCPGenericData_removeField(this);
 
-   Generic_done((Generic*)cast);
+   GenericData_done((GenericData*)cast);
    free(this);
 }
 
-PCPGenericField* PCPGeneric_addField(PCPGeneric* this, const Settings* settings)
+PCPGenericDataField* PCPGenericData_addField(PCPGenericData* this, const Settings* settings)
 {
-   PCPGenericField* field = xCalloc(1, sizeof(PCPGenericField));
+   PCPGenericDataField* field = xCalloc(1, sizeof(PCPGenericDataField));
    pmAtomValue *atom = xCalloc(1, sizeof(pmAtomValue));
 
    field->value = atom;
@@ -58,20 +58,20 @@ PCPGenericField* PCPGeneric_addField(PCPGeneric* this, const Settings* settings)
    return field;
 }
 
-void PCPGeneric_removeField(PCPGeneric* this)
+void PCPGenericData_removeField(PCPGenericData* this)
 {
    int idx = this->fieldsCount -1;
 
-   PCPGenericField* field = Hashtable_get(this->fields, idx);
+   PCPGenericDataField* field = Hashtable_get(this->fields, idx);
    free(field->value);
    Hashtable_remove(this->fields, idx);
    this->fieldsCount--;
 }
 
-void PCPGeneric_removeAllFields(PCPGeneric* this)
+void PCPGenericData_removeAllFields(PCPGenericData* this)
 {
    for (int i = this->fieldsCount; i >= 0; i--) {
-      PCPGeneric_removeField(this);
+      PCPGenericData_removeField(this);
    }
 }
 
@@ -99,9 +99,9 @@ static DynamicTab* getCurrentTab(Hashtable* tabs, char* name) {
    return iter.data;
 }
 
-static void PCPGeneric_writeField(const Generic* this, RichString* str, int field) {
-   const PCPGeneric* gg = (const PCPGeneric*) this;
-   PCPGenericField* gf = (PCPGenericField*)Hashtable_get(gg->fields, field);
+static void PCPGenericData_writeField(const GenericData* this, RichString* str, int field) {
+   const PCPGenericData* gg = (const PCPGenericData*) this;
+   PCPGenericDataField* gf = (PCPGenericDataField*)Hashtable_get(gg->fields, field);
    const ProcessField* fields = this->settings->ss->fields;
    char buffer[256]; buffer[255] = '\0';
    int attr = CRT_colors[DEFAULT_COLOR];
@@ -175,9 +175,9 @@ static void PCPGeneric_writeField(const Generic* this, RichString* str, int fiel
    }
 }
 
-static int PCPGeneric_compareByKey(const Generic* v1, const Generic* v2, int key) {
-   const PCPGeneric* g1 = (const PCPGeneric*)v1;
-   const PCPGeneric* g2 = (const PCPGeneric*)v2;
+static int PCPGenericData_compareByKey(const GenericData* v1, const GenericData* v2, int key) {
+   const PCPGenericData* g1 = (const PCPGenericData*)v1;
+   const PCPGenericData* g2 = (const PCPGenericData*)v2;
 
    switch (key) {
       case 0:
@@ -187,12 +187,12 @@ static int PCPGeneric_compareByKey(const Generic* v1, const Generic* v2, int key
    }
 }
 
-const GenericClass PCPGeneric_class = {
+const GenericDataClass PCPGenericData_class = {
    .super = {
-      .extends = Class(Generic),
-      .display = Generic_display,
-      .compare = Generic_compare,
+      .extends = Class(GenericData),
+      .display = GenericData_display,
+      .compare = GenericData_compare,
    },
-   .writeField = PCPGeneric_writeField,
-   .compareByKey = PCPGeneric_compareByKey,
+   .writeField = PCPGenericData_writeField,
+   .compareByKey = PCPGenericData_compareByKey,
 };
