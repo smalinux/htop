@@ -14,7 +14,6 @@ in the source distribution for its full text.
 #include <sys/types.h>
 
 #include "Object.h"
-#include "ProcessField.h" // SMA REMOVEME
 #include "RichString.h"
 #include "Settings.h"
 
@@ -26,8 +25,6 @@ typedef struct GenericData_ {
    /* Pointer to quasi-global data structures */
    const struct GenericDataList_* GenericDataList;
    const struct Settings_* settings;
-
-   int gtest; // SMA REMOVEME
 
 } GenericData;
 

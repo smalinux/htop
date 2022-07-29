@@ -8,12 +8,6 @@ caption = Cgroup1
 columns = cuser cusage csystem csystem csystem
 instances = 0 0 0 0 1
 
-#[test]
-#enabled = true
-#caption = Cgroup2
-#columns = bpid
-#instances = 0 1
-
 [filesys]
 enabled = true
 caption = Filesystem

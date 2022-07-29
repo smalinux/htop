@@ -58,9 +58,9 @@ void GenericData_writeField(const GenericData* this, RichString* str, int field)
 
    switch (field) {
       case 0: {
-   //xSnprintf(buffer, n, "%*d ", Process_pidDigits, this->pid);
-   //xSnprintf(buffer, n, "%*d", 10, this->gtest);
-   break;
+                 //xSnprintf(buffer, n, "%*d ", Process_pidDigits, this->pid);
+                 //xSnprintf(buffer, n, "%*d", 10, this->gtest);
+                 break;
               }
       case 1: fprintf(stderr, "1- GenericData_writeField\n"); return;
       case 2: fprintf(stderr, "2- GenericData_writeField\n"); return;
@@ -71,9 +71,8 @@ void GenericData_writeField(const GenericData* this, RichString* str, int field)
 void GenericData_display(const Object* cast, RichString* out) {
    const GenericData* this = (const GenericData*) cast;
    const ProcessField* fields = this->settings->ss->fields;
-   for (int i = 0; fields[i]; i++) // SMA use GenericData fields
-      //As_GenericData(this)->writeField(this, out, fields[i]); // 0 == loop over fields
-      As_GenericData(this)->writeField(this, out, i); // 0 == loop over fields
+   for (int i = 0; fields[i]; i++)
+      As_GenericData(this)->writeField(this, out, i);
 
    assert(RichString_size(out) > 0);
 }

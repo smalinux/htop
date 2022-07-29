@@ -31,8 +31,6 @@ typedef struct GenericDataList_ {
 
    bool needsSort;
 
-   ScreenSettings ss; /* each GenericDataList has its own screenSettings */
-
    Panel* panel;
 
    Hashtable* fieldUI;

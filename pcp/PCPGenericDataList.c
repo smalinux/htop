@@ -92,7 +92,7 @@ static bool PCPGenericDataList_updateGenericDataList(PCPGenericDataList* this) {
       return 0;
 
    // inDom Validation
-   // TODO
+   // TODO check if all columns from the same imDom or not
    //
 
    keyMetric = defineKeyMetric(settings);

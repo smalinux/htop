@@ -16,7 +16,6 @@ in the source distribution for its full text.
 
 typedef struct PCPGenericDataList_ {
    GenericDataList super;
-   // SMA; keymetric;   PCPMetric_iterate
 } PCPGenericDataList;
 
 void GenericDataList_goThroughEntries(GenericDataList * super,bool pauseUpdate);
