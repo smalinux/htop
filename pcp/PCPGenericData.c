@@ -135,7 +135,7 @@ static void PCPGenericData_writeField(const GenericData* this, RichString* str, 
 
       xSnprintf(buffer, sizeof(buffer), "%*s ", width, instName);
       RichString_appendAscii(str, attr, buffer);
-      free(instName);
+      //free(instName);
    } else {
       switch (gf->type) {
          case PM_TYPE_STRING:
