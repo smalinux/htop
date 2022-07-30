@@ -11,8 +11,6 @@ in the source distribution for its full text.
 
 #include "config.h" // IWYU pragma: keep
 
-#include <stdbool.h>
-
 #include "Object.h"
 #include "GenericData.h"
 #include "Settings.h"
@@ -51,7 +49,7 @@ GenericData* PCPGenericData_new(const Settings* settings);
 
 void GenericData_delete(Object* cast);
 
-PCPGenericDataField* PCPGenericData_addField(PCPGenericData* this, const Settings* settings);
+PCPGenericDataField* PCPGenericData_addField(PCPGenericData* this);
 
 void PCPGenericData_removeField(PCPGenericData* this);
 

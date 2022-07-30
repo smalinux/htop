@@ -12,60 +12,28 @@ in the source distribution for its full text.
 #include "GenericData.h"
 
 #include <assert.h>
-#include <limits.h>
-#include <math.h>
-#include <signal.h>
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
-#include <unistd.h>
-#include <sys/resource.h>
 
-#include "CRT.h"
 #include "Macros.h"
-#include "Platform.h"
-#include "DynamicColumn.h"
-#include "GenericDataList.h"
+#include "Process.h"
 #include "RichString.h"
 #include "Settings.h"
-#include "XUtils.h"
-
-#if defined(MAJOR_IN_MKDEV)
-#include <sys/mkdev.h>
-#endif
+#include "config.h"
 
 
 void GenericData_init(GenericData* this, const Settings* settings) {
    this->settings = settings;
-
-   // this->
-   // this->
 }
 
-void GenericData_done(GenericData* this) {
+void GenericData_done(ATTR_UNUSED GenericData* this) {
    assert (this != NULL);
-   // freeFields here
-   // Reference: Process_done
 }
 
-void GenericData_writeField(const GenericData* this, RichString* str, int field) {
-   char buffer[256];
-   size_t n = sizeof(buffer);
-   int attr = CRT_colors[DEFAULT_COLOR];
-   //fprintf(stderr, "- GenericData_writeField\n");
+void GenericData_writeField(ATTR_UNUSED const GenericData* this, ATTR_UNUSED RichString* str, int field) {
 
    switch (field) {
-      case 0: {
-                 //xSnprintf(buffer, n, "%*d ", Process_pidDigits, this->pid);
-                 //xSnprintf(buffer, n, "%*d", 10, this->gtest);
-                 break;
-              }
-      case 1: fprintf(stderr, "1- GenericData_writeField\n"); return;
-      case 2: fprintf(stderr, "2- GenericData_writeField\n"); return;
+   default:
+      break;
    }
-   //RichString_appendAscii(str, attr, buffer);
 }
 
 void GenericData_display(const Object* cast, RichString* out) {
@@ -77,7 +45,7 @@ void GenericData_display(const Object* cast, RichString* out) {
    assert(RichString_size(out) > 0);
 }
 
-int GenericData_compare(const void* v1, const void* v2) {
+int GenericData_compare(ATTR_UNUSED const void* v1, ATTR_UNUSED const void* v2) {
    return 0;
 }
 

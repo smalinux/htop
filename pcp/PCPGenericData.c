@@ -11,14 +11,19 @@ in the source distribution for its full text.
 
 #include "pcp/PCPGenericData.h"
 
-#include "RichString.h"
+#include <stdbool.h>
+#include <stdlib.h>
+
 #include "CRT.h"
-#include "Macros.h"
+#include "DynamicColumn.h"
+#include "DynamicTab.h"
 #include "GenericData.h"
-#include "ProvideCurses.h"
-#include "RichString.h"
-#include "Platform.h"
 #include "Hashtable.h"
+#include "PCPDynamicColumn.h"
+#include "PCPDynamicTab.h"
+#include "PCPMetric.h"
+#include "Platform.h"
+#include "Process.h"
 #include "XUtils.h"
 
 
@@ -37,30 +42,29 @@ GenericData* PCPGenericData_new(const Settings* settings) {
 void GenericData_delete(Object* cast) {
    PCPGenericData* this = (PCPGenericData*) cast;
 
-   for(int i = 0; i <= this->fieldsCount; i++)
+   for (int i = 0; i <= this->fieldsCount; i++)
       PCPGenericData_removeField(this);
 
    GenericData_done((GenericData*)cast);
    free(this);
 }
 
-PCPGenericDataField* PCPGenericData_addField(PCPGenericData* this, const Settings* settings)
+PCPGenericDataField* PCPGenericData_addField(PCPGenericData* this)
 {
    PCPGenericDataField* field = xCalloc(1, sizeof(PCPGenericDataField));
-   pmAtomValue *atom = xCalloc(1, sizeof(pmAtomValue));
+   pmAtomValue* atom = xCalloc(1, sizeof(pmAtomValue));
 
    field->value = atom;
    Hashtable_put(this->fields, this->fieldsCount, field);
 
    this->fieldsCount += 1;
-    //settings here if you want to read from it.. to assing...
-    //Reference: Process_init()
+
    return field;
 }
 
 void PCPGenericData_removeField(PCPGenericData* this)
 {
-   int idx = this->fieldsCount -1;
+   int idx = this->fieldsCount - 1;
 
    PCPGenericDataField* field = Hashtable_get(this->fields, idx);
    free(field->value);
@@ -103,7 +107,8 @@ static void PCPGenericData_writeField(const GenericData* this, RichString* str, 
    const PCPGenericData* gg = (const PCPGenericData*) this;
    PCPGenericDataField* gf = (PCPGenericDataField*)Hashtable_get(gg->fields, field);
    const ProcessField* fields = this->settings->ss->fields;
-   char buffer[256]; buffer[255] = '\0';
+   char buffer[256];
+   buffer[255] = '\0';
    int attr = CRT_colors[DEFAULT_COLOR];
    char* tab_username = this->settings->ss->username;
    Hashtable* pTabs = Platform_getDynamicTabs();
@@ -138,53 +143,46 @@ static void PCPGenericData_writeField(const GenericData* this, RichString* str, 
       //free(instName);
    } else {
       switch (gf->type) {
-         case PM_TYPE_STRING:
-            attr = CRT_colors[PROCESS_SHADOW];
-            xSnprintf(buffer, sizeof(buffer), "%*s ", width, gf->value->cp);
-            RichString_appendAscii(str, attr, buffer);
-            break;
-         case PM_TYPE_32:
-            xSnprintf(buffer, sizeof(buffer), "%*d ", width, gf->value->l);
-            RichString_appendAscii(str, attr, buffer);
-            break;
-         case PM_TYPE_U32:
-            xSnprintf(buffer, sizeof(buffer), "%*u ", width, gf->value->ul);
-            RichString_appendAscii(str, attr, buffer);
-            break;
-         case PM_TYPE_64:
-            xSnprintf(buffer, sizeof(buffer), "%*lld ", width, (long long) gf->value->ll);
-            RichString_appendAscii(str, attr, buffer);
-            break;
-         case PM_TYPE_U64:
-            xSnprintf(buffer, sizeof(buffer), "%*llu ", width, (unsigned long long) gf->value->ull);
-            RichString_appendAscii(str, attr, buffer);
-            break;
-         case PM_TYPE_FLOAT:
-            xSnprintf(buffer, sizeof(buffer), "%*.2f ", width, (double) gf->value->f);
-            RichString_appendAscii(str, attr, buffer);
-            break;
-         case PM_TYPE_DOUBLE:
-            xSnprintf(buffer, sizeof(buffer), "%*.2f ", width, gf->value->d);
-            RichString_appendAscii(str, attr, buffer);
-            break;
-         default:
-            attr = CRT_colors[METER_VALUE_ERROR];
-            RichString_appendAscii(str, attr, "no type");
-            break;
+      case PM_TYPE_STRING:
+         attr = CRT_colors[PROCESS_SHADOW];
+         xSnprintf(buffer, sizeof(buffer), "%*s ", width, gf->value->cp);
+         RichString_appendAscii(str, attr, buffer);
+         break;
+      case PM_TYPE_32:
+         xSnprintf(buffer, sizeof(buffer), "%*d ", width, gf->value->l);
+         RichString_appendAscii(str, attr, buffer);
+         break;
+      case PM_TYPE_U32:
+         xSnprintf(buffer, sizeof(buffer), "%*u ", width, gf->value->ul);
+         RichString_appendAscii(str, attr, buffer);
+         break;
+      case PM_TYPE_64:
+         xSnprintf(buffer, sizeof(buffer), "%*lld ", width, (long long) gf->value->ll);
+         RichString_appendAscii(str, attr, buffer);
+         break;
+      case PM_TYPE_U64:
+         xSnprintf(buffer, sizeof(buffer), "%*llu ", width, (unsigned long long) gf->value->ull);
+         RichString_appendAscii(str, attr, buffer);
+         break;
+      case PM_TYPE_FLOAT:
+         xSnprintf(buffer, sizeof(buffer), "%*.2f ", width, (double) gf->value->f);
+         RichString_appendAscii(str, attr, buffer);
+         break;
+      case PM_TYPE_DOUBLE:
+         xSnprintf(buffer, sizeof(buffer), "%*.2f ", width, gf->value->d);
+         RichString_appendAscii(str, attr, buffer);
+         break;
+      default:
+         attr = CRT_colors[METER_VALUE_ERROR];
+         RichString_appendAscii(str, attr, "no type");
+         break;
       }
    }
 }
 
-static int PCPGenericData_compareByKey(const GenericData* v1, const GenericData* v2, int key) {
-   const PCPGenericData* g1 = (const PCPGenericData*)v1;
-   const PCPGenericData* g2 = (const PCPGenericData*)v2;
+static int PCPGenericData_compareByKey(ATTR_UNUSED const GenericData* v1, ATTR_UNUSED const GenericData* v2, ATTR_UNUSED int key) {
 
-   switch (key) {
-      case 0:
-         return 0;
-      default:
-         return 0;
-   }
+   return 0;
 }
 
 const GenericDataClass PCPGenericData_class = {

@@ -25,6 +25,7 @@ in the source distribution for its full text.
 #include "CRT.h"
 #include "DynamicColumn.h"
 #include "DynamicMeter.h"
+#include "DynamicTab.h"
 #include "GenericDataList.h"
 #include "Hashtable.h"
 #include "Header.h"
@@ -317,20 +318,12 @@ int CommandLine_run(const char* name, int argc, char** argv) {
    ProcessList* pl = ProcessList_new(ut, dm, dc, flags.pidMatchList, flags.userId);
    Settings* settings = Settings_new(pl->activeCPUs, dc);
 
-   Hashtable* dt = DynamicTabs_new(settings); // FIXME free dt
+   Hashtable* dt = DynamicTabs_new(settings);
    GenericDataList* gl = GenericDataList_new();
 
-   // REMOVEME this block prints dt* hashtable
-   //for (int i = 0; i < 2; i++) {
-
-   //   DynamicTab* dd = (DynamicTab*)Hashtable_get(dt, i);
-   //   fprintf(stderr, "::: Tab::: %s\n", dd->caption);
-   //   fprintf(stderr, "::: fields::: %s\n", dd->fields);
-   //   fprintf(stderr, "\n");
-   //}
-
    pl->settings = settings;
-   gl->settings = settings;
+   if (gl)
+      gl->settings = settings;
 
    Header* header = Header_new(pl, gl, settings, 2);
 
@@ -362,7 +355,6 @@ int CommandLine_run(const char* name, int argc, char** argv) {
    CRT_init(settings, flags.allowUnicode);
 
    MainPanel* panel = MainPanel_new();
-   MainPanel* genericDataPanel = MainPanel_new();
 
    MainPanel_updateLabels(panel, settings->ss->treeView, flags.commFilter);
 
@@ -378,10 +370,8 @@ int CommandLine_run(const char* name, int argc, char** argv) {
 
    //MainPanel_setState(panel, &state);
    panel->state = &state;
-   genericDataPanel->state = &state;
 
    ProcessList_setPanel(pl, (Panel*) panel);
-   GenericDataList_setPanel(gl, (Panel*) genericDataPanel);
 
    if (flags.commFilter)
       setCommFilter(&state, &(flags.commFilter));
@@ -410,6 +400,7 @@ int CommandLine_run(const char* name, int argc, char** argv) {
 
    Header_delete(header);
    ProcessList_delete(pl);
+   GenericDataList_delete(gl);
 
    ScreenManager_delete(scr);
    MetersPanel_cleanup();
@@ -425,7 +416,7 @@ int CommandLine_run(const char* name, int argc, char** argv) {
    Settings_delete(settings);
    DynamicColumns_delete(dc);
    DynamicMeters_delete(dm);
-   //GenericDataList_delete(gl);
+   DynamicTabs_delete(dt);
 
    return 0;
 }

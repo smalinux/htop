@@ -12,7 +12,6 @@ in the source distribution for its full text.
 
 #include <ctype.h>
 #include <dirent.h>
-#include <errno.h>
 #include <pcp/pmapi.h>
 #include <stdbool.h>
 #include <stdio.h>
@@ -20,12 +19,8 @@ in the source distribution for its full text.
 #include <string.h>
 
 #include "Macros.h"
-#include "Platform.h"
-#include "RichString.h"
-#include "XUtils.h"
 #include "Settings.h"
-
-#include "pcp/PCPMetric.h"
+#include "XUtils.h"
 
 
 static bool PCPDynamicTab_validateTabName(char* key, const char* path, unsigned int line) {
@@ -138,7 +133,7 @@ static void PCPDynamicTab_parseFile(PCPDynamicTabs* tabs, const char* path) {
          free_and_xStrdup(&tab->instances, value);
          readInstances(tab);
       } else if (value && tab && String_eq(key, "enabled")) {
-         if(strcmp(value, "true") || strcmp(value, "True"))
+         if (strcmp(value, "true") || strcmp(value, "True"))
             tab->enabled = 1;
       }
       String_freeArray(config);
@@ -213,6 +208,10 @@ static void PCPDynamicTabs_free(ATTR_UNUSED ht_key_t key, void* value, ATTR_UNUS
    free(tab->super.fields);
 }
 
+void PCPDynamicTabs_done(Hashtable* table) {
+   Hashtable_foreach(table, PCPDynamicTabs_free, NULL);
+}
+
 static char* formatFields(char* fields) {
    char* trim = String_trim(fields);
    char** ids = String_split(trim, ' ', NULL);
@@ -231,10 +230,10 @@ static char* formatFields(char* fields) {
 }
 
 void PCPDynamicTab_appendScreens(PCPDynamicTabs* tabs, Settings* settings) {
-   PCPDynamicTab * dt;
+   PCPDynamicTab* dt;
    ScreenSettings* ss;
 
-   for(size_t i = 0; i < tabs->count; i++) {
+   for (size_t i = 0; i < tabs->count; i++) {
       dt = (PCPDynamicTab*)Hashtable_get(tabs->table, i);
       if (!dt)
          continue;

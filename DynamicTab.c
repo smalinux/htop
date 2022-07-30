@@ -13,15 +13,11 @@ in the source distribution for its full text.
 
 #include <stdbool.h>
 #include <stddef.h>
-#include <string.h>
 
-#include "CRT.h"
-#include "Object.h"
-#include "Platform.h"
-#include "ProcessList.h"
-#include "RichString.h"
-#include "XUtils.h"
 #include "Hashtable.h"
+#include "Platform.h"
+#include "XUtils.h"
+#include "config.h"
 
 
 Hashtable* DynamicTabs_new(Settings* settings) {
@@ -30,7 +26,7 @@ Hashtable* DynamicTabs_new(Settings* settings) {
 
 void DynamicTabs_delete(Hashtable* dynamics) {
    if (dynamics) {
-      //Platform_dynamicTabsDone(dynamics);
+      Platform_dynamicTabsDone(dynamics);
       Hashtable_delete(dynamics);
    }
 }

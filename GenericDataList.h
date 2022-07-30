@@ -11,15 +11,14 @@ in the source distribution for its full text.
 
 #include "config.h" // IWYU pragma: keep
 
-#include "Hashtable.h"
-#include "Object.h"
-#include "Panel.h"
+#include <stdbool.h>
+
 #include "GenericData.h"
+#include "Hashtable.h"
+#include "Panel.h"
 #include "RichString.h"
 #include "Settings.h"
-#include "UsersTable.h"
 #include "Vector.h"
-#include "Settings.h"
 
 
 typedef struct GenericDataList_ {
@@ -45,8 +44,8 @@ typedef struct GenericDataList_ {
 } GenericDataList;
 
 /* Implemented by platforms */
-GenericDataList* GenericDataList_addPlatformList(GenericDataList *super);
-void GenericDataList_removePlatformList(GenericDataList *super);
+GenericDataList* GenericDataList_addPlatformList(GenericDataList* super);
+void GenericDataList_removePlatformList(GenericDataList* super);
 void GenericDataList_goThroughEntries(GenericDataList* super, bool pauseUpdate);
 
 
@@ -72,10 +71,6 @@ void GenericDataList_setPanel(GenericDataList* this, Panel* panel);
 
 void GenericDataList_printHeader(const GenericDataList* this, RichString* header); // TODO
 
-//void GenericDataList_updateDisplayList(GenericDataList* this); // REMOVEME I thik this should be static function
-
-//GenericDataField GenericDataList_keyAt(const GenericDataList* this, int at); // TODO
-
 void GenericDataList_expandTree(GenericDataList* this); // TODO
 
 void GenericDataList_collapseAllBranches(GenericDataList* this); // TODO
@@ -83,11 +78,5 @@ void GenericDataList_collapseAllBranches(GenericDataList* this); // TODO
 void GenericDataList_rebuildPanel(GenericDataList* this);
 
 void GenericDataList_scan(GenericDataList* this, bool pauseUpdate);
-
-/*
-static inline Process* GenericDataList_findProcess(GenericDataList* this, pid_t pid) { // TODO
-   return (Process*) Hashtable_get(this->GenericDataTable, pid);
-}
-*/
 
 #endif

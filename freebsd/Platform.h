@@ -111,4 +111,10 @@ static inline void Platform_dynamicColumnsDone(ATTR_UNUSED Hashtable* table) { }
 
 static inline bool Platform_dynamicColumnWriteField(ATTR_UNUSED const Process* proc, ATTR_UNUSED RichString* str, ATTR_UNUSED unsigned int key) { return false; }
 
+static inline Hashtable* Platform_dynamicTabs(ATTR_UNUSED Settings *settings) { return NULL; }
+
+static inline Hashtable* Platform_getDynamicTabs(void) { return NULL; }
+
+static inline void Platform_dynamicTabsDone(ATTR_UNUSED Hashtable* tabs) { return; }
+
 #endif

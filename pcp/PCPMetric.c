@@ -195,7 +195,7 @@ pmInDom PCPMetric_InDom(PCPMetric metric) {
 /* Note: it is the responsibility of the caller to free(3) the space when it is
  * no longer required.
  */
-void PCPMetric_externalName(PCPMetric metric, int inst, char **externalName) {
+void PCPMetric_externalName(PCPMetric metric, int inst, char** externalName) {
    unsigned int indom;
 
    indom = PCPMetric_InDom(metric);

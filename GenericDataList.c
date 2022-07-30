@@ -11,14 +11,12 @@ in the source distribution for its full text.
 
 #include "GenericDataList.h"
 
-#include "CRT.h"
-#include "Hashtable.h"
-#include "Macros.h"
-#include "Platform.h"
 #include "GenericData.h"
+#include "Hashtable.h"
+#include "Object.h"
+#include "Platform.h"
 #include "Vector.h"
 #include "XUtils.h"
-#include "Settings.h"
 
 
 GenericDataList* GenericDataList_new()
@@ -26,23 +24,13 @@ GenericDataList* GenericDataList_new()
    GenericDataList* gl = xCalloc(1, sizeof(GenericDataList));
    gl = GenericDataList_addPlatformList(gl);
 
-   gl->GenericDataRow = Vector_new(Class(GenericData), false, DEFAULT_SIZE);
-   gl->displayList = Vector_new(Class(GenericData), false, DEFAULT_SIZE);
-   gl->GenericDataTable = Hashtable_new(200, false);
-
-   gl->totalRows = 0;
-
    return gl;
 }
 
-//void GenericDataList_delete(GenericDataList* this)
-//{
-//   // loop & GenericDataList_removeGenericData()
-//   Hashtable_delete(this->GenericDataTable);
-//   Vector_delete(this->GenericDataRow);
-//
-//   GenericDataList_removePlatformList(this);
-//}
+void GenericDataList_delete(GenericDataList* this)
+{
+   GenericDataList_removePlatformList(this);
+}
 
 void GenericDataList_addGenericData(GenericDataList* this, GenericData* g)
 {
@@ -54,7 +42,7 @@ void GenericDataList_addGenericData(GenericDataList* this, GenericData* g)
 
 void GenericDataList_removeGenericData(GenericDataList* this)
 {
-   int idx = this->totalRows -1;
+   int idx = this->totalRows - 1;
    Object* last = Vector_get(this->GenericDataRow, idx);
 
    GenericData_delete(last);

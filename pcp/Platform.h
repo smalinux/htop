@@ -163,4 +163,6 @@ Hashtable* Platform_dynamicTabs(Settings *settings);
 
 Hashtable* Platform_getDynamicTabs(void);
 
+void Platform_dynamicTabsDone(Hashtable* tabs);
+
 #endif

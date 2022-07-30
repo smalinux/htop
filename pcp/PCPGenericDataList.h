@@ -18,10 +18,10 @@ typedef struct PCPGenericDataList_ {
    GenericDataList super;
 } PCPGenericDataList;
 
-void GenericDataList_goThroughEntries(GenericDataList * super,bool pauseUpdate);
+void GenericDataList_goThroughEntries(GenericDataList* super, bool pauseUpdate);
 
-GenericDataList* GenericDataList_addPlatformList(GenericDataList *super);
+GenericDataList* GenericDataList_addPlatformList(GenericDataList* super);
 
-void GenericDataList_removePlatformList(GenericDataList *super);
+void GenericDataList_removePlatformList(GenericDataList* super);
 
 #endif

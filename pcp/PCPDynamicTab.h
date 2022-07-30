@@ -3,10 +3,10 @@
 
 #include <stddef.h>
 
-#include "CRT.h"
+#include <stdbool.h>
+
 #include "DynamicTab.h"
 #include "Hashtable.h"
-#include "RichString.h"
 #include "Settings.h"
 
 

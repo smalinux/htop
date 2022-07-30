@@ -25,8 +25,6 @@ in the source distribution for its full text.
 #include "DiskIOMeter.h"
 #include "DynamicColumn.h"
 #include "DynamicMeter.h"
-#include "DynamicTab.h"
-#include "GenericDataList.h"
 #include "HostnameMeter.h"
 #include "LoadAverageMeter.h"
 #include "Macros.h"
@@ -47,7 +45,7 @@ in the source distribution for its full text.
 #include "linux/ZramStats.h"
 #include "pcp/PCPDynamicColumn.h"
 #include "pcp/PCPDynamicMeter.h"
-#include "pcp/PCPGenericDataList.h"
+#include "pcp/PCPDynamicTab.h"
 #include "pcp/PCPMetric.h"
 #include "pcp/PCPProcessList.h"
 #include "zfs/ZfsArcMeter.h"
@@ -829,4 +827,8 @@ Hashtable* Platform_dynamicTabs(Settings *settings) {
 
 Hashtable* Platform_getDynamicTabs(void) {
    return pcp->tabs.table;
+}
+
+void Platform_dynamicTabsDone(Hashtable* tabs) {
+   PCPDynamicTabs_done(tabs);
 }
