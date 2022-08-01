@@ -17,6 +17,7 @@ typedef struct DynamicColumn_ {
    char* caption;     /* displayed in setup menu (short name) */
    char* description; /* displayed in setup menu (detail) */
    int width;         /* display width +/- for value alignment */
+   bool belongToDynamicScreen;
 } DynamicColumn;
 
 Hashtable* DynamicColumns_new(void);

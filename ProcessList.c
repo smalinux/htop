@@ -89,7 +89,7 @@ static const char* alignedDynamicColumnTitle(const ProcessList* this, int key, c
    int width = column->width;
    if (!width || abs(width) > DYNAMIC_MAX_COLUMN_WIDTH)
       width = DYNAMIC_DEFAULT_COLUMN_WIDTH;
-   xSnprintf(titleBuffer, titleBufferSize, "%*s", width, column->heading);
+   xSnprintf(titleBuffer, titleBufferSize, "%*s ", width, column->heading);
    return titleBuffer;
 }
 
