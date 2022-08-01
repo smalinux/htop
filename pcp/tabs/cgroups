@@ -1,0 +1,8 @@
+#
+# pcp-htop(1) configuration file - see pcp-htop(5)
+#
+
+[cgroup]
+enabled = true
+caption = Cgroup1
+columns = cuser cusage csystem csystem csystem csystem_inst

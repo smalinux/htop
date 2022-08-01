@@ -107,6 +107,7 @@ static bool PCPDynamicColumn_uniqueName(char* key, PCPDynamicColumns* columns) {
 static PCPDynamicColumn* PCPDynamicColumn_new(PCPDynamicColumns* columns, const char* name) {
    PCPDynamicColumn* column = xCalloc(1, sizeof(*column));
    String_safeStrncpy(column->super.name, name, sizeof(column->super.name));
+   column->instances = false;
 
    size_t id = columns->count + LAST_PROCESSFIELD;
    Hashtable_put(columns->table, id, column);
@@ -159,6 +160,9 @@ static void PCPDynamicColumn_parseFile(PCPDynamicColumns* columns, const char* p
          free_and_xStrdup(&column->super.description, value);
       } else if (value && column && String_eq(key, "width")) {
          column->super.width = strtoul(value, NULL, 10);
+      } else if (value && column && String_eq(key, "instances")) {
+         if (String_eq(value, "True") || String_eq(value, "true"))
+            column->instances = true;
       } else if (value && column && String_eq(key, "metric")) {
          PCPDynamicColumn_parseMetric(columns, column, path, lineno, value);
       }

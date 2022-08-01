@@ -35,9 +35,11 @@ in the source distribution for its full text.
 #include "RichString.h"
 #include "SignalsPanel.h"
 #include "CommandLine.h"
+#include "Settings.h"
 
 #include "pcp/PCPDynamicColumn.h"
 #include "pcp/PCPDynamicMeter.h"
+#include "pcp/PCPDynamicTab.h"
 #include "pcp/PCPMetric.h"
 
 
@@ -51,6 +53,7 @@ typedef struct Platform_ {
    pmResult* result;          /* sample values result indexed by Metric */
    PCPDynamicMeters meters;   /* dynamic meters via configuration files */
    PCPDynamicColumns columns; /* dynamic columns via configuration files */
+   PCPDynamicTabs tabs;       /* dynamic tabs via configuration files */
    struct timeval offset;     /* time offset used in archive mode only */
    long long btime;           /* boottime in seconds since the epoch */
    char* release;             /* uname and distro from this context */
@@ -154,5 +157,11 @@ void Platform_dynamicColumnsDone(Hashtable* columns);
 const char* Platform_dynamicColumnInit(unsigned int key);
 
 bool Platform_dynamicColumnWriteField(const Process* proc, RichString* str, unsigned int key);
+
+Hashtable* Platform_dynamicTabs(Settings *settings);
+
+Hashtable* Platform_getDynamicTabs(void);
+
+void Platform_dynamicTabsDone(Hashtable* tabs);
 
 #endif
