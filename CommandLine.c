@@ -355,6 +355,7 @@ int CommandLine_run(const char* name, int argc, char** argv) {
    CRT_init(settings, flags.allowUnicode);
 
    MainPanel* panel = MainPanel_new();
+   MainPanel* genericDataPanel = MainPanel_new();
 
    MainPanel_updateLabels(panel, settings->ss->treeView, flags.commFilter);
 
@@ -370,8 +371,11 @@ int CommandLine_run(const char* name, int argc, char** argv) {
 
    //MainPanel_setState(panel, &state);
    panel->state = &state;
+   genericDataPanel->state = &state;
 
    ProcessList_setPanel(pl, (Panel*) panel);
+   if (gl)
+      GenericDataList_setPanel(gl, (Panel*) genericDataPanel);
 
    if (flags.commFilter)
       setCommFilter(&state, &(flags.commFilter));
