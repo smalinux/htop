@@ -150,4 +150,10 @@ static inline const char* Platform_dynamicColumnInit(ATTR_UNUSED unsigned int ke
 
 static inline bool Platform_dynamicColumnWriteField(ATTR_UNUSED const Process* proc, ATTR_UNUSED RichString* str, ATTR_UNUSED unsigned int key) { return false; }
 
+static inline Hashtable* Platform_dynamicScreens(ATTR_UNUSED Settings* settings) { return NULL; }
+
+static inline Hashtable* Platform_getDynamicScreens(void) { return NULL; }
+
+static inline void Platform_dynamicScreensDone(ATTR_UNUSED Hashtable* screens) { return; }
+
 #endif

@@ -81,6 +81,9 @@ const PanelClass AvailableColumnsPanel_class = {
 
 static void AvailableColumnsPanel_addDynamicColumn(ht_key_t key, void* value, void* data) {
    const DynamicColumn* column = (const DynamicColumn*) value;
+   if (column->belongToDynamicScreen)
+      return;
+
    Panel* super = (Panel*) data;
    const char* title = column->caption ? column->caption : column->heading;
    if (!title)
