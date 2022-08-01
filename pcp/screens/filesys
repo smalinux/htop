@@ -1,0 +1,10 @@
+#
+# pcp-htop(1) configuration file - see pcp-htop(5)
+#
+
+[filesys]
+enabled = true
+caption = Filesystem
+columns = filesysavail filesysblocksize filesyscapacity filesysfree filesysfreefiles filesysfull filesysmaxfiles filesysreadonly filesysused filesysusedfiles filesysmountdir
+#sortKey = filesyscapacity
+#sortDirection = -1

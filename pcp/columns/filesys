@@ -1,0 +1,68 @@
+#
+# pcp-htop(1) configuration file - see pcp-htop(5)
+#
+
+[filesysavail]
+heading = avail
+caption = avail
+width = -12
+metric = filesys.avail
+
+[filesysblocksize]
+heading = blocksize
+caption = blocksize
+width = -12
+metric = filesys.blocksize
+
+[filesyscapacity]
+heading = capacity
+caption = capacity
+width = -12
+metric = filesys.capacity
+
+[filesysfree]
+heading = free
+caption = free
+width = -12
+metric = filesys.free
+
+[filesysfreefiles]
+heading = freefiles
+caption = freefiles
+width = -12
+metric = filesys.freefiles
+
+[filesysfull]
+heading = full
+caption = full
+width = -12
+metric = filesys.full
+
+[filesysmaxfiles]
+heading = maxfiles
+caption = maxfiles
+width = -12
+metric = filesys.maxfiles
+
+[filesysmountdir]
+heading = mountdir
+caption = mountdir
+width = -12
+metric = filesys.mountdir
+
+[filesysreadonly]
+heading = readonly
+caption = readonly
+width = -12
+metric = filesys.readonly
+
+[filesysused]
+heading = used
+caption = used
+width = -12
+metric = filesys.used
+
+[filesysusedfiles]
+heading = usedfiles
+caption = usedfiles
+metric = filesys.usedfiles
