@@ -44,7 +44,7 @@ GenericData* PCPGenericData_new(const Settings* settings) {
 void GenericData_delete(Object* cast) {
    PCPGenericData* this = (PCPGenericData*) cast;
 
-   for (int i = 0; i <= this->fieldsCount; i++)
+   for (int i = 1; i <= this->fieldsCount; i++)
       PCPGenericData_removeField(this);
 
    GenericData_done((GenericData*)cast);
@@ -59,7 +59,7 @@ PCPGenericDataField* PCPGenericData_addField(PCPGenericData* this)
    field->value = atom;
    Hashtable_put(this->fields, this->fieldsCount, field);
 
-   this->fieldsCount += 1;
+   this->fieldsCount++;
 
    return field;
 }
@@ -76,7 +76,7 @@ void PCPGenericData_removeField(PCPGenericData* this)
 
 void PCPGenericData_removeAllFields(PCPGenericData* this)
 {
-   for (int i = this->fieldsCount; i >= 0; i--) {
+   for (int i = this->fieldsCount; i > 0; i--) {
       PCPGenericData_removeField(this);
    }
 }
