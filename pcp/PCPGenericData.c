@@ -16,12 +16,12 @@ in the source distribution for its full text.
 
 #include "CRT.h"
 #include "DynamicColumn.h"
-#include "DynamicTab.h"
+#include "DynamicScreen.h"
 #include "GenericData.h"
 #include "Hashtable.h"
 #include "Macros.h"
 #include "PCPDynamicColumn.h"
-#include "PCPDynamicTab.h"
+#include "PCPDynamicScreen.h"
 #include "PCPMetric.h"
 #include "Platform.h"
 #include "Process.h"
@@ -83,7 +83,7 @@ void PCPGenericData_removeAllFields(PCPGenericData* this)
 
 typedef struct {
    char* name;
-   DynamicTab* data;
+   DynamicScreen* data;
    unsigned int key;
 } DynamicIterator;
 

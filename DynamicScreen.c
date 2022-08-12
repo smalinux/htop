@@ -1,5 +1,5 @@
 /*
-htop - DynamicTab.c
+htop - DynamicScreen.c
 (C) 2022 Sohaib Mohammed
 (C) 2022 htop dev team
 (C) 2022 Red Hat, Inc.  All Rights Reserved.
@@ -9,7 +9,7 @@ in the source distribution for its full text.
 
 #include "config.h" // IWYU pragma: keep
 
-#include "DynamicTab.h"
+#include "DynamicScreen.h"
 
 #include <stdbool.h>
 #include <stddef.h>
@@ -20,13 +20,13 @@ in the source distribution for its full text.
 #include "config.h"
 
 
-Hashtable* DynamicTabs_new(Settings* settings) {
-   return Platform_dynamicTabs(settings);
+Hashtable* DynamicScreens_new(Settings* settings) {
+   return Platform_dynamicScreens(settings);
 }
 
-void DynamicTabs_delete(Hashtable* dynamics) {
+void DynamicScreens_delete(Hashtable* dynamics) {
    if (dynamics) {
-      Platform_dynamicTabsDone(dynamics);
+      Platform_dynamicScreensDone(dynamics);
       Hashtable_delete(dynamics);
    }
 }
@@ -37,25 +37,25 @@ typedef struct {
    bool found;
 } DynamicIterator;
 
-static void DynamicTab_compare(ht_key_t key, void* value, void* data) {
-   const DynamicTab* tab = (const DynamicTab*)value;
+static void DynamicScreen_compare(ht_key_t key, void* value, void* data) {
+   const DynamicScreen* screen = (const DynamicScreen*)value;
    DynamicIterator* iter = (DynamicIterator*)data;
-   if (String_eq(iter->name, tab->name)) {
+   if (String_eq(iter->name, screen->name)) {
       iter->found = true;
       iter->key = key;
    }
 }
 
-bool DynamicTab_search(Hashtable* dynamics, const char* name, unsigned int* key) {
+bool DynamicScreen_search(Hashtable* dynamics, const char* name, unsigned int* key) {
    DynamicIterator iter = { .key = 0, .name = name, .found = false };
    if (dynamics)
-      Hashtable_foreach(dynamics, DynamicTab_compare, &iter);
+      Hashtable_foreach(dynamics, DynamicScreen_compare, &iter);
    if (key)
       *key = iter.key;
    return iter.found;
 }
 
-const char* DynamicTab_lookup(Hashtable* dynamics, unsigned int key) {
-   const DynamicTab* tab = Hashtable_get(dynamics, key);
-   return tab ? tab->name : NULL;
+const char* DynamicScreen_lookup(Hashtable* dynamics, unsigned int key) {
+   const DynamicScreen* screen = Hashtable_get(dynamics, key);
+   return screen ? screen->name : NULL;
 }

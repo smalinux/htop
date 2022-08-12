@@ -25,7 +25,7 @@ in the source distribution for its full text.
 #include "CRT.h"
 #include "DynamicColumn.h"
 #include "DynamicMeter.h"
-#include "DynamicTab.h"
+#include "DynamicScreen.h"
 #include "GenericDataList.h"
 #include "Hashtable.h"
 #include "Header.h"
@@ -321,7 +321,7 @@ int CommandLine_run(const char* name, int argc, char** argv) {
    ProcessList* pl = ProcessList_new(ut, dm, dc, flags.pidMatchList, flags.userId);
    Settings* settings = Settings_new(pl->activeCPUs, dc);
 
-   Hashtable* dt = DynamicTabs_new(settings);
+   Hashtable* dt = DynamicScreens_new(settings);
    GenericDataList* gl = GenericDataList_new();
 
    pl->settings = settings;
@@ -423,7 +423,7 @@ int CommandLine_run(const char* name, int argc, char** argv) {
    Settings_delete(settings);
    DynamicColumns_delete(dc);
    DynamicMeters_delete(dm);
-   DynamicTabs_delete(dt);
+   DynamicScreens_delete(dt);
 
    return 0;
 }

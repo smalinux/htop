@@ -92,7 +92,7 @@ static bool PCPGenericDataList_updateGenericDataList(PCPGenericDataList* this) {
    if (!settings->ss->generic)
       return 0;
 
-   // When one or more columns are added to pcp/tabs and do not already exist in
+   // When one or more columns are added to pcp/screens and do not already exist in
    // pcp/columns, continue.
    for (unsigned int i = 0 ; !fields[i]; i++)
       return 0;
