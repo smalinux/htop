@@ -31,20 +31,20 @@ void GenericDataList_delete(GenericDataList* this) {
 }
 
 void GenericDataList_addGenericData(GenericDataList* this, GenericData* g) {
-   Vector_add(this->GenericDataRow, g);
-   Hashtable_put(this->GenericDataTable, this->totalRows, g);
+   Vector_add(this->genericDataRow, g);
+   Hashtable_put(this->genericDataTable, this->totalRows, g);
 
    this->totalRows++;
 }
 
 void GenericDataList_removeGenericData(GenericDataList* this) {
    int idx = this->totalRows - 1;
-   Object* last = Vector_get(this->GenericDataRow, idx);
+   Object* last = Vector_get(this->genericDataRow, idx);
 
    GenericData_delete(last);
 
-   Vector_remove(this->GenericDataRow, idx);
-   Hashtable_remove(this->GenericDataTable, idx);
+   Vector_remove(this->genericDataRow, idx);
+   Hashtable_remove(this->genericDataTable, idx);
 
    this->totalRows--;
 }
@@ -66,11 +66,11 @@ void GenericDataList_setPanel(GenericDataList* this, Panel* panel) {
 
 static void GenericDataList_updateDisplayList(GenericDataList* this) {
    if (this->needsSort)
-      Vector_insertionSort(this->GenericDataRow);
+      Vector_insertionSort(this->genericDataRow);
    Vector_prune(this->displayList);
-   int size = Vector_size(this->GenericDataRow);
+   int size = Vector_size(this->genericDataRow);
    for (int i = 0; i < size; i++)
-      Vector_add(this->displayList, Vector_get(this->GenericDataRow, i));
+      Vector_add(this->displayList, Vector_get(this->genericDataRow, i));
    this->needsSort = false;
 }
 

@@ -50,14 +50,14 @@ static int getRowCount(int keyMetric) {
 
 static void allocRows(GenericDataList* gl, int requiredRowsCount) {
    GenericData* g;
-   int currentRowsCount = Vector_size(gl->GenericDataRow);
+   int currentRowsCount = Vector_size(gl->genericDataRow);
 
    if ( currentRowsCount != requiredRowsCount) {
       if (currentRowsCount > requiredRowsCount) {
          for (int r = currentRowsCount; r > requiredRowsCount; r--) {
             int idx = r - 1;
 
-            PCPGenericData* gg = (PCPGenericData*)Vector_get(gl->GenericDataRow, idx);
+            PCPGenericData* gg = (PCPGenericData*)Vector_get(gl->genericDataRow, idx);
             PCPGenericData_removeAllFields(gg);
             GenericDataList_removeGenericData(gl);
          }
@@ -72,19 +72,19 @@ static void allocRows(GenericDataList* gl, int requiredRowsCount) {
 }
 
 static void allocColumns(GenericDataList* gl, int requiredColumnsCount, int requiredRowsCount) {
-   PCPGenericData* firstrow = (PCPGenericData*)Vector_get(gl->GenericDataRow, 0);
+   PCPGenericData* firstrow = (PCPGenericData*)Vector_get(gl->genericDataRow, 0);
    int currentColumns = firstrow->fieldsCount;
 
    if (currentColumns < requiredRowsCount) {
-      for (int r = 0; r < Vector_size(gl->GenericDataRow); r++) {
-         PCPGenericData* gg = (PCPGenericData*)Vector_get(gl->GenericDataRow, r);
+      for (int r = 0; r < Vector_size(gl->genericDataRow); r++) {
+         PCPGenericData* gg = (PCPGenericData*)Vector_get(gl->genericDataRow, r);
          for (int c = gg->fieldsCount; c < requiredColumnsCount; c++)
             PCPGenericData_addField(gg);
       }
    }
    if (currentColumns > requiredRowsCount) {
-      for (int r = 0; r < Vector_size(gl->GenericDataRow); r++) {
-         PCPGenericData* gg = (PCPGenericData*)Vector_get(gl->GenericDataRow, r);
+      for (int r = 0; r < Vector_size(gl->genericDataRow); r++) {
+         PCPGenericData* gg = (PCPGenericData*)Vector_get(gl->genericDataRow, r);
          for (int c = gg->fieldsCount; c > requiredColumnsCount; c--)
             PCPGenericData_removeField(gg);
       }
@@ -138,7 +138,7 @@ static int PCPGenericDataList_updateGenericDataList(PCPGenericDataList* this) {
          if (PCPMetric_instance(column->id, interInst, offset, &value, metricType)) {
             GenericData* g;
 
-            g = Hashtable_get(gl->GenericDataTable, offset);
+            g = Hashtable_get(gl->genericDataTable, offset);
             if (!g)
                return -1;
 
@@ -174,9 +174,9 @@ GenericDataList* GenericDataList_addPlatformList(GenericDataList* super)
    PCPGenericDataList* this = xCalloc(1, sizeof(PCPGenericDataList));
    super = &(this->super);
 
-   super->GenericDataRow = Vector_new(Class(GenericData), false, DEFAULT_SIZE);
+   super->genericDataRow = Vector_new(Class(GenericData), false, DEFAULT_SIZE);
    super->displayList = Vector_new(Class(GenericData), false, DEFAULT_SIZE);
-   super->GenericDataTable = Hashtable_new(200, false);
+   super->genericDataTable = Hashtable_new(200, false);
 
    super->totalRows = 0;
    super->needsSort = true;
@@ -187,8 +187,8 @@ GenericDataList* GenericDataList_addPlatformList(GenericDataList* super)
 void GenericDataList_removePlatformList(GenericDataList* gl)
 {
    // SMA FIXME loop & GenericDataList_removeGenericData()
-   Hashtable_delete(gl->GenericDataTable);
-   Vector_delete(gl->GenericDataRow);
+   Hashtable_delete(gl->genericDataTable);
+   Vector_delete(gl->genericDataRow);
 
    PCPGenericDataList* this = (PCPGenericDataList*) gl;
    free(this);

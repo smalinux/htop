@@ -25,8 +25,8 @@ typedef struct GenericDataList_ {
    const Settings* settings;
 
    Vector* displayList;
-   Vector* GenericDataRow; /* each elem is struct GenericData */
-   Hashtable* GenericDataTable;
+   Vector* genericDataRow; /* each elem is struct GenericData */
+   Hashtable* genericDataTable;
 
    bool needsSort;
 
