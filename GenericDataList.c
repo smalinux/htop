@@ -18,29 +18,26 @@ in the source distribution for its full text.
 #include "XUtils.h"
 
 
-GenericDataList* GenericDataList_new()
-{
+GenericDataList* GenericDataList_new() {
    GenericDataList* gl = xCalloc(1, sizeof(GenericDataList));
+
    gl = GenericDataList_addPlatformList(gl);
 
    return gl;
 }
 
-void GenericDataList_delete(GenericDataList* this)
-{
+void GenericDataList_delete(GenericDataList* this) {
    GenericDataList_removePlatformList(this);
 }
 
-void GenericDataList_addGenericData(GenericDataList* this, GenericData* g)
-{
+void GenericDataList_addGenericData(GenericDataList* this, GenericData* g) {
    Vector_add(this->GenericDataRow, g);
    Hashtable_put(this->GenericDataTable, this->totalRows, g);
 
    this->totalRows++;
 }
 
-void GenericDataList_removeGenericData(GenericDataList* this)
-{
+void GenericDataList_removeGenericData(GenericDataList* this) {
    int idx = this->totalRows - 1;
    Object* last = Vector_get(this->GenericDataRow, idx);
 
@@ -52,16 +49,14 @@ void GenericDataList_removeGenericData(GenericDataList* this)
    this->totalRows--;
 }
 
-GenericData* GenericDataList_getGenericData(GenericDataList* this, GenericData_New constructor)
-{
+GenericData* GenericDataList_getGenericData(GenericDataList* this, GenericData_New constructor) {
    GenericData* g;
    g = constructor(this->settings);
 
    return g;
 }
 
-void GenericDataList_scan(GenericDataList* this, bool pauseUpdate)
-{
+void GenericDataList_scan(GenericDataList* this, bool pauseUpdate) {
    GenericDataList_goThroughEntries(this, pauseUpdate);
 }
 
@@ -79,8 +74,7 @@ static void GenericDataList_updateDisplayList(GenericDataList* this) {
    this->needsSort = false;
 }
 
-void GenericDataList_rebuildPanel(GenericDataList* this)
-{
+void GenericDataList_rebuildPanel(GenericDataList* this) {
    GenericDataList_updateDisplayList(this);
    const int GenericDataCount = Vector_size(this->displayList);
    int idx = 0;

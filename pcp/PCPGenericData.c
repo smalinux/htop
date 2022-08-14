@@ -28,6 +28,8 @@ in the source distribution for its full text.
 #include "RichString.h"
 #include "XUtils.h"
 
+#include "pcp/PCPMetric.h"
+
 
 GenericData* PCPGenericData_new(const Settings* settings) {
    PCPGenericData* this = xCalloc(1, sizeof(PCPGenericData));
@@ -80,12 +82,6 @@ void PCPGenericData_removeAllFields(PCPGenericData* this)
       PCPGenericData_removeField(this);
    }
 }
-
-typedef struct {
-   char* name;
-   DynamicScreen* data;
-   unsigned int key;
-} DynamicIterator;
 
 static void PCPGenericData_writeField(const GenericData* this, RichString* str, int field) {
    const PCPGenericData* gg = (const PCPGenericData*) this;
@@ -157,7 +153,52 @@ static void PCPGenericData_writeField(const GenericData* this, RichString* str, 
    }
 }
 
-static int PCPGenericData_compareByKey(ATTR_UNUSED const GenericData* v1, ATTR_UNUSED const GenericData* v2, ATTR_UNUSED int key) {
+static int PCPGenericData_compareByKey(const GenericData* v1, const GenericData* v2, int key) {
+   const PCPGenericData* g1 = (const PCPGenericData*)v1;
+   const PCPGenericData* g2 = (const PCPGenericData*)v2;
+
+   if (key < 0) return 0;
+
+   Hashtable* dc = Platform_dynamicColumns();
+   const PCPDynamicColumn* column = Hashtable_get(dc, key);
+   if (!column)
+      return -1;
+
+   size_t metric = column->id;
+   unsigned int type = PCPMetric_type(metric);
+
+   pmAtomValue atom1 = {0}, atom2 = {0};
+   if (!PCPMetric_instance(metric, g1->offset, g1->offset, &atom1, type) ||
+       !PCPMetric_instance(metric, g2->offset, g2->offset, &atom2, type)) {
+      if (type == PM_TYPE_STRING) {
+         free(atom1.cp);
+         free(atom2.cp);
+      }
+      return -1;
+   }
+
+   switch (type) {
+      case PM_TYPE_STRING: {
+         int cmp = SPACESHIP_NULLSTR(atom2.cp, atom1.cp);
+         free(atom2.cp);
+         free(atom1.cp);
+         return cmp;
+      }
+      case PM_TYPE_32:
+         return SPACESHIP_NUMBER(atom2.l, atom1.l);
+      case PM_TYPE_U32:
+         return SPACESHIP_NUMBER(atom2.ul, atom1.ul);
+      case PM_TYPE_64:
+         return SPACESHIP_NUMBER(atom2.ll, atom1.ll);
+      case PM_TYPE_U64:
+         return SPACESHIP_NUMBER(atom2.ull, atom1.ull);
+      case PM_TYPE_FLOAT:
+         return SPACESHIP_NUMBER(atom2.f, atom1.f);
+      case PM_TYPE_DOUBLE:
+         return SPACESHIP_NUMBER(atom2.d, atom1.d);
+      default:
+         break;
+   }
 
    return 0;
 }

@@ -71,26 +71,27 @@ static void allocRows(GenericDataList* gl, int requiredRowsCount) {
    }
 }
 
-static void allocColumns(GenericDataList* gl, size_t requiredColumnsCount, int requiredRowsCount) {
+static void allocColumns(GenericDataList* gl, int requiredColumnsCount, int requiredRowsCount) {
    PCPGenericData* firstrow = (PCPGenericData*)Vector_get(gl->GenericDataRow, 0);
+   int currentColumns = firstrow->fieldsCount;
 
-   if (firstrow->fieldsCount < requiredRowsCount) {
+   if (currentColumns < requiredRowsCount) {
       for (int r = 0; r < Vector_size(gl->GenericDataRow); r++) {
          PCPGenericData* gg = (PCPGenericData*)Vector_get(gl->GenericDataRow, r);
-         for (size_t c = gg->fieldsCount; c < requiredColumnsCount; c++)
+         for (int c = gg->fieldsCount; c < requiredColumnsCount; c++)
             PCPGenericData_addField(gg);
       }
    }
-   if (firstrow->fieldsCount > requiredRowsCount) {
+   if (currentColumns > requiredRowsCount) {
       for (int r = 0; r < Vector_size(gl->GenericDataRow); r++) {
          PCPGenericData* gg = (PCPGenericData*)Vector_get(gl->GenericDataRow, r);
-         for (size_t c = gg->fieldsCount; c > requiredColumnsCount; c--)
+         for (int c = gg->fieldsCount; c > requiredColumnsCount; c--)
             PCPGenericData_removeField(gg);
       }
    }
 }
 
-static bool PCPGenericDataList_updateGenericDataList(PCPGenericDataList* this) {
+static int PCPGenericDataList_updateGenericDataList(PCPGenericDataList* this) {
    GenericDataList* gl = (GenericDataList*) this;
    const Settings* settings = gl->settings;
    const ProcessField* fields = settings->ss->fields;
@@ -99,7 +100,7 @@ static bool PCPGenericDataList_updateGenericDataList(PCPGenericDataList* this) {
    if (!settings->ss->generic)
       return 0;
 
-   // When one or more columns are added to pcp/screens and do not already exist in
+   // one or more columns are added to pcp/screens and do not exist in
    // pcp/columns, continue.
    for (unsigned int i = 0 ; !fields[i]; i++)
       return 0;
@@ -128,7 +129,7 @@ static bool PCPGenericDataList_updateGenericDataList(PCPGenericDataList* this) {
 
          DynamicColumn* dc = Hashtable_get(settings->dynamicColumns, fields[i]);
          if (!dc)
-            continue;
+            return -1;
 
          PCPDynamicColumn* column = (PCPDynamicColumn*) dc;
          metricType = PCPMetric_type(column->id);
@@ -139,15 +140,19 @@ static bool PCPGenericDataList_updateGenericDataList(PCPGenericDataList* this) {
 
             g = Hashtable_get(gl->GenericDataTable, offset);
             if (!g)
-               continue;
+               return -1;
 
             PCPGenericData* gg = (PCPGenericData*) g;
 
             PCPGenericDataField* field = (PCPGenericDataField*)Hashtable_get(gg->fields, i);
-            *field->value  =  value;
-            field->type    =  metricType;
-            field->pmid    =  column->id;
-            field->offset  =  offset;
+            if (!field)
+               return -1;
+
+            gg->offset    = offset;
+            *field->value = value;
+            field->type   = metricType;
+            field->pmid   = column->id;
+            field->offset = offset;
          }
       }
    }
@@ -174,6 +179,7 @@ GenericDataList* GenericDataList_addPlatformList(GenericDataList* super)
    super->GenericDataTable = Hashtable_new(200, false);
 
    super->totalRows = 0;
+   super->needsSort = true;
 
    return super;
 }

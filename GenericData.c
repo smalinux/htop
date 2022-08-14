@@ -13,6 +13,7 @@ in the source distribution for its full text.
 
 #include <assert.h>
 
+#include "CRT.h"
 #include "Macros.h"
 #include "Process.h"
 #include "RichString.h"
@@ -38,7 +39,25 @@ void GenericData_display(const Object* cast, RichString* out) {
       As_GenericData(this)->writeField(this, out, i);
 }
 
-int GenericData_compare(ATTR_UNUSED const void* v1, ATTR_UNUSED const void* v2) {
+int GenericData_compare(const void* v1, const void* v2) {
+   const GenericData* g1 = (const GenericData*)v1;
+   const GenericData* g2 = (const GenericData*)v2;
+
+   const Settings* settings = g1->settings;
+   const ScreenSettings* ss = settings->ss;
+
+   ProcessField key = ScreenSettings_getActiveSortKey(ss);
+
+   int result = GenericData_compareByKey(g1, g2, key);
+
+   return (ScreenSettings_getActiveDirection(ss) == 1) ? result : -result;
+}
+
+int GenericData_compareByKey_Base(const GenericData* g1, const GenericData* g2, ATTR_UNUSED ProcessField key) {
+
+   (void) g1;
+   (void) g2;
+
    return 0;
 }
 

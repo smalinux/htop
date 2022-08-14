@@ -6,3 +6,5 @@
 enabled = true
 caption = Filesystem
 columns = filesysavail filesysblocksize filesyscapacity filesysfree filesysfreefiles filesysfull filesysmaxfiles filesysreadonly filesysused filesysusedfiles filesysmountdir
+#sortKey = filesyscapacity
+#sortDirection = -1

@@ -31,6 +31,9 @@ typedef struct PCPGenericDataField_ {
 typedef struct PCPGenericData_ {
    GenericData super;
 
+   /* default result offset to use for searching proc metrics */
+   unsigned int offset;
+
    Hashtable* fields;  /* PCPGenericDataFields */
 
    int fieldsCount;

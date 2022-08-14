@@ -41,7 +41,9 @@ typedef struct GenericDataClass_ {
 
 #define As_GenericData(this_)                              ((const GenericDataClass*)((this_)->super.klass))
 
-#define GenericData_compareByKey(p1_, p2_, key_)           (As_GenericData(p1_)->compareByKey ? (As_GenericData(p1_)->compareByKey(p1_, p2_, key_)) : GenericData_compareByKey_Base(p1_, p2_, key_))
+#define GenericData_compareByKey(g1_, g2_, key_)           (As_GenericData(g1_)->compareByKey ? (As_GenericData(g1_)->compareByKey(g1_, g2_, key_)) : GenericData_compareByKey_Base(g1_, g2_, key_))
+
+int GenericData_compareByKey_Base(const GenericData* g1, const GenericData* g2, ProcessField key);
 
 void GenericData_display(const Object* cast, RichString* out);
 extern const GenericDataClass GenericData_class;

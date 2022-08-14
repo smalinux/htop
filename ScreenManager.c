@@ -129,7 +129,10 @@ static void checkRecalculation(ScreenManager* this, double* oldTime, int* sortTi
       }
       // scan processes first - some header values are calculated there
       ProcessList_scan(pl, this->state->pauseUpdate);
-      GenericDataList_scan(gl, this->state->pauseUpdate);
+
+      if (this->settings->ss->generic)
+         GenericDataList_scan(gl, this->state->pauseUpdate);
+
       // always update header, especially to avoid gaps in graph meters
       Header_updateData(this->header);
       // force redraw if the number of UID digits was changed

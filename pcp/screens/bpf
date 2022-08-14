@@ -6,3 +6,5 @@
 enabled = true
 caption = opensnoop
 columns = opensnoop_pid opensnoop_comm opensnoop_fd opensnoop_err opensnoop_fname
+#sortKey = opensnoop_pid
+#sortDirection = -1

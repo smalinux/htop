@@ -111,6 +111,10 @@ static void PCPDynamicScreen_parseFile(PCPDynamicScreens* screens, const char* p
          free_and_xStrdup(&screen->super.caption, value);
       } else if (value && screen && String_eq(key, "columns")) {
          free_and_xStrdup(&screen->super.fields, value);
+      } else if (value && screen && String_eq(key, "sortKey")) {
+         free_and_xStrdup(&screen->super.sortKey, value);
+      } else if (value && screen && String_eq(key, "sortDirection")) {
+         screen->super.direction = strtoul(value, NULL, 10);
       } else if (value && screen && String_eq(key, "enabled")) {
          if (strcmp(value, "true") || strcmp(value, "True"))
             screen->enabled = 1;
@@ -184,6 +188,7 @@ static void PCPDynamicScreens_free(ATTR_UNUSED ht_key_t key, void* value, ATTR_U
    free(screen->instances);
    free(screen->super.caption);
    free(screen->super.fields);
+   free(screen->super.sortKey);
 }
 
 void PCPDynamicScreens_done(Hashtable* table) {
@@ -208,25 +213,33 @@ static char* formatFields(char* fields) {
 }
 
 void PCPDynamicScreen_appendScreens(PCPDynamicScreens* screens, Settings* settings) {
-   PCPDynamicScreen* dt;
+   PCPDynamicScreen* ds;
    ScreenSettings* ss;
+   char* sortKey;
 
    for (size_t i = 0; i < screens->count; i++) {
-      dt = (PCPDynamicScreen*)Hashtable_get(screens->table, i);
-      if (!dt)
+      ds = (PCPDynamicScreen*)Hashtable_get(screens->table, i);
+      if (!ds)
          continue;
-      if (!dt->enabled)
+      if (!ds->enabled)
          continue;
 
-      char* columns = formatFields(dt->super.fields);
+      char* columns = formatFields(ds->super.fields);
 
-      ScreenDefaults sd = {
-         .name = dt->super.caption,
+      xAsprintf(&sortKey, "Dynamic(%s)", ds->super.sortKey);
+
+      ScreenDefaults screen = {
+         .name    = ds->super.caption,
          .columns = columns,
+         .sortKey = sortKey,
       };
 
-      ss = Settings_newScreen(settings, &sd);
+      ss = Settings_newScreen(settings, &screen);
+
       ss->generic = true;
+      if (ds->super.direction)
+         ss->direction = ds->super.direction;
+
       free(columns);
    }
 }

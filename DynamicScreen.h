@@ -11,6 +11,8 @@ typedef struct DynamicScreen_ {
    char name[32];  /* unique name, cannot contain spaces */
    char* caption;
    char* fields;
+   char* sortKey;
+   int direction;
 } DynamicScreen;
 
 Hashtable* DynamicScreens_new(Settings* settings);
