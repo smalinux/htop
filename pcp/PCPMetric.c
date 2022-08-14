@@ -201,3 +201,15 @@ void PCPMetric_externalName(PCPMetric metric, int inst, char** externalName) {
    indom = PCPMetric_InDom(metric);
    pmNameInDom(indom, inst, externalName);
 }
+
+int PCPMetric_lookupText(const char* metric, char** desc) {
+   pmID pmid;
+   int sts;
+
+   sts = pmLookupName(1, &metric, &pmid);
+   if (sts < 0) {
+      return false;
+   }
+   pmLookupText(pmid, PM_TEXT_ONELINE, desc);
+   return 0;
+}

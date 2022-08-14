@@ -7,32 +7,27 @@ heading = pid
 caption = PID
 width = -7
 metric = bpf.opensnoop.pid
-description = opensnoop pid
 
 [opensnoop_comm]
 heading = comm
 caption = COMM
 width = -16
 metric = bpf.opensnoop.comm
-description = opensnoop comm
 
 [opensnoop_fd]
 heading = fd
 caption = FD
 width = -4
 metric = bpf.opensnoop.fd
-description = opensnoop fd
 
 [opensnoop_err]
 heading = err
 caption = ERR
 width = -4
 metric = bpf.opensnoop.err
-description = opensnoop err
 
 [opensnoop_fname]
 heading = fname
 caption = PATH
 width = -12
 metric = bpf.opensnoop.fname
-description = opensnoop fname

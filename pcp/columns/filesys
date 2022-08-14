@@ -7,73 +7,62 @@ heading = avail
 caption = avail
 width = -12
 metric = filesys.avail
-description = filesys avail
 
 [filesysblocksize]
 heading = blocksize
 caption = blocksize
 width = -12
 metric = filesys.blocksize
-description = filesys blocksize
 
 [filesyscapacity]
 heading = capacity
 caption = capacity
 width = -12
 metric = filesys.capacity
-description = filesys capacity
 
 [filesysfree]
 heading = free
 caption = free
 width = -12
 metric = filesys.free
-description = filesys free
 
 [filesysfreefiles]
 heading = freefiles
 caption = freefiles
 width = -12
 metric = filesys.freefiles
-description = filesys freefiles
 
 [filesysfull]
 heading = full
 caption = full
 width = -12
 metric = filesys.full
-description = filesys full
 
 [filesysmaxfiles]
 heading = maxfiles
 caption = maxfiles
 width = -12
 metric = filesys.maxfiles
-description = filesys maxfiles
 
 [filesysmountdir]
 heading = mountdir
 caption = mountdir
 width = -12
 metric = filesys.mountdir
-description = filesys mountdir
 
 [filesysreadonly]
 heading = readonly
 caption = readonly
 width = -12
 metric = filesys.readonly
-description = filesys readonly
 
 [filesysused]
 heading = used
 caption = used
 width = -12
 metric = filesys.used
-description = filesys used
 
 [filesysusedfiles]
 heading = usedfiles
 caption = usedfiles
 metric = filesys.usedfiles
-description = filesys usedfiles

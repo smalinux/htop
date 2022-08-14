@@ -180,4 +180,6 @@ pmInDom PCPMetric_InDom(PCPMetric metric);
 
 void PCPMetric_externalName(PCPMetric metric, int inst, char** externalName);
 
+int PCPMetric_lookupText(const char* metric, char** desc);
+
 #endif

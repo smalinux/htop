@@ -48,6 +48,10 @@ static bool PCPDynamicColumn_addMetric(PCPDynamicColumns* columns, PCPDynamicCol
 }
 
 static void PCPDynamicColumn_parseMetric(PCPDynamicColumns* columns, PCPDynamicColumn* column, const char* path, unsigned int line, char* value) {
+   /* pmLookupText */
+   if (!column->super.description)
+      PCPMetric_lookupText(value, &column->super.description);
+
    /* lookup a dynamic metric with this name, else create */
    if (PCPDynamicColumn_addMetric(columns, column) == false)
       return;
