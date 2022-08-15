@@ -116,7 +116,7 @@ static void PCPDynamicScreen_parseFile(PCPDynamicScreens* screens, const char* p
       } else if (value && screen && String_eq(key, "sortDirection")) {
          screen->super.direction = strtoul(value, NULL, 10);
       } else if (value && screen && String_eq(key, "enabled")) {
-         if (strcmp(value, "true") || strcmp(value, "True"))
+         if (String_eq(value, "true") || String_eq(value, "True"))
             screen->enabled = 1;
       }
       String_freeArray(config);
