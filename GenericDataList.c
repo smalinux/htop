@@ -76,10 +76,10 @@ static void GenericDataList_updateDisplayList(GenericDataList* this) {
 
 void GenericDataList_rebuildPanel(GenericDataList* this) {
    GenericDataList_updateDisplayList(this);
-   const int GenericDataCount = Vector_size(this->displayList);
+   const int genericDataCount = Vector_size(this->displayList);
    int idx = 0;
 
-   for (int i = 0; i < GenericDataCount; i++) {
+   for (int i = 0; i < genericDataCount; i++) {
       GenericData* g = (GenericData*) Vector_get(this->displayList, i);
 
       Panel_set(this->panel, idx, (Object*)g);

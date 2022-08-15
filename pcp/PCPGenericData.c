@@ -108,7 +108,7 @@ static void PCPGenericData_writeField(const GenericData* this, RichString* str, 
 
    if (instances) {
       char* instName;
-      attr = CRT_colors[PROCESS_SHADOW];
+      attr = CRT_colors[DYNAMIC_GRAY];
 
       PCPMetric_externalName(gf->pmid, gf->interInst, &instName);
 
@@ -117,7 +117,7 @@ static void PCPGenericData_writeField(const GenericData* this, RichString* str, 
    } else {
       switch (gf->type) {
          case PM_TYPE_STRING:
-            attr = CRT_colors[PROCESS_SHADOW];
+            attr = CRT_colors[DYNAMIC_GREEN];
             xSnprintf(buffer, sizeof(buffer), "%*s ", width, gf->value->cp);
             RichString_appendAscii(str, attr, buffer);
             break;
@@ -146,8 +146,8 @@ static void PCPGenericData_writeField(const GenericData* this, RichString* str, 
             RichString_appendAscii(str, attr, buffer);
             break;
          default:
-            attr = CRT_colors[METER_VALUE_ERROR];
-            RichString_appendAscii(str, attr, "no type");
+            attr = CRT_colors[DYNAMIC_RED];
+            RichString_appendAscii(str, attr, "no data");
             break;
       }
    }
