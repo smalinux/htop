@@ -110,7 +110,7 @@ static void PCPGenericData_writeField(const GenericData* this, RichString* str, 
       char* instName;
       attr = CRT_colors[PROCESS_SHADOW];
 
-      PCPMetric_externalName(gf->pmid, gf->offset, &instName);
+      PCPMetric_externalName(gf->pmid, gf->interInst, &instName);
 
       xSnprintf(buffer, sizeof(buffer), "%*s ", width, instName);
       RichString_appendAscii(str, attr, buffer);

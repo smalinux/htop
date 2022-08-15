@@ -5,4 +5,6 @@
 [cgroup]
 enabled = true
 caption = Cgroup1
-columns = cuser cusage csystem csystem csystem csystem_inst
+columns = cuser cusage csystem csystem csystem_inst
+#sortKey = cuser
+#sortDirection = -1

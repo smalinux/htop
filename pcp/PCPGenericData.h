@@ -25,6 +25,8 @@ typedef struct PCPGenericDataField_ {
 
    int offset;
 
+   int interInst;
+
    int type;
 } PCPGenericDataField;
 

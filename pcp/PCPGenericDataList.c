@@ -148,11 +148,12 @@ static int PCPGenericDataList_updateGenericDataList(PCPGenericDataList* this) {
             if (!field)
                return -1;
 
-            gg->offset    = offset;
-            *field->value = value;
-            field->type   = metricType;
-            field->pmid   = column->id;
-            field->offset = offset;
+            gg->offset       = offset;
+            *field->value    = value;
+            field->type      = metricType;
+            field->pmid      = column->id;
+            field->offset    = offset;
+            field->interInst = interInst;
          }
       }
    }
