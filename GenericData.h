@@ -50,11 +50,12 @@ extern const GenericDataClass GenericData_class;
 
 void GenericData_init(GenericData* this, const Settings* settings);
 
-void GenericData_done(GenericData* this); // TODO
+void GenericData_done(GenericData* this);
 
-void GenericData_addField(GenericData* this); // TODO
-void GenericData_removeField(GenericData* this); // TODO
-void GenericData_updateField(GenericData* this); // TODO
-void GenericData_rebuildFields(GenericData* this); // TODO
+void GenericData_addField(GenericData* this);
+
+void GenericData_removeField(GenericData* this);
+
+void GenericData_rebuildFields(GenericData* this);
 
 #endif
