@@ -116,6 +116,7 @@ static PCPDynamicColumn* PCPDynamicColumn_new(PCPDynamicColumns* columns, const 
    PCPDynamicColumn* column = xCalloc(1, sizeof(*column));
    String_safeStrncpy(column->super.name, name, sizeof(column->super.name));
    column->instances = false;
+   column->super.enabled = true;
 
    size_t id = columns->count + LAST_PROCESSFIELD;
    Hashtable_put(columns->table, id, column);
@@ -171,6 +172,9 @@ static void PCPDynamicColumn_parseFile(PCPDynamicColumns* columns, const char* p
       } else if (value && column && String_eq(key, "instances")) {
          if (String_eq(value, "True") || String_eq(value, "true"))
             column->instances = true;
+      } else if (value && column && String_eq(key, "enabled")) {
+         if (String_eq(value, "False") || String_eq(value, "false"))
+            column->super.enabled = false;
       } else if (value && column && String_eq(key, "metric")) {
          PCPDynamicColumn_parseMetric(columns, column, path, lineno, value);
       }

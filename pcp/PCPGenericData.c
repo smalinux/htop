@@ -94,7 +94,7 @@ static void PCPGenericData_writeField(const GenericData* this, RichString* str, 
    int attr = CRT_colors[DEFAULT_COLOR];
 
    DynamicColumn* dc = Hashtable_get(this->settings->dynamicColumns, fields[field]);
-   if (!dc)
+   if (!dc || !dc->enabled)
       return;
 
    PCPDynamicColumn* column = (PCPDynamicColumn*) dc;

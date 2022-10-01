@@ -68,6 +68,7 @@ static PCPDynamicColumn* PCPDynamicScreen_lookupMetric(PCPDynamicScreen* screen,
    xSnprintf(column->super.name, bytes, "%s_%s", screen->super.name, name);
    column->instances = false;
    column->super.belongToDynamicScreen = true;
+   column->super.enabled = true;
 
    return column;
 }
@@ -119,6 +120,9 @@ static void PCPDynamicScreen_parseColumn(PCPDynamicScreen* screen, const char* p
       } else if (String_eq(p, "instances")) {
          if (String_eq(value, "True") || String_eq(value, "true"))
             column->instances = true;
+      } else if (String_eq(p, "enabled")) { /* default is True */
+         if (String_eq(value, "False") || String_eq(value, "false"))
+            column->super.enabled = false;
       }
    }
 }
@@ -217,7 +221,7 @@ static void PCPDynamicScreen_parseFile(PCPDynamicScreens* screens, const char* p
          free_and_xStrdup(&screen->super.sortKey, value);
       } else if (value && screen && String_eq(key, "sortDirection")) {
          screen->super.direction = strtoul(value, NULL, 10);
-      } else if (value && screen && String_eq(key, "enabled")) {
+      } else if (value && screen && String_eq(key, "enabled")) { /* default is false */
          if (String_eq(value, "True") || String_eq(value, "true"))
             screen->enabled = true;
       } else if (value && screen) {
